@@ -1,13 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const FooterMenu = () => {
   return (
     <div className="footerMenu">
-      <a href="#">About</a>
-      <a href="#">Contact us</a>
-      <a href="#">FAQS</a>
-      <a href="#">Terms and Conditions</a>
-      <a href="#">Privacy</a>
+      <Link to="/about">About</Link>
+      <Link to="/">Contact us</Link>
+      <Link to="/">FAQS</Link>
+      <Link to="/">Terms and Conditions</Link>
+      <Link to="/">Privacy</Link>
     </div>
   );
 };
