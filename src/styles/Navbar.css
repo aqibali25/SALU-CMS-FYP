@@ -1,0 +1,837 @@
+/* ###  NAV-BAR STYLE  ### */
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  height: 90px;
+  width: 100%;
+  padding: 0 20px;
+  background-color: #f5f5f5;
+  box-shadow: 0px 0px 10px #949494;
+  z-index: 999;
+}
+/* ###  LOGO STYLE  ### */
+
+.logo {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logo img {
+  width: 75px;
+  height: 75px;
+}
+.logo .name {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-left: 15px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-decoration: none;
+  color: #111111;
+}
+.logo .name label {
+  cursor: pointer;
+}
+/* ###  NAVLINKS AND SIGNUP   ### */
+
+.navAndSignup {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 60%;
+  transition: all 0.5s ease;
+}
+/* ###  NAV MENUS/LINKS STYLE  ### */
+.navLinks {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 65%;
+}
+.navLinks a {
+  position: relative;
+  text-decoration: none;
+  color: #111111;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+.navLinks a:hover {
+  color: #e5b300;
+}
+.navLinks a:after {
+  background: none repeat scroll 0 0 transparent;
+  bottom: 0;
+  content: "";
+  display: block;
+  height: 2px;
+  left: 50%;
+  bottom: -2px;
+  position: absolute;
+  background-color: #e5b300;
+  transition: width 0.5s ease 0s, left 0.5s ease 0s;
+  width: 0;
+}
+a:hover:after {
+  width: 100%;
+  left: 0;
+  background-color: #e5b300;
+}
+
+/* ###  LOGIN SIGNUP BUTTON STYLE  ### */
+.loginSignUp {
+  display: flex;
+  justify-content: space-between;
+  width: fit-content;
+  column-gap: 15px;
+}
+.loginSignUp a,
+.getStarted,
+.aboutCampusReadMore {
+  position: relative;
+  padding: 5px 15px;
+  text-decoration: none;
+  border: 2px solid #e5b300;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.35s ease;
+  z-index: 2;
+}
+
+/* ###  LOGIN BUTTON STYLE  ### */
+.loginSignUp .login,
+.getStarted {
+  color: #111111;
+}
+.login::before,
+.getStarted::before {
+  transition: all 0.35s ease;
+  content: "";
+  width: 100%;
+  height: 0;
+  background: #e5b300;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: -1;
+}
+.login:hover::before,
+.getStarted:hover::before {
+  background: #e5b300;
+  z-index: -1;
+  height: 100%;
+}
+.login:hover,
+.getStarted:hover {
+  color: #ffffff;
+}
+
+/* ###  SIGNUP BUTTON STYLE  ### */
+
+.loginSignUp .signup,
+.aboutCampusReadMore {
+  color: #ffffff;
+}
+.signup::before,
+.aboutCampusReadMore::before {
+  transition: all 0.35s ease;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: #e5b300;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+}
+.signup:hover::before,
+.aboutCampusReadMore:hover:before {
+  background: #e5b300;
+  z-index: -1;
+  height: 0%;
+}
+.signup:hover,
+.aboutCampusReadMore:hover {
+  color: #000000;
+}
+
+/* ###  THREE LINES   ### */
+
+.menuButton {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 13%;
+  color: #090909;
+  width: 3.5em;
+  height: 3.5em;
+  border-radius: 0.5em;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.menuButton:hover {
+  border: 1px solid white;
+}
+
+.menuButton:active {
+  color: #666;
+  box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+}
+
+.menuButton input[type="checkbox"] {
+  appearance: none;
+  display: none;
+  visibility: hidden;
+}
+
+.menuButton span {
+  width: 30px;
+  height: 4px;
+  background: #131313;
+  border-radius: 100px;
+  transition: 0.3s ease;
+}
+
+.menuButton input[type]:checked ~ span.top {
+  transform: translateY(290%) rotate(45deg);
+  width: 25px;
+}
+
+.menuButton input[type]:checked ~ span.bot {
+  transform: translateY(-270%) rotate(-45deg);
+  width: 25px;
+}
+
+.menuButton input[type]:checked ~ span.mid {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+
+/* ### SECTION STYLING ### */
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  height: 85vh;
+  overflow: hidden;
+}
+.line {
+  width: 98%;
+  height: 2px;
+  background-color: #949494;
+}
+/* ###  SECTION 1  ### */
+.section-1::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  opacity: 0.5; /* Change the color and opacity as needed */
+}
+.section-1 img {
+  width: 100%;
+  height: 110%;
+}
+.backgroundImgText {
+  position: absolute;
+  top: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #ffffff;
+  text-align: center;
+}
+.backgroundImgText h2 {
+  font-size: 2.5rem;
+}
+.backgroundImgText h2 span,
+.backgroundImgText p {
+  background-color: rgba(229, 179, 0, 0.8);
+}
+
+/* ###  SECTION 2  ### */
+.section-2 {
+  justify-content: center;
+  padding: 80px 150px;
+  row-gap: 40px;
+}
+.section-2 p {
+  text-align: center;
+  font-size: 1.3rem;
+}
+.getStarted {
+  padding: 8px 25px;
+  font-size: 1rem;
+}
+
+/* ###  SECTION 3  ### */
+.section-3,
+.section-4 {
+  row-gap: 40px;
+}
+.titleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 5px;
+  width: 50%;
+  height: fit-content;
+}
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+.titleline {
+  width: 150px;
+  height: 8px;
+  border-radius: 50px;
+  background-color: #e5b300;
+}
+.trandingImages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 70%;
+  height: 70%;
+  background-color: #000000;
+  overflow: hidden;
+}
+.trandingImages img {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+}
+
+/* ###  SECTION 4  ### */
+.section-4 {
+  margin-top: 30px;
+}
+.departmentMain {
+  border-radius: 5px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 70%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.deptCard {
+  margin: 0 10px;
+  text-align: center;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+  justify-content: center;
+}
+
+.deptCard img {
+  width: 100%;
+  height: 300px;
+  margin-top: -15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.deptTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.viewMore {
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #e5b300;
+}
+
+.viewMore i {
+  margin-left: 5px;
+}
+
+/* ### SECTION 5 ### */
+
+.aboutCampus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  column-gap: 20px;
+  width: 70%;
+  height: 70%;
+}
+.aboutCampusImage {
+  width: 40%;
+  height: 100%;
+  background-color: #000000;
+  overflow: hidden;
+}
+
+.aboutCampusImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+}
+
+.aboutCampusText {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  row-gap: 20px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+.aboutCampusText h2 {
+  font-size: 2rem;
+}
+.aboutCampusText p {
+  font-size: 1.2rem;
+  text-align: justify;
+}
+/* ###  FOOTER  ### */
+
+footer {
+  width: 100%;
+  height: 200px;
+  background-color: #36384e;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+footer .socialIcons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 15%;
+}
+footer .socialIcons a {
+  color: #ffffff;
+  font-size: 25px;
+}
+footer .socialIcons a i {
+  transition: all 0.5s ease;
+}
+footer .socialIcons a .fa-facebook:hover {
+  color: #0158af;
+}
+footer .socialIcons a .fa-instagram:hover {
+  background: linear-gradient(#f9ce34, #ee2a7b, #6228d7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+footer .socialIcons a .fa-twitter:hover {
+  color: #5ea0e2;
+}
+footer .footerMenu {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 70%;
+  margin: 20px;
+}
+footer .footerMenu a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.5s ease;
+}
+footer .footerMenu a:hover {
+  text-decoration: underline;
+}
+footer label {
+  color: #ffffff;
+  font-size: 1rem;
+}
+/* ###  RESPONSIVE STYLE  ### */
+
+/* ### MAX-WIDTH 1024PX ### */
+@media only screen and (max-width: 1024px) {
+}
+/* ### MAX-WIDTH 980PX ### */
+@media only screen and (max-width: 980px) {
+  nav .logo img {
+    width: 70px;
+    height: 70px;
+  }
+  nav .logo .name label {
+    font-size: 1rem;
+  }
+  .navLinks a {
+    font-size: 0.8rem;
+  }
+  .loginSignUp a {
+    padding: 3px 10px;
+    font-size: 0.9rem;
+  }
+  .section-2 p {
+    font-size: 1.2rem;
+  }
+  .getStarted {
+    padding: 8px 20px;
+  }
+  .departmentMain {
+    row-gap: 40px;
+  }
+  .deptTitle {
+    font-size: 0.8rem;
+  }
+  .viewMore {
+    font-size: 0.6rem;
+  }
+  footer .footerMenu a {
+    font-size: 0.75rem;
+    transition: all 0.5s ease;
+  }
+  footer label {
+    font-size: 0.9rem;
+  }
+  /* ### MAX-WIDTH 860PX ### */
+
+  @media only screen and (max-width: 880px) {
+    nav .logo img {
+      width: 65px;
+      height: 65px;
+    }
+    nav .logo .name label {
+      font-size: 0.8rem;
+    }
+    .loginSignUp a {
+      padding: 3px 8px;
+      font-size: 0.8rem;
+    }
+    .departmentMain {
+      grid-template-columns: 1fr;
+      margin-bottom: 50px;
+    }
+    .deptCard {
+      margin: 20px;
+    }
+    .deptTitle {
+      font-size: 1.1rem;
+    }
+    .viewMore {
+      font-size: 0.8rem;
+    }
+    .section-5 {
+      height: fit-content;
+      padding: 50px 0;
+    }
+    .aboutCampus {
+      flex-direction: column;
+      row-gap: 30px;
+      height: 90%;
+    }
+    .aboutCampusImage,
+    .aboutCampusText {
+      width: 100%;
+      height: 50%;
+      align-items: center;
+    }
+    .aboutCampusText h2 {
+      width: 100%;
+      font-size: 1.8rem;
+      text-align: center;
+    }
+    .aboutCampusText p {
+      width: 100%;
+      font-size: 1rem;
+      /* text-align: center; */
+    }
+  }
+}
+@media only screen and (max-width: 768px) {
+  .menuButton {
+    display: flex;
+    z-index: 2;
+  }
+  nav {
+    height: 75px;
+    justify-content: space-between;
+    padding: 0 50px;
+  }
+
+  nav .logo .name label {
+    font-size: 1rem;
+  }
+  .navAndSignup {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: start;
+    gap: 50px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100vh;
+    padding-top: 40px;
+    overflow: hidden;
+    background-color: #ffffff;
+  }
+  .navLinks {
+    flex-direction: column;
+    row-gap: 40px;
+  }
+  .navLinks a {
+    font-size: 1rem;
+  }
+  .loginSignUp a {
+    padding: 5px 20px;
+  }
+  .section-2 {
+    padding: 80px 110px;
+  }
+  .section-2 p {
+    font-size: 1rem;
+  }
+  .getStarted {
+    font-size: 0.9rem;
+  }
+  footer .socialIcons {
+    width: 20%;
+  }
+  footer .footerMenu a {
+    font-size: 0.75rem;
+  }
+  footer label {
+    font-size: 0.65rem;
+  }
+}
+/* ### MAX-WIDTH 520PX ### */
+@media only screen and (max-width: 520px) {
+  nav {
+    height: 70px;
+    padding: 0 30px;
+  }
+  nav .logo img {
+    width: 50px;
+    height: 50px;
+  }
+  nav .logo .name label {
+    font-size: 1rem;
+  }
+  .menuButton {
+    position: absolute;
+    right: 10px;
+  }
+  .backgroundImgText h2 {
+    font-size: 2em;
+  }
+  .backgroundImgText p {
+    font-size: 0.8em;
+  }
+  .section-2 {
+    padding: 80px 90px;
+  }
+  .section-2 p {
+    font-size: 0.9rem;
+  }
+  .getStarted {
+    font-size: 0.8rem;
+  }
+  .title {
+    font-size: 1.3rem;
+  }
+  .titleline {
+    width: 100px;
+  }
+  .deptTitle {
+    font-size: 1rem;
+  }
+  footer .socialIcons {
+    width: 25%;
+  }
+  footer .socialIcons a {
+    font-size: 1.3rem;
+  }
+  footer .footerMenu {
+    width: 80%;
+  }
+  footer .footerMenu a {
+    font-size: 0.7rem;
+    transition: all 0.5s ease;
+  }
+  footer label {
+    font-size: 0.6rem;
+  }
+}
+/* ### MAX-WIDTH 425PX ### */
+@media only screen and (max-width: 425px) {
+  nav {
+    height: 65px;
+  }
+  nav .logo img {
+    width: 45px;
+    height: 45px;
+  }
+  nav .logo .name label {
+    font-size: 0.8rem;
+  }
+  .menuButton {
+    position: absolute;
+  }
+  .backgroundImgText h2 {
+    font-size: 1.7em;
+  }
+  .backgroundImgText p {
+    font-size: 0.7em;
+  }
+  .section-2 {
+    padding: 80px;
+  }
+  .section-2 p {
+    font-size: 0.8rem;
+  }
+  .getStarted {
+    font-size: 0.7rem;
+  }
+  .deptTitle {
+    font-size: 0.9rem;
+  }
+  .viewMore {
+    font-size: 0.7rem;
+  }
+  footer .footerMenu {
+    width: 90%;
+  }
+}
+
+/* ### MAX-WIDTH 375PX ### */
+@media only screen and (max-width: 375px) {
+  nav {
+    height: 65px;
+  }
+  nav .logo img {
+    width: 45px;
+    height: 45px;
+  }
+  nav .logo .name label {
+    font-size: 0.7rem;
+  }
+  .title {
+    font-size: 1.1rem;
+  }
+  .titleline {
+    width: 80px;
+  }
+  .deptTitle {
+    font-size: 0.8rem;
+  }
+  .viewMore {
+    font-size: 0.8rem;
+  }
+  footer .footerMenu a {
+    font-size: 0.6rem;
+  }
+  footer label {
+    font-size: 0.5rem;
+  }
+}
+/* ### MAX-WIDTH 350PX ### */
+@media only screen and (max-width: 350px) {
+  nav .logo .name label {
+    font-size: 0.6rem;
+  }
+  .menuButton {
+    position: absolute;
+    right: 5px;
+  }
+  .backgroundImgText h2 {
+    font-size: 1.3em;
+  }
+  .backgroundImgText p {
+    font-size: 0.7em;
+  }
+  .section-2 {
+    padding: 70px 60px;
+  }
+  .section-2 p {
+    font-size: 0.8rem;
+  }
+  .getStarted {
+    padding: 5px 15px;
+    font-size: 0.7rem;
+  }
+  .deptTitle {
+    font-size: 0.7rem;
+  }
+  .viewMore {
+    font-size: 0.7rem;
+  }
+  footer .socialIcons {
+    width: 30%;
+  }
+  footer .socialIcons a {
+    font-size: 1.2rem;
+  }
+  footer .footerMenu a {
+    font-size: 0.55rem;
+  }
+}
+/* ### MAX-WIDTH 320PX ### */
+@media only screen and (max-width: 320px) {
+  nav .logo .name label {
+    font-size: 0.5rem;
+  }
+  .backgroundImgText h2 {
+    font-size: 1em;
+  }
+  .backgroundImgText p {
+    font-size: 0.7em;
+  }
+}
+/* ### MAX-WIDTH 320PX ### */
+@media only screen and (max-width: 300px) {
+  nav .logo .name label {
+    display: none;
+  }
+  .backgroundImgText p {
+    font-size: 0.6em;
+  }
+  .section-2 {
+    padding: 70px 50px;
+  }
+  .section-2 p {
+    font-size: 0.6rem;
+  }
+  .getStarted {
+    padding: 5px 13px;
+    font-size: 0.5rem;
+  }
+  footer .socialIcons a {
+    font-size: 0.8rem;
+  }
+  footer .footerMenu a {
+    font-size: 0.4rem;
+  }
+  footer label {
+    font-size: 0.38rem;
+  }
+}
