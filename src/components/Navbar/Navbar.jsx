@@ -1,16 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "./Logo";
 import NavLinks from "./NavLink";
 import "../../styles/Navbar.css";
 import ButtonLink from "../Button/ButtonLink";
 
 const Navbar = () => {
-  // State to manage the menu's visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleMenuToggle = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   const navLinksData = [
     { name: "Home", href: "/", className: "home" },
@@ -19,12 +15,36 @@ const Navbar = () => {
     { name: "About", href: "/about", className: "about" },
   ];
 
+  // Handle the menu toggle
+  const handleMenuToggle = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Update screen width on resize
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Set the width of navAndSignup based on menu state and screen width
+  const getNavAndSignupWidth = () => {
+    if (screenWidth > 880) {
+      return "60%";
+    }
+    return isMenuOpen ? "100%" : "0%";
+  };
+
   return (
     <nav>
       <Logo />
       <div
-        className={`navAndSignup ${isMenuOpen ? "open" : ""}`}
+        className="navAndSignup"
         id="navAndSignup"
+        style={{ width: getNavAndSignupWidth() }}
       >
         <div className="navLinks">
           {/* Pass navLinksData as a prop to NavLinks */}

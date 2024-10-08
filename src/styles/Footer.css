@@ -1,0 +1,149 @@
+/* ### FOOTER BASE STYLES ### */
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 200px;
+  background-color: #36384e;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+footer .socialIcons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 15%;
+}
+
+footer .socialIcons a {
+  color: #ffffff;
+  font-size: 25px;
+}
+
+footer .socialIcons a i {
+  transition: all 0.5s ease;
+}
+
+footer .socialIcons a .fa-facebook:hover {
+  color: #0158af;
+}
+
+footer .socialIcons a .fa-instagram:hover {
+  background: linear-gradient(#f9ce34, #ee2a7b, #6228d7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+footer .socialIcons a .fa-twitter:hover {
+  color: #5ea0e2;
+}
+
+footer .footerMenu {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 70%;
+  margin: 20px;
+}
+
+footer .footerMenu a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.5s ease;
+}
+
+footer .footerMenu a:hover {
+  text-decoration: underline;
+}
+
+footer label {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+/* ### RESPONSIVE FOOTER STYLES ### */
+
+/* MAX-WIDTH 980PX */
+@media only screen and (max-width: 980px) {
+  footer .footerMenu a {
+    font-size: 0.75rem;
+  }
+  footer label {
+    font-size: 0.9rem;
+  }
+}
+
+/* MAX-WIDTH 768PX */
+@media only screen and (max-width: 768px) {
+  footer .socialIcons {
+    width: 20%;
+  }
+  footer .footerMenu a {
+    font-size: 0.75rem;
+  }
+  footer label {
+    font-size: 0.65rem;
+  }
+}
+
+/* MAX-WIDTH 520PX */
+@media only screen and (max-width: 520px) {
+  footer .socialIcons {
+    width: 25%;
+  }
+  footer .socialIcons a {
+    font-size: 1.3rem;
+  }
+  footer .footerMenu {
+    width: 80%;
+  }
+  footer .footerMenu a {
+    font-size: 0.7rem;
+    transition: all 0.5s ease;
+  }
+  footer label {
+    font-size: 0.6rem;
+  }
+}
+
+/* MAX-WIDTH 425PX */
+@media only screen and (max-width: 425px) {
+  footer .footerMenu {
+    width: 90%;
+  }
+}
+
+/* MAX-WIDTH 375PX */
+@media only screen and (max-width: 375px) {
+  footer .socialIcons {
+    width: 30%;
+  }
+  footer .socialIcons a {
+    font-size: 1.2rem;
+  }
+  footer .footerMenu a {
+    font-size: 0.55rem;
+  }
+  footer label {
+    font-size: 0.6rem;
+  }
+}
+
+/* MAX-WIDTH 300PX */
+@media only screen and (max-width: 300px) {
+  footer .socialIcons a {
+    font-size: 0.8rem;
+  }
+  footer .footerMenu a {
+    font-size: 0.4rem;
+  }
+  footer label {
+    font-size: 0.38rem;
+  }
+}
