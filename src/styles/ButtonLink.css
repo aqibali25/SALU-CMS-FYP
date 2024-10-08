@@ -1,0 +1,72 @@
+/* ###  LOGIN SIGNUP BUTTON STYLE  ### */
+.loginSignUp {
+  display: flex;
+  justify-content: space-between;
+  width: fit-content;
+  column-gap: 15px;
+}
+
+.loginSignUp a {
+  position: relative;
+  padding: 5px 15px;
+  text-decoration: none;
+  border: 2px solid #e5b300;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.35s ease;
+  z-index: 2;
+}
+
+/* ###  LOGIN BUTTON STYLE  ### */
+.loginSignUp .login {
+  color: #111111;
+}
+
+.login::before {
+  transition: all 0.35s ease;
+  content: "";
+  width: 100%;
+  height: 0;
+  background: #e5b300;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.login:hover::before {
+  background: #e5b300;
+  z-index: -1;
+  height: 100%;
+}
+
+.login:hover {
+  color: #ffffff;
+}
+
+/* ###  SIGNUP BUTTON STYLE  ### */
+.loginSignUp .signup {
+  color: #ffffff;
+}
+
+.signup::before {
+  transition: all 0.35s ease;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: #e5b300;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.signup:hover::before {
+  background: #e5b300;
+  z-index: -1;
+  height: 0%;
+}
+
+.signup:hover {
+  color: #000000;
+}

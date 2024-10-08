@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import Logo from "./Logo";
 import NavLinks from "./NavLink";
-import LoginSignUp from "./LoginSignUpbtn";
 import "../../styles/Navbar.css";
-import MenuButton from "./MenuButton";
+import ButtonLink from "../Button/ButtonLink";
 
 const Navbar = () => {
   // State to manage the menu's visibility
@@ -15,9 +14,9 @@ const Navbar = () => {
 
   const navLinksData = [
     { name: "Home", href: "/", className: "home" },
-    { name: "Faculty", href: "#", className: "faculty" },
-    { name: "Admission", href: "#", className: "admission" },
-    { name: "About", href: "#", className: "about" },
+    { name: "Faculty", href: "/faculty", className: "faculty" },
+    { name: "Admission", href: "/admission", className: "admission" },
+    { name: "About", href: "/about", className: "about" },
   ];
 
   return (
@@ -27,14 +26,17 @@ const Navbar = () => {
         className={`navAndSignup ${isMenuOpen ? "open" : ""}`}
         id="navAndSignup"
       >
-        {" "}
-        <div class="navLinks">
+        <div className="navLinks">
           {/* Pass navLinksData as a prop to NavLinks */}
           {navLinksData.map((link, index) => (
             <NavLinks key={index} link={link} />
           ))}
         </div>
-        <LoginSignUp />
+        <div className="loginSignUp">
+          {/* Use Link for navigation with correct paths */}
+          <ButtonLink to="/login" className="login" text="LOGIN" />
+          <ButtonLink to="/signup" className="signup" text="SIGN UP" />
+        </div>
       </div>
       <label htmlFor="check" className="menuButton" id="menuButton">
         <input
