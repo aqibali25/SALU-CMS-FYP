@@ -58,8 +58,12 @@ const Navbar = () => {
         </div>
         <div className="loginSignUp">
           {/* Use Link for navigation with correct paths */}
-          <ButtonLink to="/login" className="login" text="LOGIN" />
-          <ButtonLink to="/signup" className="signup" text="SIGN UP" />
+          <ButtonLink to="SALU-CMS-FYP/login" className="login" text="LOGIN" />
+          <ButtonLink
+            to="SALU-CMS-FYP/signup"
+            className="signup"
+            text="SIGN UP"
+          />
         </div>
       </div>
       <label htmlFor="check" className="menuButton" id="menuButton">
