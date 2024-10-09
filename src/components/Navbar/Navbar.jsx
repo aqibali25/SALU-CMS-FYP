@@ -9,10 +9,14 @@ const Navbar = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   const navLinksData = [
-    { name: "Home", href: "/", className: "home" },
-    { name: "Faculty", href: "/faculty", className: "faculty" },
-    { name: "Admission", href: "/admission", className: "admission" },
-    { name: "About", href: "/about", className: "about" },
+    { name: "Home", href: "SALU-CMS-FYP/", className: "home" },
+    { name: "Faculty", href: "SALU-CMS-FYP/faculty", className: "faculty" },
+    {
+      name: "Admission",
+      href: "SALU-CMS-FYP/admission",
+      className: "admission",
+    },
+    { name: "About", href: "SALU-CMS-FYP/about", className: "about" },
   ];
 
   // Handle the menu toggle
