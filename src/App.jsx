@@ -15,12 +15,12 @@ const App = () => {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/faculty" element={<Faculty />} />
-        <Route path="/admission" element={<Admission />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="SALU-CMS-FYP/" element={<Home />} />
+        <Route path="SALU-CMS-FYP/faculty" element={<Faculty />} />
+        <Route path="SALU-CMS-FYP/admission" element={<Admission />} />
+        <Route path="SALU-CMS-FYP/about" element={<About />} />
+        <Route path="SALU-CMS-FYP/login" element={<Login />} />
+        <Route path="SALU-CMS-FYP/signup" element={<Signup />} />
       </Routes>
       <Footer></Footer>
     </Router>
