@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
+import BackgroundImg from "../Sections/Slider/BackgroundImg";
+import "./Home.css";
 
 const Home = () => {
   useEffect(() => {
-    // Set the document title to "Home"
     document.title = "Home";
   }, []);
 
   return (
-    <div>
-      <h1>Home Page</h1>
-      {/* Content for the Home page */}
-    </div>
+    <section className="home">
+      <BackgroundImg></BackgroundImg>
+    </section>
   );
 };
 

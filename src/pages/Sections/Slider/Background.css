@@ -1,0 +1,73 @@
+.section-1 {
+  height: 85vh;
+  overflow: hidden;
+  position: relative;
+}
+.section-1 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.section-1::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  opacity: 0.5;
+}
+
+.backgroundImgText {
+  top: 30%;
+  color: #ffffff;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.backgroundImgText h2 {
+  font-size: 3rem;
+}
+
+.backgroundImgText h2 span {
+  padding: 0 10px;
+  background-color: rgba(229, 179, 0, 0.8);
+}
+.highlightText {
+  font-size: 1.8rem;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  .backgroundImgText h2 {
+    font-size: 2rem;
+  }
+
+  .highlightText {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 450px) {
+  .backgroundImgText h2 {
+    font-size: 1.5em;
+  }
+
+  .highlightText {
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 345px) {
+  .backgroundImgText h2 {
+    font-size: 1.3em;
+  }
+
+  .highlightText {
+    font-size: 0.8em;
+  }
+}
