@@ -57,10 +57,14 @@ const Navbar = () => {
           ))}
         </div>
         <div className="loginSignUp">
-          {/* Use Link for navigation with correct paths */}
-          <ButtonLink to="SALU-CMS-FYP/login" className="login" text="LOGIN" />
+          {/* Use ButtonLink for login and signup buttons */}
           <ButtonLink
-            to="SALU-CMS-FYP/signup"
+            href="SALU-CMS-FYP/login"
+            className="login"
+            text="LOGIN"
+          />
+          <ButtonLink
+            href="SALU-CMS-FYP/signup"
             className="signup"
             text="SIGN UP"
           />

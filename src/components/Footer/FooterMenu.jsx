@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const FooterMenu = () => {
   return (
     <div className="footerMenu">
-      <Link to="/about">About</Link>
+      <Link to="SALU-CMS-FYP/about">About</Link>
       <Link to="/">Contact us</Link>
       <Link to="/">FAQS</Link>
       <Link to="/">Terms and Conditions</Link>

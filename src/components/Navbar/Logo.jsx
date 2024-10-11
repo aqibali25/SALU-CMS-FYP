@@ -1,15 +1,13 @@
-import React from "react";
 import logo from "../../assets/Logo.png";
-import { Link } from "react-router-dom";
 
 const Logo = () => {
   return (
     <div className="logo">
       <img src={logo} alt="Salu logo" />
-      <Link to="SALU-CMS-FYP/" className="name">
+      <a href="/" className="name">
         <label htmlFor="name">SHAH ABDUL LATIF UNIVERSITY</label>
         <label>GHOTKI CAMPUS</label>
-      </Link>
+      </a>
     </div>
   );
 };
