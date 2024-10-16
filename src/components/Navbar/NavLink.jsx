@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
+
 const NavLinks = ({ link }) => {
   return (
-    <a href={`/${link.href}`} className={link.className}>
+    <Link to={`/${link.href}`} className={link.className}>
       {link.name}
-    </a>
+    </Link>
   );
 };
 

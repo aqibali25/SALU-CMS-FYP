@@ -9,14 +9,23 @@
   margin-bottom: 40px;
   overflow: hidden;
 }
-.carousel-control-prev-icon,
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #e5b300;
+  height: 40px !important;
+}
 .carousel-control-next-icon {
-  padding: 20px 5px;
-  background-color: black;
+  right: 0;
+}
+.carousel-control-prev-icon {
+  left: 0;
 }
 #carouselExampleAutoplaying {
   width: 70%;
-  height: 70%;
+  height: 80%;
   margin-bottom: 20px;
 }
 @media (max-width: 768px) {

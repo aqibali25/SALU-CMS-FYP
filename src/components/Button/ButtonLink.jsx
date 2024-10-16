@@ -1,10 +1,11 @@
+import { Link } from "react-router-dom";
 import "../../styles/ButtonLink.css";
 
 const ButtonLink = ({ text, className, href }) => {
   return (
-    <a href={`/${href}`} className={className}>
+    <Link to={`/${href}`} className={className}>
       {text}
-    </a>
+    </Link>
   );
 };
 

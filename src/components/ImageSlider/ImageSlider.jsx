@@ -38,12 +38,10 @@ const ImageSlider = () => {
           type="button"
           data-bs-target="#carouselExampleAutoplaying"
           data-bs-slide="prev"
-          style={{ color: "black" }} // Set controls color to black
         >
           <span
             className="carousel-control-prev-icon"
             aria-hidden="true"
-            style={{ backgroundColor: "black" }}
           ></span>
           <span className="visually-hidden">Previous</span>
         </button>
@@ -52,12 +50,10 @@ const ImageSlider = () => {
           type="button"
           data-bs-target="#carouselExampleAutoplaying"
           data-bs-slide="next"
-          style={{ color: "black" }} // Set controls color to black
         >
           <span
             className="carousel-control-next-icon"
             aria-hidden="true"
-            style={{ backgroundColor: "black" }}
           ></span>
           <span className="visually-hidden">Next</span>
         </button>
