@@ -9,8 +9,8 @@
   width: 100%;
   /* gap: 20px; */
 }
-.carousel-control-prev,
-.carousel-control-next {
+.impDates .carousel-control-prev,
+.impDates .carousel-control-next {
   display: none !important;
 }
 .carousel-indicators button[type="button"] {

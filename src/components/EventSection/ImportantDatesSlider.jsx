@@ -10,7 +10,7 @@ const ImportantDatesSlider = ({ dates }) => {
   };
 
   return (
-    <Carousel>
+    <Carousel className="impDates">
       {dates.map((event, index) => {
         if (index % 2 !== 0) return null; // Skip odd indices
 
