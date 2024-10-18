@@ -1,12 +1,34 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // React Router for navigation
 import "./Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
-    document.title = "Login"; // Set document title
-  }, []);
+    // Set document title for the login page
+    document.title = "Login";
+
+    // Check if the user is already logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    // If logged in, redirect to the admission page
+    if (isLoggedIn === "true") {
+      navigate("/SALU-CMS-FYP/admission");
+    }
+  }, [navigate]);
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+
+    // Assume successful login
+    localStorage.setItem("isLoggedIn", "true");
+
+    // Redirect to the admission page after login
+    navigate("/SALU-CMS-FYP/admission");
+  };
 
   return (
     <>
@@ -31,12 +53,13 @@ const Login = () => {
             <p className="text-gray">Enter your information below to login.</p>
 
             {/* Login Form */}
-            <form>
+            <form onSubmit={handleLoginSubmit}>
               <div className="form-group mb-3">
                 <input
                   type="text"
                   className="form-control form-input"
                   placeholder="Enter CNIC"
+                  required
                 />
               </div>
               <div className="form-group mb-3">
@@ -44,13 +67,8 @@ const Login = () => {
                   type="password"
                   className="form-control form-input"
                   placeholder="Enter Password"
+                  required
                 />
-              </div>
-
-              <div className="text-end mb-3">
-                <a href="#" className="forgot-password text-white">
-                  Forgot Password?
-                </a>
               </div>
 
               <button type="submit" className="btn btn-warning w-100">

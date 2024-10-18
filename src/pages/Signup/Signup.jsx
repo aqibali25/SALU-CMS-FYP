@@ -1,12 +1,34 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // React Router for navigation
 import "../Login/Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
 
 const Signup = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
-    document.title = "Signup"; // Set document title for signup
-  }, []);
+    // Set the document title for the signup page
+    document.title = "Signup";
+
+    // Check if the user is already logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    // If logged in, redirect to the admission page
+    if (isLoggedIn === "true") {
+      navigate("/SALU-CMS-FYP/admission");
+    }
+  }, [navigate]);
+
+  const handleSignupSubmit = (e) => {
+    e.preventDefault();
+
+    // Assume successful signup
+    localStorage.setItem("isLoggedIn", "true");
+
+    // Redirect to the admission page after signup
+    navigate("/SALU-CMS-FYP/admission");
+  };
 
   return (
     <>
@@ -33,12 +55,13 @@ const Signup = () => {
             </p>
 
             {/* Signup Form */}
-            <form>
+            <form onSubmit={handleSignupSubmit}>
               <div className="form-group mb-3">
                 <input
                   type="text"
                   className="form-control form-input"
                   placeholder="CNIC"
+                  required
                 />
               </div>
               <div className="form-group mb-3">
@@ -46,6 +69,7 @@ const Signup = () => {
                   type="password"
                   className="form-control form-input"
                   placeholder="Password"
+                  required
                 />
               </div>
               <div className="form-group mb-3">
@@ -53,6 +77,7 @@ const Signup = () => {
                   type="password"
                   className="form-control form-input"
                   placeholder="Confirm Password"
+                  required
                 />
               </div>
 
