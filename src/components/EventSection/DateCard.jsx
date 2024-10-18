@@ -1,5 +1,5 @@
 import React from "react";
-import "./DateCard.css";
+import "../../styles/DateCard.css";
 
 const DateCard = ({ date, monthYear, title, description }) => (
   <div className="post">

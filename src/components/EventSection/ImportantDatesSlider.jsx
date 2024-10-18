@@ -1,7 +1,7 @@
 import React from "react";
 import { Carousel } from "react-bootstrap";
-import DateCard from "./DateCard";
-import "./ImportantDatesSlider.css";
+import "../../styles/ImportantDatesSlider.css";
+import DateCard from "./DateCard.jsx";
 
 const ImportantDatesSlider = ({ dates }) => {
   const formatDate = (dateStr) => {

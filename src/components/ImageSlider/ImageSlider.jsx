@@ -3,7 +3,7 @@ import React from "react";
 import Image1 from "../../assets/TrandngImages/Image1.jpg";
 import Image2 from "../../assets/TrandngImages/Image2.jpg";
 import Image3 from "../../assets/TrandngImages/Image3.jpg";
-import "./ImageSlider.css"; // Import the CSS file
+import "../../styles/ImageSlider.css"; // Import the CSS file
 import SectionTitle from "../SectionTitle/SectionTitle";
 
 const images = [Image1, Image2, Image3];
