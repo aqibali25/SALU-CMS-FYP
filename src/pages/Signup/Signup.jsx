@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // React Router for navigation
 import "../Login/Login.css";
 import Logo from "../../assets/Logo.png";
@@ -6,6 +6,13 @@ import BackgroundImage from "../../assets/Background.jpg";
 
 const Signup = () => {
   const navigate = useNavigate();
+
+  // State to store user input (CNIC, password, and confirm password)
+  const [signupFormData, setSignupFormData] = useState({
+    cnic: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   useEffect(() => {
     // Set the document title for the signup page
@@ -20,8 +27,22 @@ const Signup = () => {
     }
   }, [navigate]);
 
+  // Handle input changes and update state
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSignupFormData((prevData) => ({
+      ...prevData,
+      [name]: value, // Dynamically update the form field based on its name
+    }));
+  };
+
   const handleSignupSubmit = (e) => {
     e.preventDefault();
+
+    // Log the signupFormData object (CNIC, password, confirm password)
+    console.log("Signup Form Data:", signupFormData);
+
+    // You could also add password validation here (e.g., matching password and confirmPassword)
 
     // Assume successful signup
     localStorage.setItem("isLoggedIn", "true");
@@ -61,6 +82,9 @@ const Signup = () => {
                   type="text"
                   className="form-control form-input"
                   placeholder="CNIC"
+                  name="cnic" // Name for identification
+                  value={signupFormData.cnic} // Access CNIC from signupFormData
+                  onChange={handleInputChange} // Update state on input change
                   required
                 />
               </div>
@@ -69,6 +93,9 @@ const Signup = () => {
                   type="password"
                   className="form-control form-input"
                   placeholder="Password"
+                  name="password" // Name for identification
+                  value={signupFormData.password} // Access password from signupFormData
+                  onChange={handleInputChange} // Update state on input change
                   required
                 />
               </div>
@@ -77,6 +104,9 @@ const Signup = () => {
                   type="password"
                   className="form-control form-input"
                   placeholder="Confirm Password"
+                  name="confirmPassword" // Name for identification
+                  value={signupFormData.confirmPassword} // Access confirmPassword from signupFormData
+                  onChange={handleInputChange} // Update state on input change
                   required
                 />
               </div>
@@ -89,7 +119,7 @@ const Signup = () => {
             {/* Footer */}
             <div className="footer mt-4 text-white">
               <p>RegisCopyright © 2024 SALU.</p>
-              <p>Phone: 0243-920126ter</p>
+              <p>Phone: 0243-920126833</p>
             </div>
           </div>
         </div>

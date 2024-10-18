@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // React Router for navigation
 import "./Login.css";
 import Logo from "../../assets/Logo.png";
@@ -6,6 +6,12 @@ import BackgroundImage from "../../assets/Background.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
+
+  // State for user input (CNIC and password) stored as an object
+  const [loginFormData, setLoginFormData] = useState({
+    cnic: "",
+    password: "",
+  });
 
   useEffect(() => {
     // Set document title for the login page
@@ -20,11 +26,28 @@ const Login = () => {
     }
   }, [navigate]);
 
+  // Handle input changes and update state
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setLoginFormData((prevData) => ({
+      ...prevData,
+      [name]: value, // Dynamically update the form field based on its name
+    }));
+  };
+
   const handleLoginSubmit = (e) => {
     e.preventDefault();
 
-    // Assume successful login
-    localStorage.setItem("isLoggedIn", "true");
+    if (loginFormData.cnic === "45102" && loginFormData.password === "123") {
+      // Assume successful login
+      localStorage.setItem("isLoggedIn", "true");
+    } else {
+      alert("Invalid CNIC or password. Please try again.");
+      setLoginFormData({ cnic: "", password: "" }); // Clear form fields if login fails
+      return; // Prevent form submission if login fails
+    }
+    // Log the loginFormData object (CNIC and password)
+    console.log("Login Form Data:", loginFormData);
 
     // Redirect to the admission page after login
     navigate("/SALU-CMS-FYP/admission");
@@ -59,6 +82,9 @@ const Login = () => {
                   type="text"
                   className="form-control form-input"
                   placeholder="Enter CNIC"
+                  name="cnic" // Name for identification
+                  value={loginFormData.cnic} // Access CNIC from loginFormData
+                  onChange={handleInputChange} // Update state on input change
                   required
                 />
               </div>
@@ -67,6 +93,9 @@ const Login = () => {
                   type="password"
                   className="form-control form-input"
                   placeholder="Enter Password"
+                  name="password" // Name for identification
+                  value={loginFormData.password} // Access password from loginFormData
+                  onChange={handleInputChange} // Update state on input change
                   required
                 />
               </div>
@@ -79,7 +108,7 @@ const Login = () => {
             {/* Footer */}
             <div className="footer mt-4 text-white">
               <p>RegisCopyright © 2024 SALU.</p>
-              <p>Phone: 0243-920126ter</p>
+              <p>Phone: 0243-920126833</p>
             </div>
           </div>
         </div>
