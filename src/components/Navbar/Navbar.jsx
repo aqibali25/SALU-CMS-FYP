@@ -9,14 +9,10 @@ const Navbar = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   const navLinksData = [
-    { name: "Home", href: "SALU-CMS-FYP/", className: "home" },
-    { name: "Faculty", href: "SALU-CMS-FYP/faculty", className: "faculty" },
-    {
-      name: "Admission",
-      href: "SALU-CMS-FYP/admission",
-      className: "admission",
-    },
-    { name: "About", href: "SALU-CMS-FYP/about", className: "about" },
+    { name: "Home", href: "/", className: "home" }, // Changed here
+    { name: "Faculty", href: "/faculty", className: "faculty" }, // Changed here
+    { name: "Admission", href: "/admission", className: "admission" }, // Changed here
+    { name: "About", href: "/about", className: "about" }, // Changed here
   ];
 
   // Handle the menu toggle
@@ -58,16 +54,10 @@ const Navbar = () => {
         </div>
         <div className="loginSignUp">
           {/* Use ButtonLink for login and signup buttons */}
-          <ButtonLink
-            href="SALU-CMS-FYP/login"
-            className="login"
-            text="LOGIN"
-          />
-          <ButtonLink
-            href="SALU-CMS-FYP/signup"
-            className="signup"
-            text="SIGN UP"
-          />
+          <ButtonLink href="/login" className="login" text="LOGIN" />{" "}
+          {/* Changed here */}
+          <ButtonLink href="/signup" className="signup" text="SIGN UP" />{" "}
+          {/* Changed here */}
         </div>
       </div>
       <label htmlFor="check" className="menuButton" id="menuButton">
