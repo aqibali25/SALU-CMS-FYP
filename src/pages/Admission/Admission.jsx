@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import Login from "../Login/Login";
+import "./Admission.css";
 
 const Admission = () => {
   useEffect(() => {
@@ -7,10 +9,9 @@ const Admission = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Admission Page</h1>
-      {/* Content for the Admission page */}
-    </div>
+    <section className="admission">
+      <h1>Admission</h1>
+    </section>
   );
 };
 

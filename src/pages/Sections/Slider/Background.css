@@ -1,5 +1,5 @@
 .section-1 {
-  height: 85vh;
+  height: 100vh;
   overflow: hidden;
   position: relative;
 }
@@ -32,8 +32,8 @@
 }
 
 .backgroundImgText h2 span {
-  padding: 0 10px;
-  background-color: rgba(229, 179, 0, 0.8);
+  /* padding: 0 10px; */
+  background-color: #e5b300cc;
 }
 .highlightText {
   font-size: 1.8rem;
