@@ -1,0 +1,58 @@
+.eventImageContainer {
+  position: relative;
+  width: 100%;
+  min-height: 55vh;
+  max-height: 350px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.eventImageContainer img {
+  /* width: 100%; */
+  height: 100%;
+  object-fit: cover !important;
+}
+.eventImageContainer span {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  background-color: #e5b300dc;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 10px;
+  z-index: 2;
+}
+.eventImageContainer .text {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  transform: translate(-50%);
+  background: #00000080;
+  color: #ffffff;
+  z-index: 1;
+}
+
+.text h3 {
+  position: absolute;
+  bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  /* margin-bottom: 10px; */
+}
+.text h3 p {
+  margin: 10px 0;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+@media (max-width: 992px) {
+  .eventImageContainer {
+    min-width: 80%;
+  }
+}
+@media (max-width: 425px) {
+  .eventImageContainer {
+    min-width: 95%;
+  }
+}
