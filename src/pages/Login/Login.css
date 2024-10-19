@@ -61,6 +61,7 @@
 }
 
 .form-input::placeholder {
+  font-size: 0.8rem !important;
   color: #c2c2c2 !important;
 }
 

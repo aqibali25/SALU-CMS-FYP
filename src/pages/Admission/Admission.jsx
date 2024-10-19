@@ -3,19 +3,17 @@ import { useNavigate } from "react-router-dom"; // React Router for navigation
 import "./Admission.css";
 
 const Admission = () => {
-  const navigate = useNavigate(); // For navigation
-
+  const navigate = useNavigate();
   useEffect(() => {
-    // Set the document title to "Admission"
     document.title = "Admission";
 
-    // Check if the user is logged in
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    // // Check if the user is logged in
+    // const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-    // If not logged in, redirect to the login page
-    if (isLoggedIn !== "true") {
-      navigate("/SALU-CMS-FYP/login");
-    }
+    // // If not logged in, redirect to the login page
+    // if (isLoggedIn !== "true") {
+    //   navigate("/SALU-CMS-FYP/login");
+    // }
   }, [navigate]);
 
   return (

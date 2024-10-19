@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // React Router for navigation
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
@@ -13,44 +13,70 @@ const Login = () => {
     password: "",
   });
 
+  const [isCnicValid, setIsCnicValid] = useState(true); // State to track CNIC validity
+
   useEffect(() => {
-    // Set document title for the login page
     document.title = "Login";
-
-    // Check if the user is already logged in
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-    // If logged in, redirect to the admission page
-    if (isLoggedIn === "true") {
-      navigate("/SALU-CMS-FYP/admission");
-    }
   }, [navigate]);
 
   // Handle input changes and update state
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setLoginFormData((prevData) => ({
-      ...prevData,
-      [name]: value, // Dynamically update the form field based on its name
-    }));
+
+    // Only allow CNIC to be formatted with numbers and hyphens
+    if (name === "cnic") {
+      const formattedCnic = formatCnic(value);
+      setLoginFormData((prevData) => ({
+        ...prevData,
+        [name]: formattedCnic,
+      }));
+
+      // Check if CNIC format is valid (#####-#######-#)
+      const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
+      setIsCnicValid(cnicPattern.test(formattedCnic));
+    } else {
+      setLoginFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  // Function to format CNIC while typing
+  const formatCnic = (value) => {
+    // Remove all non-numeric characters except for hyphen
+    const cleanValue = value.replace(/\D/g, "");
+
+    // Format the CNIC as #####-#######-#
+    const part1 = cleanValue.substring(0, 5);
+    const part2 = cleanValue.substring(5, 12);
+    const part3 = cleanValue.substring(12, 13);
+
+    let formatted = part1;
+    if (part2) formatted += "-" + part2;
+    if (part3) formatted += "-" + part3;
+
+    return formatted;
   };
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
 
-    if (loginFormData.cnic === "45102" && loginFormData.password === "123") {
-      // Assume successful login
-      localStorage.setItem("isLoggedIn", "true");
+    // Validate if CNIC and password match the required values
+    if (
+      loginFormData.cnic === "45102-1234567-1" &&
+      loginFormData.password === "123"
+    ) {
+      // localStorage.setItem("isLoggedIn", "true");
+      // Redirect to the admission page after login
+      // navigate("/SALU-CMS-FYP/admission");
     } else {
       alert("Invalid CNIC or password. Please try again.");
-      setLoginFormData({ cnic: "", password: "" }); // Clear form fields if login fails
-      return; // Prevent form submission if login fails
+      setLoginFormData({ cnic: "", password: "" });
     }
+
     // Log the loginFormData object (CNIC and password)
     console.log("Login Form Data:", loginFormData);
-
-    // Redirect to the admission page after login
-    navigate("/SALU-CMS-FYP/admission");
   };
 
   return (
@@ -81,13 +107,33 @@ const Login = () => {
                 <input
                   type="text"
                   className="form-control form-input"
-                  placeholder="Enter CNIC"
+                  placeholder="CNIC (#####-#######-#)"
                   name="cnic" // Name for identification
                   value={loginFormData.cnic} // Access CNIC from loginFormData
                   onChange={handleInputChange} // Update state on input change
+                  maxLength={15} // Limit length to match CNIC format
+                  style={{
+                    border: !isCnicValid ? "2px solid red" : "", // Add red border if CNIC is invalid
+                  }}
+                  autoComplete="off"
                   required
                 />
               </div>
+
+              {/* Display CNIC error if invalid */}
+              <span
+                className="invalid-feedback"
+                style={{
+                  color: "red",
+                  display: !isCnicValid ? "block" : "none",
+                  marginBottom: "10px",
+                }}
+              >
+                {!isCnicValid
+                  ? "Invalid CNIC format! Must be #####-#######-#"
+                  : ""}
+              </span>
+
               <div className="form-group mb-3">
                 <input
                   type="password"
