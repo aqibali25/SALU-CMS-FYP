@@ -9,6 +9,9 @@
   width: 100%;
   /* gap: 20px; */
 }
+/* .carousel-indicators {
+  margin-bottom: 0rem !important;
+} */
 .impDates .carousel-control-prev,
 .impDates .carousel-control-next {
   display: none !important;
@@ -22,6 +25,9 @@
 @media (max-width: 992px) {
   .carousel {
     min-width: 80%;
+  }
+  .carousel-indicators {
+    margin-bottom: -1.5rem !important;
   }
 }
 

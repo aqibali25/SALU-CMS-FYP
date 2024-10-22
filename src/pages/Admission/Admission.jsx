@@ -1,6 +1,26 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // React Router for navigation
 import "./Admission.css";
+// import AdmissionStatusCard from "../../components/AdmissionComp/AdmissionStatusCard";
+import { FaGraduationCap, FaUser, FaTrophy, FaPencilAlt } from "react-icons/fa";
+// const statusItems = [
+//   {
+//     title: "Program Of Study",
+//     icon: <FaGraduationCap size={30} />,
+//     status: "Pending",
+//   },
+//   {
+//     title: "Personal Information",
+//     icon: <FaUser size={30} />,
+//     status: "Pending",
+//   },
+//   {
+//     title: "Father / Guardian Information",
+//     icon: <FaUser size={30} />,
+//     status: "Pending",
+//   },
+//   { title: "Academic Record", icon: <FaTrophy size={30} />, status: "Pending" },
+// ];
 
 const Admission = () => {
   const navigate = useNavigate();
@@ -17,9 +37,8 @@ const Admission = () => {
   }, [navigate]);
 
   return (
-    <section className="admission">
-      <h1>Admission</h1>
-      {/* Add your content for the admission page here */}
+    <section className="admissionSection">
+      <AdmissionStatusCard></AdmissionStatusCard>
     </section>
   );
 };

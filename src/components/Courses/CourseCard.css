@@ -1,0 +1,29 @@
+.card-body {
+  box-shadow: 4px 4px 10px rgba(211, 211, 211, 0.5),
+    -4px 4px 10px rgba(211, 211, 211, 0.5) !important;
+}
+.custom-card {
+  min-height: 100%;
+  width: 100%;
+  border: none !important;
+}
+.card-img,
+.card-img-top {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.custom-card .cardTitle {
+  font-size: 1rem;
+}
+
+.course-link {
+  font-size: 0.7rem;
+  color: #ffc107;
+  text-decoration: none;
+  transition: all 1s ease;
+}
+
+.course-link:hover {
+  text-decoration: underline;
+}

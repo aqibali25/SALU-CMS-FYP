@@ -2,7 +2,8 @@ import React from "react";
 import BackgroundImg from "../Sections/Slider/BackgroundImg";
 import "./Home.css";
 import ImageSlider from "../../components/ImageSlider/ImageSlider";
-import EventSection from "../../components/EventSection/EventSection";
+import EventSection from "../Sections/Events/EventSection";
+import Courses from "../Sections/Courses/Courses";
 
 const Home = () => {
   return (
@@ -15,6 +16,7 @@ const Home = () => {
       ></BackgroundImg>
       <EventSection></EventSection>
       <ImageSlider></ImageSlider>
+      <Courses></Courses>
     </section>
   );
 };

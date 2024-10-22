@@ -1,9 +1,9 @@
 import React from "react";
-import "../../styles/EventSection.css";
-import UpcomingEvents from "../../Components/EventSection/UpcomingEvents";
-import ImportantDatesSlider from "../../Components/EventSection/ImportantDatesSlider";
-import UmcomingEventImage from "../../assets/UmcomingEventImage.jpg";
-import SectionTitle from "../SectionTitle/SectionTitle";
+import "./EventSection.css";
+import UpcomingEvents from "../../../Components/EventSection/UpcomingEvents";
+import ImportantDatesSlider from "../../../Components/EventSection/ImportantDatesSlider";
+import UmcomingEventImage from "../../../assets/UmcomingEventImage.jpg";
+import SectionTitle from "../../../components/SectionTitle/SectionTitle";
 
 const EventDates = [
   {
