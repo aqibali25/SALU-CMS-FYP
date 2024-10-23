@@ -1,7 +1,7 @@
 import { Container, Row, Col } from "react-bootstrap";
 import CourseCard from "../../../components/Courses/CourseCard";
 
-//Images
+// Images
 import CSImage from "../../../assets/CSCourse.png";
 import BBAImage from "../../../assets/BBACourse.png";
 import EnglishImages from "../../../assets/EnglishCourse.png";
@@ -31,7 +31,9 @@ const Courses = () => {
       <SectionTitle label={"Offered Degree Programs"}></SectionTitle>
       <Row className="mt-4">
         {courses.map((course, index) => (
-          <Col key={index} md={4}>
+          <Col key={index} md={4} className="mb-4">
+            {" "}
+            {/* Add mb-4 for bottom margin */}
             <CourseCard
               title={course.title}
               image={course.image}

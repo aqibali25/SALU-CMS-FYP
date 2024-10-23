@@ -25,6 +25,3 @@ body {
 ::-webkit-scrollbar {
   width: 0px;
 }
-.container {
-  max-width: 70% !important;
-}

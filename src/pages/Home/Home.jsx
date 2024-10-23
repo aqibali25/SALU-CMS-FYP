@@ -1,8 +1,7 @@
 import React from "react";
-import BackgroundImg from "../Sections/Slider/BackgroundImg";
+import BackgroundImg from "../Sections/BackgroundImage/BackgroundImg";
 import "./Home.css";
 import ImageSlider from "../../components/ImageSlider/ImageSlider";
-import EventSection from "../Sections/Events/EventSection";
 import Courses from "../Sections/Courses/Courses";
 
 const Home = () => {
@@ -14,7 +13,6 @@ const Home = () => {
         heading2={"Today!"}
         para={"The Ultimate Guide to Universities Worldwide"}
       ></BackgroundImg>
-      <EventSection></EventSection>
       <ImageSlider></ImageSlider>
       <Courses></Courses>
     </section>

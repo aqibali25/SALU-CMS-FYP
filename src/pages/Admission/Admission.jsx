@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // React Router for navigation
 import "./Admission.css";
 // import AdmissionStatusCard from "../../components/AdmissionComp/AdmissionStatusCard";
-import { FaGraduationCap, FaUser, FaTrophy, FaPencilAlt } from "react-icons/fa";
+// import { FaGraduationCap, FaUser, FaTrophy, FaPencilAlt } from "react-icons/fa";
 // const statusItems = [
 //   {
 //     title: "Program Of Study",
@@ -38,7 +38,8 @@ const Admission = () => {
 
   return (
     <section className="admissionSection">
-      <AdmissionStatusCard></AdmissionStatusCard>
+      <h1>Admission</h1>
+      {/* <AdmissionStatusCard></AdmissionStatusCard> */}
     </section>
   );
 };
