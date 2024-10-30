@@ -1,0 +1,45 @@
+.formStatusCard {
+  width: 100%;
+  min-height: 80px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px #0000001a;
+  padding-left: 15px;
+}
+.FormStatus {
+  min-width: 200px;
+  height: 100%;
+  min-height: 80px !important;
+  border-radius: 8px;
+  float: right;
+  padding: 0 10px;
+  background-color: #717070;
+  color: #f5f5f5;
+  cursor: pointer;
+}
+.statusNames {
+  gap: 10px;
+}
+@media (max-width: 567px) {
+  .formStatusCard {
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+    padding-left: 0;
+  }
+  .FormStatus {
+    width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  .statusNames {
+    flex-direction: column;
+    gap: 0 !important;
+  }
+  .statusNames p {
+    margin-bottom: 10px;
+  }
+  .statusNames h5 {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+}

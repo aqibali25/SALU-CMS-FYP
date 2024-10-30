@@ -1,29 +1,47 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // React Router for navigation
+
 import "./Admission.css";
+
 import FormHeaderCard from "../../components/AdmissionComp/FormHeaderCard";
 import FormSideBar from "../../components/AdmissionComp/FormSideBar";
 import FormStatusCards from "../../components/AdmissionComp/FormStatusCards";
-// import AdmissionStatusCard from "../../components/AdmissionComp/AdmissionStatusCard";
-// import { FaGraduationCap, FaUser, FaTrophy, FaPencilAlt } from "react-icons/fa";
-// const statusItems = [
-//   {
-//     title: "Program Of Study",
-//     icon: <FaGraduationCap size={30} />,
-//     status: "Pending",
-//   },
-//   {
-//     title: "Personal Information",
-//     icon: <FaUser size={30} />,
-//     status: "Pending",
-//   },
-//   {
-//     title: "Father / Guardian Information",
-//     icon: <FaUser size={30} />,
-//     status: "Pending",
-//   },
-//   { title: "Academic Record", icon: <FaTrophy size={30} />, status: "Pending" },
-// ];
+
+import {
+  FaGraduationCap,
+  FaUser,
+  FaTrophy,
+  FaUsers,
+  FaImage,
+} from "react-icons/fa";
+
+const statusItems = [
+  {
+    title: "Program Of Study",
+    icon: <FaGraduationCap size={50} color="#717070" />,
+    status: "Pending",
+  },
+  {
+    title: "Personal Information",
+    icon: <FaUser size={50} color="#717070" />,
+    status: "Pending",
+  },
+  {
+    title: "Father / Guardian Information",
+    icon: <FaUsers size={50} color="#717070" />,
+    status: "Pending",
+  },
+  {
+    title: "Academic Record",
+    icon: <FaTrophy size={50} color="#717070" />,
+    status: "Pending",
+  },
+  {
+    title: "Photograph And Document",
+    icon: <FaImage size={50} color="#717070" />,
+    status: "Pending",
+  },
+];
 
 const Admission = () => {
   const navigate = useNavigate();
@@ -44,7 +62,7 @@ const Admission = () => {
       <FormSideBar />
       <div className="admissionform">
         <FormHeaderCard />
-        <FormStatusCards />
+        <FormStatusCards statusItems={statusItems} />
       </div>
     </section>
   );
