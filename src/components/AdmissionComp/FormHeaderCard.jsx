@@ -7,10 +7,7 @@ const FormHeaderCard = () => {
   const percentage = 25; // Set your dynamic percentage here
 
   return (
-    <div
-      className="formHeaderCard d-flex flex-wrap justify-content-around align-items-center float-end bg-light col-md-10  mx-auto p-3"
-      style={{ minHeight: "150px" }}
-    >
+    <div className="formHeaderCard d-flex flex-wrap justify-content-around align-items-center float-end  col-md-10  mx-auto p-4">
       <div className="formHeaderInner formHeaderIcon mb-3 mb-md-0">
         <i className="fa-solid fa-user fa-4x"></i>
       </div>
@@ -42,7 +39,7 @@ const FormHeaderCard = () => {
       </div>
       <div
         className="formHeaderInner"
-        style={{ width: "80px", height: "80px" }}
+        style={{ width: "100px", height: "100px" }}
       >
         <CircularProgressbar
           value={percentage}
