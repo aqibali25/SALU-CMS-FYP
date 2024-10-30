@@ -1,4 +1,27 @@
 .admissionSection {
+  display: flex;
+  min-height: 100vh;
   background-color: #fefdfd;
-  height: 100vh;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Form container styling */
+.admissionform {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: auto;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 865px) {
+  .admissionSection {
+    flex-direction: column;
+  }
+  .admissionform {
+    width: 100%;
+  }
 }

@@ -1,0 +1,13 @@
+.formStatusCards {
+  max-width: 850px;
+  height: 90vh;
+  padding: 10px;
+  /* background-color: #f5f5f5; */
+  border-radius: 8px;
+}
+
+@media (max-width: 865px) {
+  .formStatusCards {
+    height: auto;
+  }
+}
