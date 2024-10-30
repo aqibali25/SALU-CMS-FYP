@@ -1,0 +1,30 @@
+.formHeaderIcon {
+  background-color: #8d8d8d;
+  padding: 10px;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  color: #ffffff;
+}
+.formHeaderInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.formHeaderInner p {
+  color: #646464;
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+  text-align: start;
+}
+.formHeaderCard h6 {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+@media (max-width: 865px) {
+  .formHeaderCard {
+    max-width: 250px !important;
+    flex-direction: column;
+    gap: 40px;
+  }
+}

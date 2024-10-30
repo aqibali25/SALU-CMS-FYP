@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // React Router for navigation
 import "./Admission.css";
+import FormHeaderCard from "../../components/AdmissionComp/FormHeaderCard";
 // import AdmissionStatusCard from "../../components/AdmissionComp/AdmissionStatusCard";
 // import { FaGraduationCap, FaUser, FaTrophy, FaPencilAlt } from "react-icons/fa";
 // const statusItems = [
@@ -37,8 +38,8 @@ const Admission = () => {
   }, [navigate]);
 
   return (
-    <section className="admissionSection">
-      <h1>Admission</h1>
+    <section className="admissionSection p-3">
+      <FormHeaderCard></FormHeaderCard>
       {/* <AdmissionStatusCard></AdmissionStatusCard> */}
     </section>
   );
