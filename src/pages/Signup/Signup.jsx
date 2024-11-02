@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Login/Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
-import { SignupContext } from "../../contexts/SignupContext";
+// import { SignupContext } from "../../contexts/SignupContext";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { setSignupData } = useContext(SignupContext); // Access context to save signup data
+  // const { setSignupData } = useContext(SignupContext); // Access context to save signup data
 
   const [signupFormData, setSignupFormData] = useState({
     cnic: "",
