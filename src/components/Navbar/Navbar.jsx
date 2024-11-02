@@ -56,7 +56,7 @@ const Navbar = () => {
             <NavLinks key={index} link={link} />
           ))}
         </div>
-        <div className="loginSignUp">
+        <div className="buttonContainer">
           {/* Use ButtonLink for login and signup buttons */}
           <ButtonLink
             href="SALU-CMS-FYP/login"

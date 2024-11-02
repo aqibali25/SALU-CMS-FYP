@@ -1,12 +1,12 @@
 /* ###  LOGIN SIGNUP BUTTON STYLE  ### */
-.loginSignUp {
+.buttonContainer {
   display: flex;
   justify-content: space-between;
   width: fit-content;
   column-gap: 15px;
 }
 
-.loginSignUp a {
+.buttonContainer a {
   position: relative;
   padding: 5px 15px;
   text-decoration: none;

@@ -7,8 +7,8 @@ import Admission from "./pages/Admission/Admission.jsx";
 import About from "./pages/About/About.jsx";
 import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
-import "./App.css";
 import Footer from "./components/Footer/Footer.jsx";
+import "./App.css";
 
 const App = () => {
   return (

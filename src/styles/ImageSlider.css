@@ -4,9 +4,7 @@
   justify-content: space-evenly;
   align-items: center;
   gap: 20px;
-  padding: 50px 0;
-  height: 100vh;
-  margin-bottom: 40px;
+  height: 85%vh;
   overflow: hidden;
 }
 .carousel-control-next-icon,
@@ -24,8 +22,8 @@
   left: 0;
 }
 #carouselExampleAutoplaying {
-  width: 70%;
-  height: 80%;
+  width: 85%;
+  height: 75vh;
   margin-bottom: 20px;
 }
 @media (max-width: 768px) {

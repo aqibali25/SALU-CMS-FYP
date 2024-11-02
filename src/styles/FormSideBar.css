@@ -1,16 +1,12 @@
 .formSidebar {
-  position: sticky; /* Fix the sidebar position */
-  top: 20px; /* 20px offset from the top */
-  left: 20px; /* 20px offset from the left */
+  position: sticky;
+  /* top: 20px;
+  left: 20px; */
   width: 200px;
-  min-height: 80vh; /* Minimum height of 80vh */
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 80vh;
   z-index: 3;
 }
 
-/* Adjust for smaller screens */
 @media (max-width: 865px) {
   .formSidebar {
     display: none;

@@ -1,6 +1,6 @@
 .admissionSection {
   display: flex;
-  min-height: 100vh;
+  min-height: 80vh;
   background-color: #fefdfd;
   gap: 20px;
   padding: 20px;
@@ -24,4 +24,48 @@
   .admissionform {
     width: 100%;
   }
+}
+.program-selection-form {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.program-selection-form h4 {
+  font-weight: 500;
+}
+
+.program-selection-form .form-label {
+  font-weight: 600;
+}
+
+button.btn-warning {
+  background-color: #e5b300;
+  border: none;
+}
+
+button.btn-warning:hover {
+  background-color: #f7c305;
+}
+.inputContainer label {
+  text-align: end;
+  width: 160px;
+}
+.admissionform select,
+.admissionform input {
+  min-width: 70%;
+  padding: 2px;
+  border: 2px solid #a5a5a5;
+  outline: none;
+  color: #a5a5a5;
+  background-color: #f9f9f9;
+}
+/* .admissionform input{} */
+
+.admissionform select option:first-child {
+  color: #a5a5a5;
+}
+
+.admissionform select option {
+  color: #646464;
 }

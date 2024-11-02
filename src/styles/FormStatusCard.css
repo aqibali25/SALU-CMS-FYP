@@ -1,8 +1,6 @@
 .formStatusCard {
   width: 100%;
   min-height: 80px;
-  background-color: #f5f5f5;
-  box-shadow: 0 2px 4px #0000001a;
   padding-left: 15px;
 }
 .FormStatus {
@@ -12,7 +10,7 @@
   border-radius: 8px;
   float: right;
   padding: 0 10px;
-  background-color: #717070;
+  background-color: #929292;
   color: #f5f5f5;
   cursor: pointer;
 }

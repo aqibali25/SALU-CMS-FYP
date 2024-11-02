@@ -7,7 +7,7 @@ const FormHeaderCard = () => {
   const percentage = 25; // Set your dynamic percentage here
 
   return (
-    <div className="formHeaderCard d-flex flex-wrap justify-content-around align-items-center float-end  col-md-12  mx-auto p-4">
+    <div className="formHeaderCard formConitainer d-flex flex-wrap justify-content-around align-items-center float-end  col-md-12  mx-auto p-4">
       <div className="formHeaderInner formHeaderIcon mb-3 mb-md-0">
         <i className="fa-solid fa-user fa-4x"></i>
       </div>
