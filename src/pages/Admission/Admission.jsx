@@ -67,8 +67,8 @@ const Admission = () => {
       <div className="admissionform">
         <FormHeaderCard />
         {/* <FormStatusCards statusItems={statusItems} /> */}
-        <ProgramSelectionForm></ProgramSelectionForm>
-        {/* <PersonalInfo></PersonalInfo> */}
+        {/* <ProgramSelectionForm></ProgramSelectionForm> */}
+        <PersonalInfo></PersonalInfo>
       </div>
     </section>
   );

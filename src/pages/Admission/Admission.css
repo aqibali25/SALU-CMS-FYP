@@ -53,14 +53,18 @@ button.btn-warning:hover {
 }
 .admissionform select,
 .admissionform input {
-  min-width: 70%;
   padding: 2px;
   border: 2px solid #a5a5a5;
   outline: none;
   color: #a5a5a5;
   background-color: #f9f9f9;
 }
-/* .admissionform input{} */
+.admissionform select {
+  max-width: 40% !important;
+}
+.admissionform input {
+  min-width: 70%;
+}
 
 .admissionform select option:first-child {
   color: #a5a5a5;

@@ -1,14 +1,14 @@
 .dateOfBirth {
   width: 70%;
   display: flex;
-  /* justify-content: space-between;
-  align-items: center; */
-  /* gap: 30px; */
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
 }
 .dateOfBirth label {
   width: 160px;
 }
 .dateOfBirth select {
   min-width: 8%;
-  width: 33.33%;
+  width: 30%;
 }
