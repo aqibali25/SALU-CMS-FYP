@@ -3,6 +3,9 @@ import BackgroundImg from "../Sections/BackgroundImage/BackgroundImg";
 import "./Home.css";
 import ImageSlider from "../../components/ImageSlider/ImageSlider";
 import Courses from "../Sections/Courses/Courses";
+import EventSection from "../Sections/Events/EventSection";
+import MissionAndVision from "../Sections/MissionAndVision/MissionAndVision";
+import AboutSection from "../Sections/AboutSection/AboutSection";
 
 const Home = () => {
   return (
@@ -13,8 +16,15 @@ const Home = () => {
         heading2={"Today!"}
         para={"The Ultimate Guide to Universities Worldwide"}
       ></BackgroundImg>
+      <MissionAndVision></MissionAndVision>
+      <hr className="home-hr" />
+      <EventSection></EventSection>
+      <hr className="home-hr" />
       <ImageSlider></ImageSlider>
+      <hr className="home-hr" />
       <Courses></Courses>
+      <hr className="home-hr" />
+      <AboutSection></AboutSection>
     </section>
   );
 };

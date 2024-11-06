@@ -16,7 +16,7 @@ const Login = () => {
   const [isCnicValid, setIsCnicValid] = useState(true); // State to track CNIC validity
 
   useEffect(() => {
-    document.title = "Login";
+    document.title = "Login | SALU Ghotki";
   }, [navigate]);
 
   // Handle input changes and update state

@@ -20,7 +20,7 @@ const Signup = () => {
   const [isPasswordStrong, setIsPasswordStrong] = useState(true);
 
   useEffect(() => {
-    document.title = "Signup";
+    document.title = "Signup | SALU Ghotki";
 
     // const isLoggedIn = localStorage.getItem("isLoggedIn");
     // if (isLoggedIn === "true") {

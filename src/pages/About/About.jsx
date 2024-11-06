@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 const About = () => {
   useEffect(() => {
     // Set the document title to "About"
-    document.title = "About";
+    document.title = "About | SALU Ghotki";
   }, []);
 
   return (

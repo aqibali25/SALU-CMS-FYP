@@ -61,7 +61,7 @@ const Navbar = () => {
           <Link to="SALU-CMS-FYP/login" className="button buttonNotFilled">
             LOGIN
           </Link>
-          <Link to="SALU-CMS-FYP/signup" className="button buttonFilled">
+          <Link to="/SALU-CMS-FYP/signup" className="button buttonFilled">
             SIGN UP
           </Link>
         </div>

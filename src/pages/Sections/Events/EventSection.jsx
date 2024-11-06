@@ -1,47 +1,40 @@
 import React from "react";
 import "./EventSection.css";
-import UpcomingEvents from "../../../Components/EventSection/UpcomingEvents";
-import ImportantDatesSlider from "../../../Components/EventSection/ImportantDatesSlider";
-import UmcomingEventImage from "../../../assets/UmcomingEventImage.jpg";
-import SectionTitle from "../../../components/SectionTitle/SectionTitle";
+import LatestNews from "../../../components/EventSection/LatestNews";
+import Events from "../../../components/EventSection/Events";
 
-const EventDates = [
+import {
+  faAward,
+  faMagnifyingGlass,
+  faFileAudio,
+} from "@fortawesome/free-solid-svg-icons";
+
+const latestNewsCards = [
   {
-    image: UmcomingEventImage,
-    date: "00-000-00",
-    heading: "Scholarship test",
-    description:
-      "Your upcoming test is around the corner! Ensure you're well-prepared to achieve academic success.",
+    icon: faAward,
+    heading: "Merit Lists - Admission 2023",
+    date: "January 25, 2023",
+    text: "Merit Lists 2023 Download Last Date...",
   },
   {
-    image: UmcomingEventImage,
-    date: "00-000-00",
-    heading: "Scholarship test",
-    description:
-      "Your upcoming test is around the corner! Ensure you're well-prepared to achieve academic success.",
+    icon: faMagnifyingGlass,
+    heading: "Press Release: Job Hunting Workshop",
+    date: "January 25, 2023",
+    text: "QEC Department Of Shah Abdul....",
   },
   {
-    image: UmcomingEventImage,
-    date: "00-000-00",
-    heading: "Scholarship test",
-    description:
-      "Your upcoming test is around the corner! Ensure you're well-prepared to achieve academic success.",
-  },
-  {
-    image: UmcomingEventImage,
-    date: "00-000-00",
-    heading: "Scholarship test",
-    description:
-      "Your upcoming test is around the corner! Ensure you're well-prepared to achieve academic success.",
+    icon: faFileAudio,
+    heading: "Press Release: Incharge DG(P&D) HEC and Project Director...",
+    date: "January 25, 2023",
+    text: "Merit Lists 2023 Download Last Date...",
   },
 ];
-const EventSection = ({}) => {
+const EventSection = () => {
   return (
     <>
-      <SectionTitle label={"Important Events"}></SectionTitle>
       <section className="event-section container">
-        <UpcomingEvents event={EventDates[0]} />
-        <ImportantDatesSlider dates={EventDates} />
+        <LatestNews latestNewsCards={latestNewsCards}></LatestNews>
+        <Events></Events>
       </section>
     </>
   );

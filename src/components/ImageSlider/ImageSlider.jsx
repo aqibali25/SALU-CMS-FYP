@@ -13,7 +13,7 @@ const images = [Image1, Image2, Image3, Image4, Image5];
 
 const ImageSlider = () => {
   return (
-    <sectoion className="imageSlider">
+    <sectoion className="imageSlider mb-5">
       <SectionTitle label={"Tranding @SALU GC"}></SectionTitle>
       <div
         id="carouselExampleAutoplaying"

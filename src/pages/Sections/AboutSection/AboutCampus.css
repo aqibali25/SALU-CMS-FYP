@@ -1,0 +1,53 @@
+.aboutSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  padding: 50px;
+  width: 100%;
+}
+
+.aboutImage,
+.aboutText {
+  max-width: 550px;
+  overflow: hidden;
+}
+
+.aboutImage img {
+  width: 100%;
+  height: auto;
+}
+
+.aboutText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50%;
+}
+
+@media (max-width: 992px) {
+  .aboutSection {
+    flex-direction: column;
+    gap: 30px;
+  }
+  .aboutText {
+    width: 80%;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 595px) {
+  .aboutSection {
+    padding: 20px 0;
+    gap: 20px;
+  }
+  .aboutImage {
+    max-width: 90%;
+    height: auto;
+  }
+  .aboutText {
+    width: 90%;
+    height: auto;
+  }
+}
