@@ -17,7 +17,7 @@ const App = () => {
       <Routes>
         <Route path="SALU-CMS-FYP/" element={<Home />} />
         <Route path="SALU-CMS-FYP/faculty" element={<Faculty />} />
-        <Route path="SALU-CMS-FYP/admission" element={<Admission />} />
+        <Route path="SALU-CMS-FYP/admissionForm" element={<Admission />} />
         <Route path="SALU-CMS-FYP/about" element={<About />} />
         <Route path="SALU-CMS-FYP/login" element={<Login />} />
         <Route path="SALU-CMS-FYP/signup" element={<Signup />} />

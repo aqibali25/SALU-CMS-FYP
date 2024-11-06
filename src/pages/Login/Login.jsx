@@ -69,7 +69,7 @@ const Login = () => {
     ) {
       // localStorage.setItem("isLoggedIn", "true");
       // Redirect to the admission page after login
-      // navigate("/SALU-CMS-FYP/admission");
+      // navigate("/SALU-CMS-FYP/admissionForm");
     } else {
       alert("Invalid CNIC or password. Please try again.");
       setLoginFormData({ cnic: "", password: "" });

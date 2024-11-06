@@ -48,7 +48,9 @@ const DateOfBirth = () => {
         onChange={(e) => setSelectedMonth(e.target.value)}
         required
       >
-        <option value="">[Month]</option>
+        <option value="" disabled>
+          [Month]
+        </option>
         {months.map((month, index) => (
           <option key={index} value={index + 1}>
             {month}
@@ -56,7 +58,9 @@ const DateOfBirth = () => {
         ))}
       </select>
       <select id="dob-day" required>
-        <option value="">[Day]</option>
+        <option value="" disabled selected>
+          [Day]
+        </option>
         {days.map((day) => (
           <option key={day} value={day}>
             {day}
@@ -69,7 +73,9 @@ const DateOfBirth = () => {
         onChange={(e) => setSelectedYear(e.target.value)}
         required
       >
-        <option value="">[Year]</option>
+        <option value="" disabled>
+          [Year]
+        </option>
         {years.map((year) => (
           <option key={year} value={year}>
             {year}

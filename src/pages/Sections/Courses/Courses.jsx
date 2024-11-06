@@ -11,17 +11,17 @@ const courses = [
   {
     title: "BS(Computer Science)",
     image: CSImage,
-    guideLink: "/SALU-CMS-FYP/admission",
+    guideLink: "/SALU-CMS-FYP/admissionForm",
   },
   {
     title: "BS(Business Administration)",
     image: BBAImage,
-    guideLink: "/SALU-CMS-FYP/admission",
+    guideLink: "/SALU-CMS-FYP/admissionForm",
   },
   {
     title: "BS(English Languages & Literature)",
     image: EnglishImages,
-    guideLink: "/SALU-CMS-FYP/admission",
+    guideLink: "/SALU-CMS-FYP/admissionForm",
   },
 ];
 

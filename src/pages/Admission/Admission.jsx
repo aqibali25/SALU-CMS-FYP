@@ -16,41 +16,48 @@ import {
   FaImage,
 } from "react-icons/fa";
 import PersonalInfo from "../../components/AdmissionComp/FormComponents/PersonalInfo";
+import FatherInfo from "../../components/AdmissionComp/FormComponents/FatherInfo";
 
 const statusItems = [
   {
     title: "Program Of Study",
     icon: <FaGraduationCap size={50} color="#929292" />,
     status: "Pending",
+    bgColor: "#929292",
   },
   {
     title: "Personal Information",
     icon: <FaUser size={50} color="#929292" />,
     status: "Pending",
+    bgColor: "#929292", //#E9B82B
   },
   {
     title: "Father / Guardian Information",
     icon: <FaUsers size={50} color="#929292" />,
     status: "Pending",
+    bgColor: "#929292",
   },
   {
     title: "Academic Record",
     icon: <FaTrophy size={50} color="#929292" />,
     status: "Pending",
+    bgColor: "#929292",
   },
   {
     title: "Photograph And Document",
     icon: <FaImage size={50} color="#929292" />,
     status: "Pending",
+    bgColor: "#929292",
   },
 ];
 
 const Admission = () => {
   // const { signupData } = useContext(SignupContext); // Access signup data from context
   const navigate = useNavigate();
+  const percentage = 0;
 
   useEffect(() => {
-    document.title = "Admission";
+    document.title = "Admission | SALU Ghotki";
 
     // Check if the user is logged in
     // const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -65,10 +72,11 @@ const Admission = () => {
     <section className="admissionSection">
       <FormSideBar />
       <div className="admissionform">
-        <FormHeaderCard />
+        <FormHeaderCard percentage={percentage} />
         {/* <FormStatusCards statusItems={statusItems} /> */}
-        {/* <ProgramSelectionForm></ProgramSelectionForm> */}
+        <ProgramSelectionForm></ProgramSelectionForm>
         <PersonalInfo></PersonalInfo>
+        <FatherInfo></FatherInfo>
       </div>
     </section>
   );

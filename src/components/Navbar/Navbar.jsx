@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Logo from "./Logo";
 import NavLinks from "./NavLink";
 import "../../styles/Navbar.css";
-import ButtonLink from "../Button/ButtonLink";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,7 +13,7 @@ const Navbar = () => {
     { name: "Faculty", href: "SALU-CMS-FYP/faculty", className: "faculty" },
     {
       name: "Admission",
-      href: "SALU-CMS-FYP/admission",
+      href: "SALU-CMS-FYP/admissionForm",
       className: "admission",
     },
     { name: "About", href: "SALU-CMS-FYP/about", className: "about" },
@@ -58,16 +58,12 @@ const Navbar = () => {
         </div>
         <div className="buttonContainer">
           {/* Use ButtonLink for login and signup buttons */}
-          <ButtonLink
-            href="SALU-CMS-FYP/login"
-            className="login"
-            text="LOGIN"
-          />
-          <ButtonLink
-            href="SALU-CMS-FYP/signup"
-            className="signup"
-            text="SIGN UP"
-          />
+          <Link to="SALU-CMS-FYP/login" className="button buttonNotFilled">
+            LOGIN
+          </Link>
+          <Link to="SALU-CMS-FYP/signup" className="button buttonFilled">
+            SIGN UP
+          </Link>
         </div>
       </div>
       <label htmlFor="check" className="menuButton" id="menuButton">

@@ -25,8 +25,75 @@ body {
 ::-webkit-scrollbar {
   width: 0px;
 }
-.formConitainer {
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+
+/* ### BUTTON CONTAINER AND COMMON BUTTON STYLE ### */
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  width: fit-content;
+  column-gap: 15px;
+}
+
+.buttonContainer .button {
+  position: relative;
+  padding: 5px 15px;
+  border: 2px solid #e5b300;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.35s ease;
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* ### BUTTON FILLED STYLE ### */
+.buttonFilled {
+  color: #ffffff;
+}
+
+.buttonFilled::before {
+  transition: all 0.35s ease;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: #e5b300;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.buttonFilled:hover::before {
+  height: 0%;
+}
+
+.buttonFilled:hover {
+  color: #000000;
+}
+
+/* ### BUTTON NOT FILLED STYLE ### */
+.buttonNotFilled {
+  color: #111111;
+}
+
+.buttonNotFilled::before {
+  transition: all 0.35s ease;
+  content: "";
+  width: 100%;
+  height: 0;
+  background: #e5b300;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.buttonNotFilled:hover::before {
+  height: 100%;
+}
+
+.buttonNotFilled:hover {
+  color: #ffffff;
 }

@@ -2,9 +2,8 @@ import "../../styles/FormHeaderCard.css";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-const FormHeaderCard = () => {
+const FormHeaderCard = ({ percentage }) => {
   const currentYear = new Date().getFullYear();
-  const percentage = 25; // Set your dynamic percentage here
 
   return (
     <div className="formHeaderCard formConitainer d-flex flex-wrap justify-content-around align-items-center float-end  col-md-12  mx-auto p-4">

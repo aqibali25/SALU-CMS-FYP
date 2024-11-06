@@ -74,7 +74,7 @@
 .btn-warning {
   background-color: #e5b300;
   color: #ffffff !important;
-  border: 2px solid #e5b300;
+  border: 2px solid #e5b300 !important;
   padding: 10px 0;
   font-size: 1.3rem;
   font-weight: bold;
@@ -82,6 +82,8 @@
 }
 
 .btn-warning:hover {
+  border: 2px solid #e5b300;
+
   background-color: transparent !important;
 }
 

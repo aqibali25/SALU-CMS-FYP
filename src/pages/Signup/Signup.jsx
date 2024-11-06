@@ -24,7 +24,7 @@ const Signup = () => {
 
     // const isLoggedIn = localStorage.getItem("isLoggedIn");
     // if (isLoggedIn === "true") {
-    //   navigate("/SALU-CMS-FYP/admission");
+    //   navigate("/SALU-CMS-FYP/admissionForm");
     // }
   }, [navigate]);
 
@@ -87,7 +87,7 @@ const Signup = () => {
       if (isCnicValid && isPasswordStrong) {
         setSignupData(signupFormData); // Save form data in context
         localStorage.setItem("isLoggedIn", "true");
-        navigate("/SALU-CMS-FYP/admission");
+        navigate("/SALU-CMS-FYP/admissionForm");
       }
     } else {
       setIsPasswordMatch(false);
@@ -170,7 +170,7 @@ const Signup = () => {
               <span
                 className="invalid-feedback"
                 style={{
-                  fontSize: "10px",
+                  fontSize: "13px",
                   color: "red",
                   display: !isPasswordStrong ? "block" : "none",
                   marginBottom: "10px",
