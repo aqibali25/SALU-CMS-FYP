@@ -1,8 +1,8 @@
 import React from "react";
 import BackgroundImg from "../Sections/BackgroundImage/BackgroundImg";
 import "./Home.css";
-import ImageSlider from "../../components/ImageSlider/ImageSlider";
 import Courses from "../Sections/Courses/Courses";
+import ImageSlider from "../Sections/ImageSlider/ImageSlider";
 import EventSection from "../Sections/Events/EventSection";
 import MissionAndVision from "../Sections/MissionAndVision/MissionAndVision";
 import AboutSection from "../Sections/AboutSection/AboutSection";

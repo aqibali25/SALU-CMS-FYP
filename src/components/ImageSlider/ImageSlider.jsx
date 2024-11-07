@@ -1,13 +1,14 @@
 import React from "react";
-import "../../styles/ImageSlider.css"; // Import the CSS file
-import SectionTitle from "../SectionTitle/SectionTitle";
+import "./ImageSlider.css"; // Import the CSS file
+import SectionTitle from "../../../components/SectionTitle/SectionTitle";
 
 //import images
-import Image1 from "../../assets/TrandngImages/Image1.jpg";
-import Image2 from "../../assets/TrandngImages/Image2.jpg";
-import Image3 from "../../assets/TrandngImages/Image3.jpg";
-import Image4 from "../../assets/TrandngImages/Image4.jpg";
-import Image5 from "../../assets/TrandngImages/Image5.jpg";
+// import Image1 from "../../assets/TrandngImages/Image1.jpg";
+import Image1 from "../../../assets/TrandngImages/Image1.jpg";
+import Image2 from "../../../assets/TrandngImages/Image2.jpg";
+import Image3 from "../../../assets/TrandngImages/Image3.jpg";
+import Image4 from "../../../assets/TrandngImages/Image4.jpg";
+import Image5 from "../../../assets/TrandngImages/Image5.jpg";
 
 const images = [Image1, Image2, Image3, Image4, Image5];
 
