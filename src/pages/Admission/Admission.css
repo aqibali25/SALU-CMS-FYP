@@ -87,6 +87,6 @@ button.btn-warning:hover {
   }
   .admissionform input {
     min-width: none !important;
-    width: 100%;
+    max-width: 100%;
   }
 }
