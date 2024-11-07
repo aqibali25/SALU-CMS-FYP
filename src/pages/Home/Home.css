@@ -1,1 +1,15 @@
-    
+.home section {
+  width: 95% !important;
+}
+.home section:first-child {
+  width: 100% !important;
+}
+@media (max-width: 550px) {
+  .home section {
+    width: 100% !important;
+    padding: 20px !important;
+  }
+  .home section:first-child {
+    padding: 0 !important;
+  }
+}

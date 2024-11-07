@@ -75,7 +75,7 @@ const Events = () => {
       >
         {groupedEvents.map((group, index) => (
           <Carousel.Item key={index}>
-            <div className="d-flex flex-column align-items-center gap-4 mx-5">
+            <div className="d-flex flex-column align-items-center gap-4 col-12">
               {group.map((event, idx) => (
                 <EventCard
                   key={idx}

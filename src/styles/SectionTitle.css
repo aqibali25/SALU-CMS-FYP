@@ -19,3 +19,8 @@
   border-radius: 50px;
   background-color: #e5b300;
 }
+@media (max-width: 550px) {
+  .title {
+    font-size: 1.3rem;
+  }
+}
