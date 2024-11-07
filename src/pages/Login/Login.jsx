@@ -145,7 +145,9 @@ const Login = () => {
                   required
                 />
               </div>
-
+              <a htmlFor="forgotPassword" className="forgotPassowrd">
+                Forgot Password
+              </a>
               <button type="submit" className="btn btn-warning w-100">
                 Login
               </button>

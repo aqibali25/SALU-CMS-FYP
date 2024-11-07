@@ -73,3 +73,19 @@ button.btn-warning:hover {
 .admissionform select option {
   color: #646464;
 }
+@media (max-width: 768px) {
+  .inputContainer {
+    flex-direction: column;
+    justify-content: start !important;
+    align-items: start !important;
+  }
+  .inputContainer label {
+    text-align: start;
+  }
+  .admissionform select {
+    max-width: 100% !important;
+  }
+  .admissionform input {
+    min-width: 100%;
+  }
+}

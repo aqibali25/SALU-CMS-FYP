@@ -78,6 +78,7 @@
   padding: 10px 0;
   font-size: 1.3rem;
   font-weight: bold;
+  margin-top: 10px;
   transition: all 0.5s ease !important;
 }
 
@@ -88,8 +89,18 @@
 }
 
 /* Forgot password link */
-.forgot-password {
-  color: #e5b300;
+
+.forgotPassowrd {
+  text-decoration: none;
+  color: #c2c2c2;
+  font-size: 0.9rem;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.forgotPassowrd:hover {
+  color: #ffffff;
+  text-decoration: underline;
 }
 
 /* Footer styling */

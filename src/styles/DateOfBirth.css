@@ -12,3 +12,10 @@
   min-width: 8%;
   width: 30%;
 }
+@media (max-width: 768px) {
+  .dateOfBirth {
+    width: 100%;
+    /* flex-direction: column; */
+    gap: 10px;
+  }
+}
