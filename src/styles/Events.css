@@ -58,7 +58,6 @@
 @media (max-width: 560px) {
   .eventCard {
     padding: 10px;
-    min-height: 30vh;
   }
   .iconBox {
     justify-content: center !important;
