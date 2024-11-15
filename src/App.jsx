@@ -15,43 +15,23 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const handleLoad = () => setLoading(false); // Set loading to false when content is loaded
-
-    const images = document.querySelectorAll("img");
-    let imagesLoaded = 0;
-
-    const checkAllLoaded = () => {
-      imagesLoaded++;
-      if (imagesLoaded === images.length) {
-        handleLoad();
-      }
+    // Use the `load` event on the `window` to detect when everything is loaded
+    const handleWindowLoad = () => {
+      setLoading(false);
     };
 
-    images.forEach((img) => {
-      if (img.complete) {
-        checkAllLoaded(); // Count already loaded images
-      } else {
-        img.addEventListener("load", checkAllLoaded);
-        img.addEventListener("error", checkAllLoaded); // Handle load errors
-      }
-    });
+    // Add event listener to `window`
+    window.addEventListener("load", handleWindowLoad);
 
-    // Fallback: Ensure loader hides even if there are no images
-    if (images.length === 0) {
-      handleLoad();
-    }
-
-    // Cleanup event listeners
+    // Cleanup the event listener when the component unmounts
     return () => {
-      images.forEach((img) => {
-        img.removeEventListener("load", checkAllLoaded);
-        img.removeEventListener("error", checkAllLoaded);
-      });
+      window.removeEventListener("load", handleWindowLoad);
     };
   }, []);
 
+  // Show the Loader until loading is complete
   if (loading) {
-    return <Loader />; // Show the loader while loading is true
+    return <Loader />;
   }
 
   return (
