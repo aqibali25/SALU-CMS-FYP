@@ -15,46 +15,46 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const images = Array.from(document.images); // Get all images on the page
-    let loadedImages = 0;
+    // Use a timeout fallback to avoid infinite loading
+    const fallbackTimer = setTimeout(() => {
+      console.log("Fallback timer triggered, hiding loader");
+      setLoading(false);
+    }, 800); // Fallback hides the loader after 800ms
 
-    const checkAllLoaded = () => {
-      loadedImages++;
-      if (loadedImages === images.length) {
-        setLoading(false);
-      }
-    };
+    // Select all images on the page after a slight delay to ensure they are rendered
+    setTimeout(() => {
+      const images = document.querySelectorAll("img");
+      let imagesLoaded = 0;
 
-    if (images.length > 0) {
+      console.log(`Found ${images.length} images`);
+
+      const handleImageLoad = () => {
+        imagesLoaded++;
+        console.log(`Image loaded: ${imagesLoaded}/${images.length}`);
+        if (imagesLoaded === images.length) {
+          clearTimeout(fallbackTimer); // Clear the fallback timer
+          setLoading(false);
+        }
+      };
+
       images.forEach((img) => {
         if (img.complete) {
-          checkAllLoaded(); // Already loaded images
+          handleImageLoad(); // Image already loaded
         } else {
-          img.addEventListener("load", checkAllLoaded);
-          img.addEventListener("error", checkAllLoaded);
+          img.addEventListener("load", handleImageLoad);
+          img.addEventListener("error", handleImageLoad); // Handles image load errors
         }
       });
-    } else {
-      // No images present; stop loading immediately
-      setLoading(false);
-    }
 
-    // Fallback: Ensure loading stops even if some events aren't captured
-    const fallbackTimeout = setTimeout(() => {
-      setLoading(false);
-    }, 5000); // Adjust this timeout to match your expected load time
-
-    return () => {
-      // Cleanup listeners
-      images.forEach((img) => {
-        img.removeEventListener("load", checkAllLoaded);
-        img.removeEventListener("error", checkAllLoaded);
-      });
-      clearTimeout(fallbackTimeout);
-    };
+      return () => {
+        images.forEach((img) => {
+          img.removeEventListener("load", handleImageLoad);
+          img.removeEventListener("error", handleImageLoad);
+        });
+      };
+    }, 800); // Delay to ensure images are in DOM
   }, []);
 
-  // Show the loader while loading is true
   if (loading) {
     return <Loader />;
   }
