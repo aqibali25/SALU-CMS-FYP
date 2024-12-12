@@ -15,60 +15,52 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadImagesAndIcons = () => {
-      // Get all images on the page
-      const images = document.getElementsByTagName("img");
-      const icons = document.getElementsByTagName("i");
-
-      // Create an array of promises for image loading
-      const imagePromises = Array.from(images).map((img) => {
-        if (img.complete) return Promise.resolve();
-        return new Promise((resolve) => {
-          img.addEventListener("load", resolve);
-          img.addEventListener("error", resolve);
+    // Function to check if all images are loaded
+    const loadImages = async () => {
+      try {
+        // Get all images on the page
+        const images = document.querySelectorAll("img");
+        const imagePromises = Array.from(images).map((img) => {
+          if (img.complete) {
+            return Promise.resolve();
+          } else {
+            return new Promise((resolve) => {
+              img.addEventListener("load", resolve);
+              img.addEventListener("error", resolve); // Handle error cases as well
+            });
+          }
         });
-      });
 
-      // Create promises for icon font loading
-      const iconPromises = Array.from(icons).map(() => {
-        return document.fonts.ready;
-      });
-
-      // Wait for window load and all resources
-      window.addEventListener("load", () => {
-        Promise.all([...imagePromises, ...iconPromises])
-          .then(() => {
-            setTimeout(() => setIsLoading(false), 500); // Add small delay to ensure everything is rendered
-          })
-          .catch(() => {
-            setIsLoading(false);
-          });
-      });
+        // Wait for all images to load
+        await Promise.all(imagePromises);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error loading images:", error);
+        setIsLoading(false);
+      }
     };
 
-    loadImagesAndIcons();
-
-    return () => {
-      setIsLoading(false);
-    };
+    loadImages();
   }, []);
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="SALU-CMS-FYP/" element={<Home />} />
-        <Route path="SALU-CMS-FYP/faculty" element={<Faculty />} />
-        <Route path="SALU-CMS-FYP/admissionForm" element={<Admission />} />
-        <Route path="SALU-CMS-FYP/about" element={<About />} />
-        <Route path="SALU-CMS-FYP/login" element={<Login />} />
-        <Route path="SALU-CMS-FYP/signup" element={<Signup />} />
-      </Routes>
-      <Footer></Footer>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <Navbar />
+          <Routes>
+            <Route path="SALU-CMS-FYP/" element={<Home />} />
+            <Route path="SALU-CMS-FYP/faculty" element={<Faculty />} />
+            <Route path="SALU-CMS-FYP/admissionForm" element={<Admission />} />
+            <Route path="SALU-CMS-FYP/about" element={<About />} />
+            <Route path="SALU-CMS-FYP/login" element={<Login />} />
+            <Route path="SALU-CMS-FYP/signup" element={<Signup />} />
+          </Routes>
+          <Footer />
+        </>
+      )}
     </Router>
   );
 };
