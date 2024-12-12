@@ -15,57 +15,50 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Function to check if all images are loaded
-    const loadImages = async () => {
+    const loadAssets = async () => {
       try {
-        // Get all images on the page
+        // Get all images in the document
         const images = document.querySelectorAll("img");
 
-        // If no images found, stop loading
+        // If no images, set loading to false immediately
         if (images.length === 0) {
           setIsLoading(false);
           return;
         }
 
+        // Create promises for images to load
         const imagePromises = Array.from(images).map((img) => {
-          return new Promise((resolve, reject) => {
+          return new Promise((resolve) => {
             if (img.complete) {
               resolve();
             } else {
-              img.onload = () => resolve();
+              img.onload = resolve;
               img.onerror = () => {
                 console.warn(`Failed to load image: ${img.src}`);
-                resolve(); // Resolve anyway to prevent hanging
+                resolve(); // Resolve anyway to avoid blocking
               };
             }
           });
         });
 
-        // Wait for all images to load with a timeout
+        // Add a timeout to avoid hanging
         const timeoutPromise = new Promise((resolve) => {
           setTimeout(() => {
-            console.warn("Loading timeout reached");
+            console.warn("Loading timeout reached for assets.");
             resolve();
-          }, 5000); // 5 second timeout
+          }, 5000); // 5 seconds timeout
         });
 
+        // Wait for either all images to load or timeout to occur
         await Promise.race([Promise.all(imagePromises), timeoutPromise]);
-        setIsLoading(false);
       } catch (error) {
-        console.error("Error loading images:", error);
+        console.error("Error during asset loading:", error);
+      } finally {
         setIsLoading(false);
       }
     };
 
-    // Start loading check
-    loadImages();
-
-    // Fallback timeout to prevent infinite loading
-    const fallbackTimeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 8000); // 8 second absolute maximum
-
-    return () => clearTimeout(fallbackTimeout);
+    loadAssets();
   }, []);
 
   return (
