@@ -17,44 +17,49 @@ const App = () => {
   useEffect(() => {
     const loadAssets = async () => {
       try {
-        // Get all images in the document
+        // Select all images in the document
         const images = document.querySelectorAll("img");
 
-        // If no images, set loading to false immediately
         if (images.length === 0) {
+          // No images to load, set loading to false
           setIsLoading(false);
           return;
         }
 
-        // Create promises for images to load
+        // Create an array of promises for all images
         const imagePromises = Array.from(images).map((img) => {
-          return new Promise((resolve) => {
+          return new Promise((resolve, reject) => {
             if (img.complete) {
-              resolve();
+              // Check if the image is already loaded or failed
+              if (img.naturalWidth > 0) {
+                resolve();
+              } else {
+                reject(new Error(`Image failed to load: ${img.src}`));
+              }
             } else {
-              img.onload = resolve;
-              img.onerror = () => {
-                console.warn(`Failed to load image: ${img.src}`);
-                resolve(); // Resolve anyway to avoid blocking
-              };
+              img.onload = resolve; // Resolve when image loads
+              img.onerror = () =>
+                reject(new Error(`Image failed to load: ${img.src}`));
             }
           });
         });
 
-        // Add a timeout to avoid hanging
+        // Add a timeout as a safety mechanism
         const timeoutPromise = new Promise((resolve) => {
           setTimeout(() => {
-            console.warn("Loading timeout reached for assets.");
+            console.warn("Loading timeout reached. Proceeding...");
             resolve();
-          }, 5000); // 5 seconds timeout
+          }, 10000); // 10 seconds timeout
         });
 
-        // Wait for either all images to load or timeout to occur
+        // Wait for all images to load or timeout
         await Promise.race([Promise.all(imagePromises), timeoutPromise]);
+
+        // Set loading to false after everything is done
+        setIsLoading(false);
       } catch (error) {
         console.error("Error during asset loading:", error);
-      } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Ensure the loader is disabled even on error
       }
     };
 
