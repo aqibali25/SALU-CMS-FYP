@@ -16,44 +16,38 @@ const App = () => {
 
   useEffect(() => {
     const loadImagesAndIcons = () => {
+      // Get all images on the page
       const images = document.getElementsByTagName("img");
       const icons = document.getElementsByTagName("i");
 
+      // Create an array of promises for image loading
       const imagePromises = Array.from(images).map((img) => {
+        if (img.complete) return Promise.resolve();
         return new Promise((resolve) => {
-          if (img.complete) {
-            resolve();
-          } else {
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-          }
+          img.addEventListener("load", resolve);
+          img.addEventListener("error", resolve);
         });
       });
 
-      const iconPromises = Array.from(icons).map((icon) => {
-        return new Promise((resolve) => {
-          if (document.fonts.status === "loaded") {
-            resolve();
-          } else {
-            document.fonts.ready.then(() => resolve());
-          }
-        });
+      // Create promises for icon font loading
+      const iconPromises = Array.from(icons).map(() => {
+        return document.fonts.ready;
       });
 
-      Promise.all([...imagePromises, ...iconPromises])
-        .then(() => {
-          setIsLoading(false);
-        })
-        .catch(() => {
-          // If there's any error, still stop loading
-          setIsLoading(false);
-        });
+      // Wait for window load and all resources
+      window.addEventListener("load", () => {
+        Promise.all([...imagePromises, ...iconPromises])
+          .then(() => {
+            setTimeout(() => setIsLoading(false), 500); // Add small delay to ensure everything is rendered
+          })
+          .catch(() => {
+            setIsLoading(false);
+          });
+      });
     };
 
-    // Call immediately instead of waiting for load event
     loadImagesAndIcons();
 
-    // Cleanup
     return () => {
       setIsLoading(false);
     };
