@@ -20,19 +20,36 @@ const App = () => {
       try {
         // Get all images on the page
         const images = document.querySelectorAll("img");
+
+        // If no images found, stop loading
+        if (images.length === 0) {
+          setIsLoading(false);
+          return;
+        }
+
         const imagePromises = Array.from(images).map((img) => {
-          if (img.complete) {
-            return Promise.resolve();
-          } else {
-            return new Promise((resolve) => {
-              img.addEventListener("load", resolve);
-              img.addEventListener("error", resolve); // Handle error cases as well
-            });
-          }
+          return new Promise((resolve, reject) => {
+            if (img.complete) {
+              resolve();
+            } else {
+              img.onload = () => resolve();
+              img.onerror = () => {
+                console.warn(`Failed to load image: ${img.src}`);
+                resolve(); // Resolve anyway to prevent hanging
+              };
+            }
+          });
         });
 
-        // Wait for all images to load
-        await Promise.all(imagePromises);
+        // Wait for all images to load with a timeout
+        const timeoutPromise = new Promise((resolve) => {
+          setTimeout(() => {
+            console.warn("Loading timeout reached");
+            resolve();
+          }, 5000); // 5 second timeout
+        });
+
+        await Promise.race([Promise.all(imagePromises), timeoutPromise]);
         setIsLoading(false);
       } catch (error) {
         console.error("Error loading images:", error);
@@ -40,7 +57,15 @@ const App = () => {
       }
     };
 
+    // Start loading check
     loadImages();
+
+    // Fallback timeout to prevent infinite loading
+    const fallbackTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 8000); // 8 second absolute maximum
+
+    return () => clearTimeout(fallbackTimeout);
   }, []);
 
   return (
