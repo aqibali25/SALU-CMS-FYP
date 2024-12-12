@@ -15,38 +15,48 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Function to check if all images and icons are loaded
-    const loadImagesAndIcons = async () => {
+    const loadImagesAndIcons = () => {
       const images = document.getElementsByTagName("img");
-      const icons = document.getElementsByTagName("i"); // Get all icon elements
+      const icons = document.getElementsByTagName("i");
 
       const imagePromises = Array.from(images).map((img) => {
-        if (img.complete) return Promise.resolve();
         return new Promise((resolve) => {
-          img.onload = resolve;
-          img.onerror = resolve; // Handle error cases as well
-        });
-      });
-
-      const iconPromises = Array.from(icons).map((icon) => {
-        // For icons, we'll check if they're fully rendered
-        return new Promise((resolve) => {
-          if (window.getComputedStyle(icon).fontFamily !== "") {
+          if (img.complete) {
             resolve();
           } else {
-            // If font isn't loaded yet, wait for it
-            document.fonts.ready.then(resolve);
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
           }
         });
       });
 
-      // Wait for both images and icons to load
-      await Promise.all([...imagePromises, ...iconPromises]);
-      setIsLoading(false);
+      const iconPromises = Array.from(icons).map((icon) => {
+        return new Promise((resolve) => {
+          if (document.fonts.status === "loaded") {
+            resolve();
+          } else {
+            document.fonts.ready.then(() => resolve());
+          }
+        });
+      });
+
+      Promise.all([...imagePromises, ...iconPromises])
+        .then(() => {
+          setIsLoading(false);
+        })
+        .catch(() => {
+          // If there's any error, still stop loading
+          setIsLoading(false);
+        });
     };
 
-    window.addEventListener("load", loadImagesAndIcons);
-    return () => window.removeEventListener("load", loadImagesAndIcons);
+    // Call immediately instead of waiting for load event
+    loadImagesAndIcons();
+
+    // Cleanup
+    return () => {
+      setIsLoading(false);
+    };
   }, []);
 
   if (isLoading) {
