@@ -15,6 +15,9 @@
   gap: 20px;
   height: auto;
 }
+.formContainer {
+  margin-top: 50px;
+}
 
 /* Media query for responsiveness */
 @media (max-width: 865px) {
@@ -82,11 +85,8 @@ button.btn-warning:hover {
   .inputContainer label {
     text-align: start;
   }
-  .admissionform select {
-    max-width: 100% !important;
-  }
+  .admissionform select,
   .admissionform input {
-    min-width: none !important;
-    max-width: 100%;
+    min-width: 100% !important;
   }
 }

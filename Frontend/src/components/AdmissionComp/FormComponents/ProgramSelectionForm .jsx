@@ -78,10 +78,66 @@ const ProgramSelectionForm = () => {
       className="program-selection-form formConitainer p-4"
       style={{ minHeight: "200px" }}
     >
-      <h4 className="pb-5">Program of Study</h4>
+      <h4>Program of Study</h4>
       {loading && (
         <form className="animate-pulse">
-          <div className="container">{/* Loading content */}</div>
+          <div className="container">
+            <div className="mb-4">
+              <div
+                className="rounded mb-2 pulse"
+                style={{
+                  height: "16px",
+                  width: "25%",
+                  backgroundColor: "#e0e0e0",
+                }}
+              ></div>
+              <div
+                className="rounded pulse"
+                style={{ height: "32px", backgroundColor: "#e0e0e0" }}
+              ></div>
+            </div>
+
+            <div className="mb-4">
+              <div
+                className="rounded mb-2 pulse"
+                style={{
+                  height: "16px",
+                  width: "25%",
+                  backgroundColor: "#e0e0e0",
+                }}
+              ></div>
+              <div
+                className="rounded pulse"
+                style={{ height: "32px", backgroundColor: "#e0e0e0" }}
+              ></div>
+            </div>
+
+            <div className="mb-4">
+              <div
+                className="rounded mb-2 pulse"
+                style={{
+                  height: "16px",
+                  width: "25%",
+                  backgroundColor: "#e0e0e0",
+                }}
+              ></div>
+              <div
+                className="rounded pulse"
+                style={{ height: "32px", backgroundColor: "#e0e0e0" }}
+              ></div>
+            </div>
+
+            <div className="d-flex justify-content-end">
+              <div
+                className="rounded pulse"
+                style={{
+                  height: "40px",
+                  width: "128px",
+                  backgroundColor: "#e0e0e0",
+                }}
+              ></div>
+            </div>
+          </div>
         </form>
       )}
       {!loading && (

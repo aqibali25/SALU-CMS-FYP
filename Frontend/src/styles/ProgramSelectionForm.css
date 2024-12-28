@@ -18,6 +18,21 @@
 .inputContainer select {
   width: 100% !important;
 }
+.pulse {
+  animation: pulse-animation 1.5s infinite;
+}
+
+@keyframes pulse-animation {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 
 @media (max-width: 768px) {
   .formContainer {

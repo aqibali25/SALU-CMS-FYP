@@ -13,6 +13,9 @@ import ProgramSelectionForm from "./components/AdmissionComp/FormComponents/Prog
 import PersonalInfo from "./components/AdmissionComp/FormComponents/PersonalInfo.jsx";
 import FormStatusCards from "./components/AdmissionComp/FormStatusCards.jsx";
 import FatherInfo from "./components/AdmissionComp/FormComponents/FatherInfo.jsx";
+import AcademicRecord from "./components/AdmissionComp/FormComponents/AcademicRecord.jsx";
+import PhotographAndDocument from "./components/AdmissionComp/FormComponents/PhotographAndDocument.jsx";
+
 import {
   FaGraduationCap,
   FaUser,
@@ -72,6 +75,11 @@ const App = () => {
           ></Route>
           <Route path="personal-information" element={<PersonalInfo />}></Route>
           <Route path="father-information" element={<FatherInfo />}></Route>
+          <Route path="academic-record" element={<AcademicRecord />} />
+          <Route
+            path="photograph-and-document"
+            element={<PhotographAndDocument />}
+          />
         </Route>
         <Route path="SALU-CMS-FYP/about" element={<About />} />
         <Route path="SALU-CMS-FYP/login" element={<Login />} />
