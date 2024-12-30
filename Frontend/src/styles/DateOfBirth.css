@@ -9,8 +9,8 @@
   width: 160px;
 }
 .dateOfBirth select {
-  min-width: 8%;
-  width: 30%;
+  min-width: 8% !important;
+  width: 30% !important;
 }
 @media (max-width: 768px) {
   .dateOfBirth {

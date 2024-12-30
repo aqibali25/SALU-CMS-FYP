@@ -67,6 +67,7 @@ button.btn-warning:hover {
 }
 .admissionform input {
   min-width: 70%;
+  max-width: 70%;
 }
 
 .admissionform select option:first-child {
@@ -88,5 +89,6 @@ button.btn-warning:hover {
   .admissionform select,
   .admissionform input {
     min-width: 100% !important;
+    max-width: 100% !important;
   }
 }
