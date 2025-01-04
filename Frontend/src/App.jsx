@@ -9,7 +9,7 @@ import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import "./App.css";
-import ProgramSelectionForm from "./components/AdmissionComp/FormComponents/ProgramSelectionForm .jsx";
+import ProgramSelectionForm from "./components/AdmissionComp/FormComponents/ProgramSelectionForm.jsx";
 import PersonalInfo from "./components/AdmissionComp/FormComponents/PersonalInfo.jsx";
 import FormStatusCards from "./components/AdmissionComp/FormStatusCards.jsx";
 import FatherInfo from "./components/AdmissionComp/FormComponents/FatherInfo.jsx";

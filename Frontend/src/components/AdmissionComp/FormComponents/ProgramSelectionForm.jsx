@@ -5,12 +5,12 @@ import axios from "axios";
 
 const ProgramSelectionForm = () => {
   const [programOptions, setProgramOptions] = useState([
-    { value: "Computer Science", label: "Computer Science" },
-    { value: "Business Adminstration", label: "Business Adminstration" },
-    {
-      value: "English Litrature and Languagistics",
-      label: "English Litrature and Languagistics",
-    },
+    // { value: "Computer Science", label: "Computer Science" },
+    // { value: "Business Adminstration", label: "Business Adminstration" },
+    // {
+    //   value: "English Litrature and Languagistics",
+    //   label: "English Litrature and Languagistics",
+    // },
   ]);
   const [choices, setChoices] = useState({
     firstChoice: "",
@@ -27,12 +27,8 @@ const ProgramSelectionForm = () => {
         const response = await axios.get(
           "http://localhost:5000/api/departments"
         );
-        console.log(response);
-        const options = response.data.map((data) => ({
-          value: data.department,
-          label: data.department,
-        }));
-        // setProgramOptions(options);
+        const options = response.data;
+        setProgramOptions(options);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -79,69 +75,59 @@ const ProgramSelectionForm = () => {
       style={{ minHeight: "200px" }}
     >
       <h4>Program of Study</h4>
-      {loading && (
-        <form className="animate-pulse">
-          <div className="container">
-            <div className="mb-4">
-              <div
-                className="rounded mb-2 pulse"
-                style={{
-                  height: "16px",
-                  width: "25%",
-                  backgroundColor: "#e0e0e0",
-                }}
-              ></div>
-              <div
-                className="rounded pulse"
-                style={{ height: "32px", backgroundColor: "#e0e0e0" }}
-              ></div>
-            </div>
 
-            <div className="mb-4">
-              <div
-                className="rounded mb-2 pulse"
-                style={{
-                  height: "16px",
-                  width: "25%",
-                  backgroundColor: "#e0e0e0",
-                }}
-              ></div>
-              <div
-                className="rounded pulse"
-                style={{ height: "32px", backgroundColor: "#e0e0e0" }}
-              ></div>
-            </div>
+      <form onSubmit={handleSubmit}>
+        {loading && (
+          <form className="animate-pulse">
+            <div className="container">
+              <div className="mb-4">
+                <div
+                  className="rounded mb-2 pulse"
+                  style={{
+                    height: "16px",
+                    width: "25%",
+                    backgroundColor: "#e0e0e0",
+                  }}
+                ></div>
+                <div
+                  className="rounded pulse"
+                  style={{ height: "32px", backgroundColor: "#e0e0e0" }}
+                ></div>
+              </div>
 
-            <div className="mb-4">
-              <div
-                className="rounded mb-2 pulse"
-                style={{
-                  height: "16px",
-                  width: "25%",
-                  backgroundColor: "#e0e0e0",
-                }}
-              ></div>
-              <div
-                className="rounded pulse"
-                style={{ height: "32px", backgroundColor: "#e0e0e0" }}
-              ></div>
-            </div>
+              <div className="mb-4">
+                <div
+                  className="rounded mb-2 pulse"
+                  style={{
+                    height: "16px",
+                    width: "25%",
+                    backgroundColor: "#e0e0e0",
+                  }}
+                ></div>
+                <div
+                  className="rounded pulse"
+                  style={{ height: "32px", backgroundColor: "#e0e0e0" }}
+                ></div>
+              </div>
 
-            <div className="d-flex justify-content-end">
-              <div
-                className="rounded pulse"
-                style={{
-                  height: "40px",
-                  width: "128px",
-                  backgroundColor: "#e0e0e0",
-                }}
-              ></div>
+              <div className="mb-4">
+                <div
+                  className="rounded mb-2 pulse"
+                  style={{
+                    height: "16px",
+                    width: "25%",
+                    backgroundColor: "#e0e0e0",
+                  }}
+                ></div>
+                <div
+                  className="rounded pulse"
+                  style={{ height: "32px", backgroundColor: "#e0e0e0" }}
+                ></div>
+              </div>
             </div>
-          </div>
-        </form>
-      )}
-      {!loading && (
-        <form onSubmit={handleSubmit}>
+          </form>
+        )}
+        {!loading && (
           <div className="formContainer">
             <div className="inputContainer">
               <label htmlFor="firstChoice">
@@ -211,13 +197,13 @@ const ProgramSelectionForm = () => {
               </select>
             </div>
           </div>
-          <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-            <button type="submit" className="button buttonFilled">
-              Save & Proceed
-            </button>
-          </div>
-        </form>
-      )}
+        )}
+        <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
+          <button type="submit" className="button buttonFilled">
+            Save & Proceed
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

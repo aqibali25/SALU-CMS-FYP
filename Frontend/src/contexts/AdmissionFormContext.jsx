@@ -1,61 +1,52 @@
-// src/contexts/AdmissionFormContext.js
 import React, { createContext, useContext, useState } from "react";
 
-// Create the AdmissionForm context
 const AdmissionFormContext = createContext();
 
-// Create the provider component
+export const useAdmissionForm = () => {
+  return useContext(AdmissionFormContext);
+};
+
 export const AdmissionFormProvider = ({ children }) => {
-  // Program selection data
-  const [programSelection, setProgramSelection] = useState({
-    firstChoice: "",
-    secondChoice: "",
-    thirdChoice: "",
+  const [formData, setFormData] = useState({
+    programSelection: {},
+    personalInfo: {},
+    fatherInfo: {},
   });
 
-  const handleProgramChoiceChange = (choice, selectedValue) => {
-    setProgramSelection((prevChoices) => ({
-      ...prevChoices,
-      [choice]: selectedValue,
+  const updateFormData = (section, data) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [section]: data,
     }));
   };
 
-  // Placeholder for additional sections (tables) in the admission form
-  const [personalInfo, setPersonalInfo] = useState({
-    firstName: "",
-    lastName: "",
-    gender: "",
-    dob: "",
-    religion: "",
-    bloodGroup: "",
-    disability: "",
-    nativeLanguage: "",
-    cnic: "",
-  });
+  const submitSectionData = async (section) => {
+    try {
+      // Simulate a POST request
+      const response = await fetch("http://localhost:5000/api/admission-form", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ section, data: formData[section] }),
+      });
 
-  const updatePersonalInfo = (newInfo) => {
-    setPersonalInfo((prevInfo) => ({
-      ...prevInfo,
-      ...newInfo,
-    }));
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      console.log("Data submitted successfully:", result);
+    } catch (error) {
+      console.error("Error submitting data:", error);
+    }
   };
-
-  // Add other form sections similarly as you share them
 
   return (
     <AdmissionFormContext.Provider
-      value={{
-        programSelection,
-        handleProgramChoiceChange,
-        personalInfo,
-        updatePersonalInfo,
-        // Include other form sections here as needed
-      }}
+      value={{ formData, updateFormData, submitSectionData }}
     >
       {children}
     </AdmissionFormContext.Provider>
   );
 };
-
-// Custom hook to use AdmissionFormContext
-export const useAdmissionForm = () => useContext(AdmissionFormContext);
