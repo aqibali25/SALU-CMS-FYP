@@ -1,5 +1,6 @@
 const express = require("express");
 const mysql = require("mysql2");
+const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
@@ -7,45 +8,54 @@ const PORT = 5000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
 // MySQL Database Connection
 const db = mysql.createConnection({
-  host: "127.0.0.1", // Database host
-  user: "root", // Your MySQL username
-  password: "", // Your MySQL password
-  database: "cms", // Your database name
+  host: "localhost",
+  user: "root", // Replace with your MySQL username
+  password: "", // Replace with your MySQL password
+  database: "salu_cms", // Database name
 });
 
-// Connect to MySQL
+// Connect to the Database
 db.connect((err) => {
   if (err) {
-    console.error("Error connecting to database:", err.message);
+    console.error("Database connection failed: ", err);
     return;
   }
-  console.log("Connected to the MySQL database");
+  console.log("Connected to the MySQL database.");
 });
 
-// API Route to fetch data from tbl_department
-app.get("/api/departments", (req, res) => {
-  const sqlQuery = "SELECT * FROM tbl_department";
-  db.query(sqlQuery, (err, results) => {
+// Login Route
+app.post("/api/login", (req, res) => {
+  const { cnic, password } = req.body;
+
+  if (!cnic || !password) {
+    return res.status(400).json({ message: "CNIC and Password are required." });
+  }
+
+  // Query the database to validate the user
+  const query = "SELECT * FROM users WHERE cnic = ? AND password = ?";
+  db.query(query, [cnic, password], (err, results) => {
     if (err) {
-      console.error("Error fetching data:", err.message);
-      return res.status(500).json({ error: "Database query error" });
+      console.error("Error querying the database: ", err);
+      return res
+        .status(500)
+        .json({ message: "Server error. Please try again later." });
     }
 
-    // Transform data into the format for programOptions
-    const programOptions = results.map((dept) => ({
-      value: dept.name, // Replace 'name' with your actual column name
-      label: dept.name, // Replace 'name' with your actual column name
-    }));
-
-    res.json(programOptions);
+    if (results.length > 0) {
+      return res
+        .status(200)
+        .json({ message: "Login successful.", user: results[0] });
+    } else {
+      return res.status(401).json({ message: "Invalid CNIC or Password." });
+    }
   });
 });
 
-// Start Server
+// Start the Server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

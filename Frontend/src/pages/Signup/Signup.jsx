@@ -81,16 +81,36 @@ const Signup = () => {
     }
   };
 
-  const handleSignupSubmit = (e) => {
+  //const handleSignupSubmit = (e) => {
+  //e.preventDefault();
+  //if (signupFormData.password === signupFormData.confirmPassword) {
+  //if (isCnicValid && isPasswordStrong) {
+  //setSignupData(signupFormData); // Save form data in context
+  //localStorage.setItem("isLoggedIn", "true");
+  //navigate("/SALU-CMS-FYP/admissionForm");}
+  // } else {
+  // setIsPasswordMatch(false);
+  //}
+  //};
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    if (signupFormData.password === signupFormData.confirmPassword) {
-      if (isCnicValid && isPasswordStrong) {
-        setSignupData(signupFormData); // Save form data in context
-        localStorage.setItem("isLoggedIn", "true");
+    try {
+      const response = await fetch("http://localhost:5000/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signupFormData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Signup successful!");
         navigate("/SALU-CMS-FYP/admissionForm");
+      } else {
+        alert(data.message || "Signup failed!");
       }
-    } else {
-      setIsPasswordMatch(false);
+    } catch (error) {
+      alert("Error: " + error.message);
     }
   };
 
