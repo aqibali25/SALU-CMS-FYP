@@ -9,18 +9,18 @@ import FormSideBar from "../../components/AdmissionComp/FormSideBar";
 const Admission = () => {
   // const { signupData } = useContext(SignupContext); // Access signup data from context
   const navigate = useNavigate();
-  const percentage = 0;
+  const percentage = 10;
 
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
 
     // Check if the user is logged in
-    // const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-    // // If not logged in, redirect to the login page
-    // if (isLoggedIn !== "true") {
-    //   navigate("/SALU-CMS-FYP/login");
-    // }
+    // If not logged in, redirect to the login page
+    if (isLoggedIn !== "true") {
+      navigate("/SALU-CMS-FYP/login");
+    }
   }, [navigate]);
 
   return (

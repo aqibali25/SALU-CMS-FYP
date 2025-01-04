@@ -58,7 +58,7 @@ app.post("/signup", async (req, res) => {
 
     // Insert user into the database
     const query = "INSERT INTO users (cnic, password) VALUES (?, ?)";
-    db.query(query, [cnic, hashedPassword], (err, result) => {
+    db.query(query, [cnic, password], (err, result) => {
       if (err) {
         if (err.code === "ER_DUP_ENTRY") {
           return res.status(400).json({ message: "CNIC already registered!" });

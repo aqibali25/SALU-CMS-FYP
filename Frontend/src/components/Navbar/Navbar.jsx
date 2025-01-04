@@ -2,12 +2,20 @@ import React, { useState, useEffect } from "react";
 import Logo from "./Logo";
 import NavLinks from "./NavLink";
 import "../../styles/Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn === "true") {
+      // navigate("/SALU-CMS-FYP/");
+    }
+  }, []);
   const navLinksData = [
     { name: "Home", href: "SALU-CMS-FYP/", className: "home" },
     { name: "Faculty", href: "SALU-CMS-FYP/faculty", className: "faculty" },
@@ -57,13 +65,26 @@ const Navbar = () => {
           ))}
         </div>
         <div className="buttonContainer">
-          {/* Use ButtonLink for login and signup buttons */}
-          <Link to="SALU-CMS-FYP/login" className="button buttonNotFilled">
-            LOGIN
-          </Link>
-          <Link to="/SALU-CMS-FYP/signup" className="button buttonFilled">
-            SIGN UP
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              to="/SALU-CMS-FYP/login"
+              className="button buttonNotFilled"
+              onClick={() => {
+                localStorage.removeItem("isLoggedIn");
+              }}
+            >
+              Logout
+            </Link>
+          ) : (
+            <>
+              <Link to="SALU-CMS-FYP/login" className="button buttonNotFilled">
+                LOGIN
+              </Link>
+              <Link to="/SALU-CMS-FYP/signup" className="button buttonFilled">
+                SIGN UP
+              </Link>
+            </>
+          )}
         </div>
       </div>
       <label htmlFor="check" className="menuButton" id="menuButton">

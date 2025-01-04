@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../Login/Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
+import LoginMarquee from "../../components/LoginMarquee";
 // import { SignupContext } from "../../contexts/SignupContext";
 
 const Signup = () => {
@@ -22,10 +23,10 @@ const Signup = () => {
   useEffect(() => {
     document.title = "Signup | SALU Ghotki";
 
-    // const isLoggedIn = localStorage.getItem("isLoggedIn");
-    // if (isLoggedIn === "true") {
-    //   navigate("/SALU-CMS-FYP/admissionForm");
-    // }
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn === "true") {
+      navigate("/SALU-CMS-FYP/admission-form");
+    }
   }, [navigate]);
 
   const handleInputChange = (e) => {
@@ -81,17 +82,6 @@ const Signup = () => {
     }
   };
 
-  //const handleSignupSubmit = (e) => {
-  //e.preventDefault();
-  //if (signupFormData.password === signupFormData.confirmPassword) {
-  //if (isCnicValid && isPasswordStrong) {
-  //setSignupData(signupFormData); // Save form data in context
-  //localStorage.setItem("isLoggedIn", "true");
-  //navigate("/SALU-CMS-FYP/admissionForm");}
-  // } else {
-  // setIsPasswordMatch(false);
-  //}
-  //};
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -104,8 +94,9 @@ const Signup = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Signup successful!");
-        navigate("/SALU-CMS-FYP/admissionForm");
+        localStorage.setItem("isLoggedIn", "true");
+        // alert("Signup successful!");
+        navigate("/SALU-CMS-FYP/admission-form");
       } else {
         alert(data.message || "Signup failed!");
       }
@@ -120,22 +111,7 @@ const Signup = () => {
         className="login-container"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       >
-        <marquee
-          behavior=""
-          direction="right"
-          className="text-white position-absolute top-0 p-3 z-3"
-          style={{ backgroundColor: "#A78B27" }}
-        >
-          2nd Merit list of Undergraduate Admissions, Part-I, 2025 (Main Campus)
-          Note: All the selected candidates are advised to download the
-          admission offer letter from the student's portal/website of SALU and
-          bring all original relevant documents may be verified from the
-          concerned Department/Institute along with Affidavit. After
-          verification of documents download fees challan from the
-          Portal/Website and pay via HBL Connect, HBL Mobile App and submit your
-          documents along with the paid challan in the Departments/Institutes.
-          The due date to pay the fees is 05-12-2024 to 13-12-2024.
-        </marquee>
+        <LoginMarquee></LoginMarquee>
         <div className="login-form-overlay mt-5">
           <div className="login-form-content text-center">
             <div className="logo-container mb-3">

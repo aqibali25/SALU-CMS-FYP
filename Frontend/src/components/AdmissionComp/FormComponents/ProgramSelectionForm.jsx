@@ -5,12 +5,12 @@ import axios from "axios";
 
 const ProgramSelectionForm = () => {
   const [programOptions, setProgramOptions] = useState([
-    // { value: "Computer Science", label: "Computer Science" },
-    // { value: "Business Adminstration", label: "Business Adminstration" },
-    // {
-    //   value: "English Litrature and Languagistics",
-    //   label: "English Litrature and Languagistics",
-    // },
+    { value: "Computer Science", label: "Computer Science" },
+    { value: "Business Adminstration", label: "Business Adminstration" },
+    {
+      value: "English Litrature and Languagistics",
+      label: "English Litrature and Languagistics",
+    },
   ]);
   const [choices, setChoices] = useState({
     firstChoice: "",
@@ -21,21 +21,21 @@ const ProgramSelectionForm = () => {
 
   const navigate = useNavigate(); // Initialize the navigate function
 
-  useEffect(() => {
-    const fetchProgramOptions = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/departments"
-        );
-        const options = response.data;
-        setProgramOptions(options);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchProgramOptions = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://localhost:5000/api/departments"
+  //       );
+  //       const options = response.data;
+  //       setProgramOptions(options);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
 
-    fetchProgramOptions();
-  }, []);
+  //   fetchProgramOptions();
+  // }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
