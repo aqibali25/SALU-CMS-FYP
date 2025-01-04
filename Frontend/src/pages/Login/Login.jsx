@@ -59,24 +59,33 @@ const Login = () => {
     return formatted;
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate if CNIC and password match the required values
-    if (
-      loginFormData.cnic === "45102-1234567-1" &&
-      loginFormData.password === "123"
-    ) {
-      // localStorage.setItem("isLoggedIn", "true");
-      // Redirect to the admission page after login
-      // navigate("/SALU-CMS-FYP/admissionForm");
-    } else {
-      alert("Invalid CNIC or password. Please try again.");
-      setLoginFormData({ cnic: "", password: "" });
-    }
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginFormData),
+      });
 
-    // Log the loginFormData object (CNIC and password)
-    console.log("Login Form Data:", loginFormData);
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Login successful.");
+        console.log("User Details:", data.user);
+        // Navigate to the admission page
+        navigate("/SALU-CMS-FYP/admissionForm");
+      } else {
+        alert(data.message || "Login failed.");
+        setLoginFormData({ cnic: "", password: "" });
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
