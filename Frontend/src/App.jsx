@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home/Home.jsx";
@@ -15,6 +15,7 @@ import FormStatusCards from "./components/AdmissionComp/FormStatusCards.jsx";
 import FatherInfo from "./components/AdmissionComp/FormComponents/FatherInfo.jsx";
 import AcademicRecord from "./components/AdmissionComp/FormComponents/AcademicRecord.jsx";
 import PhotographAndDocument from "./components/AdmissionComp/FormComponents/PhotographAndDocument.jsx";
+import Loader from "./components/Loaders/Loader.jsx";
 
 import {
   FaGraduationCap,
@@ -58,6 +59,27 @@ const statusItems = [
 ];
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const handleLoad = () => setIsLoading(false);
+
+    // Check when all images and resources are fully loaded
+    if (document.readyState === "complete") {
+      handleLoad();
+    } else {
+      window.addEventListener("load", handleLoad);
+    }
+
+    return () => {
+      window.removeEventListener("load", handleLoad);
+    };
+  }, []);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <Router>
       <Navbar />
