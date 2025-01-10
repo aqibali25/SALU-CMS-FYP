@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom"; // React Router for navigation
 
 import "./Admission.css";
@@ -17,7 +17,7 @@ const Admission = () => {
     // Check if the user is logged in
     const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-    // If not logged in, redirect to the login page
+    // // If not logged in, redirect to the login page
     if (isLoggedIn !== "true") {
       navigate("/SALU-CMS-FYP/login");
     }

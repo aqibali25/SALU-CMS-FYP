@@ -5,7 +5,7 @@ const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 
 const app = express();
-const PORT = 5000;
+const PORT = 8000;
 
 // Middleware
 app.use(cors());
@@ -54,11 +54,11 @@ app.post("/signup", async (req, res) => {
 
   try {
     // Hash the password
-    // const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user into the database
     const query = "INSERT INTO users (cnic, password) VALUES (?, ?)";
-    db.query(query, [cnic, password], (err, result) => {
+    db.query(query, [cnic, hashedPassword], (err, result) => {
       if (err) {
         if (err.code === "ER_DUP_ENTRY") {
           return res.status(400).json({ message: "CNIC already registered!" });

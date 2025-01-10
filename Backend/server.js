@@ -2,6 +2,7 @@ const express = require("express");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const bcrypt = require("bcrypt"); // Import bcrypt
 
 const app = express();
 const PORT = 5000;
@@ -35,9 +36,9 @@ app.post("/api/login", (req, res) => {
     return res.status(400).json({ message: "CNIC and Password are required." });
   }
 
-  // Query the database to validate the user
-  const query = "SELECT * FROM users WHERE cnic = ? AND password = ?";
-  db.query(query, [cnic, password], (err, results) => {
+  // Query the database to get the user's hashed password
+  const query = "SELECT * FROM users WHERE cnic = ?";
+  db.query(query, [cnic], (err, results) => {
     if (err) {
       console.error("Error querying the database: ", err);
       return res
@@ -46,9 +47,24 @@ app.post("/api/login", (req, res) => {
     }
 
     if (results.length > 0) {
-      return res
-        .status(200)
-        .json({ message: "Login successful.", user: results[0] });
+      const user = results[0];
+      const hashedPassword = user.password; // Retrieve the hashed password from the database
+
+      // Compare the provided password with the hashed password
+      bcrypt.compare(password, hashedPassword, (err, isMatch) => {
+        if (err) {
+          console.error("Error comparing passwords: ", err);
+          return res
+            .status(500)
+            .json({ message: "Server error. Please try again later." });
+        }
+
+        if (isMatch) {
+          return res.status(200).json({ message: "Login successful.", user });
+        } else {
+          return res.status(401).json({ message: "Invalid CNIC or Password." });
+        }
+      });
     } else {
       return res.status(401).json({ message: "Invalid CNIC or Password." });
     }
