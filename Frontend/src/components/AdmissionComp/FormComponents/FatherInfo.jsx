@@ -55,10 +55,11 @@ const FatherInfo = () => {
   return (
     <div className="program-selection-form formConitainer p-4">
       <h4>Father Information</h4>
-      {loading ? (
-        <SkeletonLoader length={6} />
-      ) : (
-        <form onSubmit={handleSubmit}>
+
+      <form onSubmit={handleSubmit}>
+        {loading ? (
+          <SkeletonLoader length={6} />
+        ) : (
           <div className="formContainer">
             <InputContainer
               htmlFor="fatherName"
@@ -112,13 +113,13 @@ const FatherInfo = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-            <button type="submit" className="button buttonFilled">
-              Save & Proceed
-            </button>
-          </div>
-        </form>
-      )}
+        )}
+        <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
+          <button type="submit" className="button buttonFilled">
+            Save & Proceed
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

@@ -56,10 +56,11 @@ const AcademicRecord = () => {
   return (
     <div className="formConitainer p-4">
       <h4>Degree Information (Intermediate)</h4>
-      {loading ? (
-        <SkeletonLoader length={9} /> // 9 input fields
-      ) : (
-        <form onSubmit={handleSubmit}>
+
+      <form onSubmit={handleSubmit}>
+        {loading ? (
+          <SkeletonLoader length={9} /> // 9 input fields
+        ) : (
           <div className="formContainer">
             <InputContainer
               htmlFor="group"
@@ -147,13 +148,13 @@ const AcademicRecord = () => {
               value={formData.percentage}
             />
           </div>
-          <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-            <button className="button buttonFilled" type="submit">
-              Save & Proceed
-            </button>
-          </div>
-        </form>
-      )}
+        )}
+        <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
+          <button className="button buttonFilled" type="submit">
+            Save & Proceed
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

@@ -63,10 +63,11 @@ const GuardianInfo = () => {
   return (
     <div className="program-selection-form formConitainer p-4">
       <h4>Guardian Information</h4>
-      {loading ? (
-        <SkeletonLoader length={inputCount} />
-      ) : (
-        <form onSubmit={handleSubmit}>
+
+      <form onSubmit={handleSubmit}>
+        {loading ? (
+          <SkeletonLoader length={inputCount} />
+        ) : (
           <div className="formContainer">
             <div className="checkInput">
               <input
@@ -134,14 +135,14 @@ const GuardianInfo = () => {
               </>
             )}
           </div>
+        )}
 
-          <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-            <button type="submit" className="button buttonFilled">
-              Save & Proceed
-            </button>
-          </div>
-        </form>
-      )}
+        <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
+          <button type="submit" className="button buttonFilled">
+            Save & Proceed
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
