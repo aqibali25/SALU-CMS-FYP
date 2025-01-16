@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "../../../styles/./ProgramSelectionForm.css";
 import axios from "axios";
+import { use } from "react";
+import { useFormStatus } from "../../../contexts/AdmissionFormContext";
+import SkeletonLoader from "../SkeletonLoader";
 
 const ProgramSelectionForm = () => {
   const [programOptions, setProgramOptions] = useState([
@@ -58,9 +61,15 @@ const ProgramSelectionForm = () => {
     );
   };
 
+  const { updateFormStatus, statusItems } = useFormStatus();
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent form from reloading the page
+
+    // Update the form status
+    updateFormStatus("programOfStudy", "Completed");
+    console.log(statusItems);
 
     // Log the selected choices
     console.log("Form Data:", choices);
@@ -77,56 +86,7 @@ const ProgramSelectionForm = () => {
       <h4>Program of Study</h4>
 
       <form onSubmit={handleSubmit}>
-        {loading && (
-          <form className="animate-pulse">
-            <div className="container">
-              <div className="mb-4">
-                <div
-                  className="rounded mb-2 pulse"
-                  style={{
-                    height: "16px",
-                    width: "25%",
-                    backgroundColor: "#e0e0e0",
-                  }}
-                ></div>
-                <div
-                  className="rounded pulse"
-                  style={{ height: "32px", backgroundColor: "#e0e0e0" }}
-                ></div>
-              </div>
-
-              <div className="mb-4">
-                <div
-                  className="rounded mb-2 pulse"
-                  style={{
-                    height: "16px",
-                    width: "25%",
-                    backgroundColor: "#e0e0e0",
-                  }}
-                ></div>
-                <div
-                  className="rounded pulse"
-                  style={{ height: "32px", backgroundColor: "#e0e0e0" }}
-                ></div>
-              </div>
-
-              <div className="mb-4">
-                <div
-                  className="rounded mb-2 pulse"
-                  style={{
-                    height: "16px",
-                    width: "25%",
-                    backgroundColor: "#e0e0e0",
-                  }}
-                ></div>
-                <div
-                  className="rounded pulse"
-                  style={{ height: "32px", backgroundColor: "#e0e0e0" }}
-                ></div>
-              </div>
-            </div>
-          </form>
-        )}
+        {loading && <SkeletonLoader />}
         {!loading && (
           <div className="formContainer">
             <div className="inputContainer">

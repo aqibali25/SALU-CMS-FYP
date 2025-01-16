@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../../styles/DateOfBirth.css";
+import "../../styles/DateOfBirth.css";
 
 const DateOfBirth = () => {
   const [months] = useState([

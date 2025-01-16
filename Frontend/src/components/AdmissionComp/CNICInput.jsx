@@ -1,15 +1,25 @@
 import React, { useState } from "react";
 
-const CnicInput = ({ id, readonly, value }) => {
+const CnicInput = ({ id, readonly, value, onChange }) => {
   const [cnic, setCnic] = useState("");
-  const [isCnicValid, setIsCnicValid] = useState(true);
+  const [hasBlurred, setHasBlurred] = useState(false);
 
   const handleCnicChange = (e) => {
-    const formattedCnic = formatCnic(e.target.value);
+    const inputValue = e.target.value;
+    const formattedCnic = formatCnic(inputValue);
+
+    // Update local state
     setCnic(formattedCnic);
 
-    const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
-    setIsCnicValid(cnicPattern.test(formattedCnic));
+    // Call the parent onChange function if provided
+    if (onChange) {
+      onChange({
+        target: {
+          id,
+          value: formattedCnic,
+        },
+      });
+    }
   };
 
   const formatCnic = (value) => {
@@ -23,14 +33,26 @@ const CnicInput = ({ id, readonly, value }) => {
     return formatted;
   };
 
+  const handleBlur = () => {
+    setHasBlurred(true);
+  };
+
+  const isValidCnic = (cnic) => /^\d{5}-\d{7}-\d{1}$/.test(cnic);
+
   return (
     <input
       type="text"
       id={id}
       value={cnic || value || ""}
       onChange={handleCnicChange}
+      onBlur={handleBlur}
       maxLength={15}
-      style={{ border: !isCnicValid ? "2px solid red" : "" }}
+      style={{
+        border:
+          hasBlurred && cnic && !isValidCnic(cnic) // If blurred, text exists, and invalid
+            ? "2px solid red"
+            : "", // No border otherwise
+      }}
       required
       autoComplete="off"
       readOnly={readonly}

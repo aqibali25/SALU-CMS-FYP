@@ -4,6 +4,8 @@ import "../Login/Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
 import LoginMarquee from "../../components/LoginMarquee";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 // import { SignupContext } from "../../contexts/SignupContext";
 
 const Signup = () => {
@@ -105,6 +107,16 @@ const Signup = () => {
     }
   };
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
   return (
     <>
       <div
@@ -162,7 +174,7 @@ const Signup = () => {
               {/* Password Input */}
               <div className="form-group mb-3">
                 <input
-                  type="password"
+                  type={passwordVisible ? "text" : "password"}
                   className="form-control form-input"
                   placeholder="Password"
                   name="password"
@@ -176,6 +188,15 @@ const Signup = () => {
                         : "",
                   }}
                   required
+                />
+                <FontAwesomeIcon
+                  icon={passwordVisible ? faEye : faEyeSlash} // Show 'eye' for visible, 'eye-slash' for hidden
+                  onClick={togglePasswordVisibility}
+                  style={{
+                    position: "absolute",
+                    right: "40px",
+                    cursor: "pointer",
+                  }}
                 />
               </div>
               {/* Error Display */}
@@ -196,7 +217,7 @@ const Signup = () => {
               {/* Confirm Password Input */}
               <div className="form-group mb-3">
                 <input
-                  type="password"
+                  type={confirmPasswordVisible ? "text" : "password"}
                   className="form-control form-input"
                   placeholder="Confirm Password"
                   name="confirmPassword"
@@ -207,6 +228,15 @@ const Signup = () => {
                     border: !isPasswordMatch ? "2px solid red" : "",
                   }}
                   required
+                />
+                <FontAwesomeIcon
+                  icon={confirmPasswordVisible ? faEye : faEyeSlash} // Show 'eye' for visible, 'eye-slash' for hidden
+                  onClick={toggleConfirmPasswordVisibility}
+                  style={{
+                    position: "absolute",
+                    right: "40px",
+                    cursor: "pointer",
+                  }}
                 />
               </div>
               {/* Error Display */}

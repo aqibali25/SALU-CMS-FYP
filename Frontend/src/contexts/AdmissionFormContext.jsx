@@ -1,52 +1,127 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import {
+  FaGraduationCap,
+  FaUser,
+  FaTrophy,
+  FaUsers,
+  FaImage,
+} from "react-icons/fa";
 
-const AdmissionFormContext = createContext();
+const FormStatusContext = createContext();
 
-export const useAdmissionForm = () => {
-  return useContext(AdmissionFormContext);
-};
-
-export const AdmissionFormProvider = ({ children }) => {
-  const [formData, setFormData] = useState({
-    programSelection: {},
-    personalInfo: {},
-    fatherInfo: {},
+export const FormStatusProvider = ({ children }) => {
+  const [formStatus, setFormStatus] = useState({
+    percentage: 0,
+    forms: {
+      programOfStudy: "Pending",
+      personalInformation: "Pending",
+      fatherGuardianInformation: "Pending",
+      academicRecord: "Pending",
+      photographAndDocument: "Pending",
+    },
   });
 
-  const updateFormData = (section, data) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [section]: data,
-    }));
+  // Simulated fetch function to get initial data from the database
+  const fetchFormStatusFromDB = async () => {
+    // Replace this mock data with an API call to your backend
+    const dataFromDB = await Promise.resolve({
+      percentage: 60,
+      forms: {
+        programOfStudy: "Completed",
+        personalInformation: "Completed",
+        fatherGuardianInformation: "Pending",
+        academicRecord: "Pending",
+        photographAndDocument: "Completed",
+      },
+    });
+
+    setFormStatus(dataFromDB);
   };
 
-  const submitSectionData = async (section) => {
-    try {
-      // Simulate a POST request
-      const response = await fetch("http://localhost:5000/api/admission-form", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ section, data: formData[section] }),
-      });
+  // Initialize formStatus from the database on component mount
+  useEffect(() => {
+    fetchFormStatusFromDB();
+  }, []);
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+  const updateFormStatus = async (formName, status) => {
+    setFormStatus((prev) => {
+      const updatedForms = { ...prev.forms, [formName]: status };
+      const completedForms = Object.values(updatedForms).filter(
+        (status) => status === "Completed"
+      ).length;
+      const percentage =
+        (completedForms / Object.keys(updatedForms).length) * 100;
 
-      const result = await response.json();
-      console.log("Data submitted successfully:", result);
-    } catch (error) {
-      console.error("Error submitting data:", error);
-    }
+      // Simulated save function to update the database
+      saveFormStatusToDB({ forms: updatedForms, percentage });
+
+      return { forms: updatedForms, percentage };
+    });
   };
+
+  // Simulated save function to update the database
+  const saveFormStatusToDB = async (data) => {
+    // Replace this with an API call to save data to your backend
+    await Promise.resolve(data);
+  };
+
+  const statusItems = [
+    {
+      title: "Program Of Study",
+      icon: <FaGraduationCap size={50} color="#929292" />,
+      status: formStatus.forms.programOfStudy,
+      bgColor:
+        formStatus.forms.programOfStudy === "Completed" ? "#E9B82B" : "#929292",
+    },
+    {
+      title: "Personal Information",
+      icon: <FaUser size={50} color="#929292" />,
+      status: formStatus.forms.personalInformation,
+      bgColor:
+        formStatus.forms.personalInformation === "Completed"
+          ? "#E9B82B"
+          : "#929292",
+    },
+    {
+      title: "Father / Guardian Information",
+      icon: <FaUsers size={50} color="#929292" />,
+      status: formStatus.forms.fatherGuardianInformation,
+      bgColor:
+        formStatus.forms.fatherGuardianInformation === "Completed"
+          ? "#E9B82B"
+          : "#929292",
+    },
+    {
+      title: "Academic Record",
+      icon: <FaTrophy size={50} color="#929292" />,
+      status: formStatus.forms.academicRecord,
+      bgColor:
+        formStatus.forms.academicRecord === "Completed" ? "#E9B82B" : "#929292",
+    },
+    {
+      title: "Photograph And Document",
+      icon: <FaImage size={50} color="#929292" />,
+      status: formStatus.forms.photographAndDocument,
+      bgColor:
+        formStatus.forms.photographAndDocument === "Completed"
+          ? "#E9B82B"
+          : "#929292",
+    },
+  ];
 
   return (
-    <AdmissionFormContext.Provider
-      value={{ formData, updateFormData, submitSectionData }}
+    <FormStatusContext.Provider
+      value={{ formStatus, updateFormStatus, statusItems }}
     >
       {children}
-    </AdmissionFormContext.Provider>
+    </FormStatusContext.Provider>
   );
+};
+
+export const useFormStatus = () => {
+  const context = useContext(FormStatusContext);
+  if (!context) {
+    throw new Error("useFormStatus must be used within a FormStatusProvider");
+  }
+  return context;
 };

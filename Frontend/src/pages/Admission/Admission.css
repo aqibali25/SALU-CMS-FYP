@@ -52,7 +52,7 @@ button.btn-warning:hover {
 }
 .inputContainer label {
   text-align: end;
-  width: 160px;
+  width: 200px;
 }
 .admissionform select,
 .admissionform input {
@@ -91,4 +91,11 @@ button.btn-warning:hover {
     min-width: 100% !important;
     max-width: 100% !important;
   }
+}
+.checkInput input {
+  min-width: 30px !important;
+}
+.admissionform input,
+.admissionform select {
+  color: #2a2a2a;
 }

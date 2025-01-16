@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { citiesByProvince } from "../../../contexts/provinceCitiesData";
+import { citiesByProvince } from "../../contexts/provinceCitiesData";
 
 const ProvinceCitySelector = ({ onProvinceChange, onCityChange }) => {
   const [selectedProvince, setSelectedProvince] = useState("");

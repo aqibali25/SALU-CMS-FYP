@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
 import LoginMarquee from "../../components/LoginMarquee";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -78,7 +80,7 @@ const Login = () => {
         body: JSON.stringify(loginFormData),
       });
 
-      const data = await response.json();
+      // const data = await response.json();
 
       if (response.ok) {
         localStorage.setItem("isLoggedIn", "true");
@@ -94,6 +96,12 @@ const Login = () => {
       console.error("Error logging in:", error);
       alert("An error occurred. Please try again.");
     }
+  };
+
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
   return (
@@ -154,13 +162,22 @@ const Login = () => {
 
               <div className="form-group mb-3">
                 <input
-                  type="password"
+                  type={passwordVisible ? "text" : "password"}
                   className="form-control form-input"
                   placeholder="Enter Password"
                   name="password" // Name for identification
                   value={loginFormData.password} // Access password from loginFormData
                   onChange={handleInputChange} // Update state on input change
                   required
+                />
+                <FontAwesomeIcon
+                  icon={passwordVisible ? faEye : faEyeSlash} // Show 'eye' for visible, 'eye-slash' for hidden
+                  onClick={togglePasswordVisibility}
+                  style={{
+                    position: "absolute",
+                    right: "40px",
+                    cursor: "pointer",
+                  }}
                 />
               </div>
               <a htmlFor="forgotPassword" className="forgotPassowrd">

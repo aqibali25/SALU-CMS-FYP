@@ -5,6 +5,8 @@ const InputContainer = ({
   title,
   readOnly,
   value,
+  onChange,
+  placeholder = "",
 }) => {
   return (
     <div className="inputContainer">
@@ -18,6 +20,8 @@ const InputContainer = ({
         id={htmlFor}
         required={required}
         readOnly={readOnly}
+        onChange={onChange}
+        placeholder={placeholder}
       />
     </div>
   );

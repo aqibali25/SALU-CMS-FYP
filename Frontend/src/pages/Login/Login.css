@@ -97,7 +97,11 @@
   transition: all 0.5s ease;
   cursor: pointer;
 }
-
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .forgotPassowrd:hover {
   color: #ffffff;
   text-decoration: underline;
