@@ -60,7 +60,10 @@ const App = () => {
               element={<PersonalInfo />}
             ></Route>
             <Route path="father-information" element={<FatherInfo />}></Route>
-            <Route path="guardian-info" element={<GuardianInfo />}></Route>
+            <Route
+              path="guardian-information"
+              element={<GuardianInfo />}
+            ></Route>
             <Route path="academic-record" element={<AcademicRecord />} />
             <Route
               path="photograph-and-document"

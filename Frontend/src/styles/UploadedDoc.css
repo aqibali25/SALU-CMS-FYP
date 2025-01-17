@@ -1,0 +1,52 @@
+/* Default styles */
+.uploaded-doc-container {
+  max-width: 68%;
+}
+
+/* Media query for devices with max-width 865px */
+@media (max-width: 865px) {
+  .uploaded-doc-container {
+    max-width: 100% !important;
+  }
+}
+
+/* Media query for devices with max-width 425px */
+@media (max-width: 425px) {
+  .uploaded-doc-container .fa-image {
+    display: none;
+  }
+  .uploaded-doc-container .fa-eye,
+  .uploaded-doc-container .fa-trash {
+    font-size: 15px !important;
+  }
+}
+
+/* Media query for devices with max-width 325px */
+@media (max-width: 325px) {
+  .uploaded-doc-container span {
+    font-size: 0.8rem;
+  }
+}
+
+/* Icon styles */
+.fa-image {
+  font-size: 24px;
+  color: #6c757d;
+}
+
+.fa-eye {
+  font-size: 20px;
+  cursor: pointer;
+  color: #007bff;
+}
+
+.fa-trash {
+  font-size: 20px;
+  cursor: pointer;
+  color: #dc3545;
+}
+
+/* Document name styling */
+.doc-name {
+  font-weight: 500;
+}

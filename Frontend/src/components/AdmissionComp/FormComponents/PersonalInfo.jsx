@@ -8,6 +8,18 @@ import SkeletonLoader from "../SkeletonLoader";
 
 const PersonalInfo = () => {
   const [loading, setLoading] = useState(true); // State for loading
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    gender: "",
+    dob: "",
+    cnic: "45102-2473066-7",
+    religion: "",
+    disability: "",
+    nativeLanguage: "",
+    bloodGroup: null,
+  }); // Initialize state with empty values
+
   const { updateFormStatus } = useFormStatus(); // Call useFormStatus to access its properties
   const navigate = useNavigate(); // Define navigate for redirection
 
@@ -19,8 +31,27 @@ const PersonalInfo = () => {
     return () => clearTimeout(timer); // Clear timeout to avoid memory leaks
   }, []);
 
+  const handleInputChange = (e) => {
+    const { id, value } = e.target; // Get id and value of the input
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value, // Update the corresponding field in the form data
+    }));
+  };
+
+  const handleSelectChange = (e) => {
+    const { id, value } = e.target; // Get id and value of the select element
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent form from reloading the page
+
+    console.log("Submitted Personal Info:", formData); // Log the form data for testing
+
     // Update the form status
     updateFormStatus("personalInformation", "Completed");
     // Redirect user to /SALU-CMS-FYP/admission-form
@@ -39,19 +70,28 @@ const PersonalInfo = () => {
               title="First Name"
               required={true}
               inputType="text"
+              value={formData.firstName}
+              onChange={handleInputChange}
             />
             <InputContainer
               htmlFor="lastName"
               title="Last Name"
               required={true}
               inputType="text"
+              value={formData.lastName}
+              onChange={handleInputChange}
             />
             <div className="inputContainer">
               <label htmlFor="gender">
                 <span className="required">*</span>Gender:
               </label>
-              <select name="Gender" id="gender" className="col-6">
-                <option value="" disabled selected>
+              <select
+                id="gender"
+                className="col-6"
+                value={formData.gender}
+                onChange={handleSelectChange}
+              >
+                <option value="" disabled>
                   [Select an Option]
                 </option>
                 <option value="male">Male</option>
@@ -63,18 +103,28 @@ const PersonalInfo = () => {
               <label htmlFor="dob-month">
                 <span className="required">* </span>Date of Birth:
               </label>
-              <DateOfBirth />
+              <DateOfBirth
+                value={formData.dob}
+                onChange={(value) =>
+                  setFormData((prevData) => ({ ...prevData, dob: value }))
+                }
+              />
             </div>
             <div className="inputContainer">
               <label htmlFor="cnic">
                 <span className="required">*</span>CNIC:
               </label>
               <CnicInput
-                label="CNIC"
                 id="cnic"
-                value="45102-2473066-7"
+                value={formData.cnic}
                 readonly={"true"}
                 required
+                onChange={(e) =>
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    cnic: e.target.value,
+                  }))
+                }
               />
             </div>
             <InputContainer
@@ -82,13 +132,20 @@ const PersonalInfo = () => {
               title="Religion"
               required={true}
               inputType="text"
+              value={formData.religion}
+              onChange={handleInputChange}
             />
             <div className="inputContainer">
               <label htmlFor="disability">
                 <span className="required">*</span>Disability:
               </label>
-              <select name="Disability" id="disability" className="col-6">
-                <option value="" disabled selected>
+              <select
+                id="disability"
+                className="col-6"
+                value={formData.disability}
+                onChange={handleSelectChange}
+              >
+                <option value="" disabled>
                   [Select an Option]
                 </option>
                 <option value="Yes">Yes</option>
@@ -100,12 +157,16 @@ const PersonalInfo = () => {
               title="Native Language"
               required={true}
               inputType="text"
+              value={formData.nativeLanguage}
+              onChange={handleInputChange}
             />
             <InputContainer
               htmlFor="bloodGroup"
               title="Blood Group"
               required={false}
               inputType="text"
+              value={formData.bloodGroup}
+              onChange={handleInputChange}
             />
           </div>
         )}

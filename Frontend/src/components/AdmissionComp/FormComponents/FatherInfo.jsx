@@ -49,7 +49,7 @@ const FatherInfo = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("fatherInfo", formData);
-    navigate("/SALU-CMS-FYP/admission-form/guardian-info");
+    navigate("/SALU-CMS-FYP/admission-form/guardian-information");
   };
 
   return (

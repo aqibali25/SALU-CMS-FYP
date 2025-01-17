@@ -7,8 +7,19 @@ import { useFormStatus } from "../../../contexts/AdmissionFormContext.jsx"; // I
 import { useNavigate } from "react-router-dom";
 
 const GuardianInfo = () => {
+  // Initial state for the form data
+  const initialFormData = {
+    guardianName: "",
+    guardianCnic: "",
+    guardianMobileNumber: "",
+    province: "",
+    city: "",
+    address: "",
+    occupation: null,
+  };
+
   const [sameAsFather, setSameAsFather] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(initialFormData); // Initialize form data with default values
   const { updateFormStatus } = useFormStatus();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -20,6 +31,11 @@ const GuardianInfo = () => {
 
   const handleCheckboxChange = (e) => {
     setSameAsFather(e.target.checked);
+
+    // Reset formData if "Same as father" is checked
+    if (e.target.checked) {
+      setFormData(initialFormData);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -91,6 +107,7 @@ const GuardianInfo = () => {
                   required={true}
                   inputType="text"
                   autoComplete="off"
+                  value={formData.guardianName}
                   onChange={handleInputChange}
                 />
                 <div className="inputContainer">
@@ -101,6 +118,7 @@ const GuardianInfo = () => {
                     label="Guardian CNIC"
                     id="guardianCnic"
                     required
+                    value={formData.guardianCnic}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -110,11 +128,14 @@ const GuardianInfo = () => {
                   required={true}
                   inputType="text"
                   autoComplete="off"
+                  value={formData.guardianMobileNumber}
                   onChange={handleInputChange}
                 />
                 <ProvinceCitySelector
                   onProvinceChange={handleProvinceChange}
                   onCityChange={handleCityChange}
+                  provinceValue={formData.province}
+                  cityValue={formData.city}
                 />
                 <InputContainer
                   htmlFor="address"
@@ -122,6 +143,7 @@ const GuardianInfo = () => {
                   required={true}
                   inputType="text"
                   autoComplete="off"
+                  value={formData.address}
                   onChange={handleInputChange}
                 />
                 <InputContainer
@@ -130,6 +152,7 @@ const GuardianInfo = () => {
                   required={false}
                   inputType="text"
                   autoComplete="off"
+                  value={formData.occupation}
                   onChange={handleInputChange}
                 />
               </>
