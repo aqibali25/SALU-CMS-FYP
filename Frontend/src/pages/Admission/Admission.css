@@ -56,7 +56,7 @@ button.btn-warning:hover {
 }
 .inputContainer label {
   text-align: end;
-  width: 200px;
+  width: 25%;
 }
 .admissionform select,
 .admissionform input {
@@ -65,6 +65,10 @@ button.btn-warning:hover {
   outline: none;
   color: #a5a5a5;
   background-color: #f9f9f9;
+}
+.inputContainer {
+  align-items: start !important;
+  justify-content: start !important;
 }
 .admissionform select {
   max-width: 40% !important;
@@ -89,6 +93,7 @@ button.btn-warning:hover {
   }
   .inputContainer label {
     text-align: start;
+    width: fit-content;
   }
   .admissionform select,
   .admissionform input {

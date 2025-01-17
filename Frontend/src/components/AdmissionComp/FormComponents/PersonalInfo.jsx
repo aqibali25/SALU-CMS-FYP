@@ -105,8 +105,8 @@ const PersonalInfo = () => {
               </label>
               <DateOfBirth
                 value={formData.dob}
-                onChange={(value) =>
-                  setFormData((prevData) => ({ ...prevData, dob: value }))
+                onChange={(dob) =>
+                  setFormData((prevData) => ({ ...prevData, dob }))
                 }
               />
             </div>
