@@ -16,8 +16,9 @@ import FatherInfo from "./components/AdmissionComp/FormComponents/FatherInfo.jsx
 import AcademicRecord from "./components/AdmissionComp/FormComponents/AcademicRecord.jsx";
 import PhotographAndDocument from "./components/AdmissionComp/FormComponents/PhotographAndDocument.jsx";
 import Loader from "./components/Loaders/Loader.jsx";
-import { FormStatusProvider } from "./contexts/AdmissionFormContext.jsx";
 import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
+import { FormStatusProvider } from "./contexts/AdmissionFormContext.jsx";
+import { SignupContextProvider } from "./contexts/SignupContext.jsx";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,40 +44,42 @@ const App = () => {
 
   return (
     <FormStatusProvider>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="SALU-CMS-FYP/" element={<Home />} />
-          <Route path="SALU-CMS-FYP/faculty" element={<Faculty />} />
+      <SignupContextProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="SALU-CMS-FYP/" element={<Home />} />
+            <Route path="SALU-CMS-FYP/faculty" element={<Faculty />} />
 
-          <Route path="SALU-CMS-FYP/admission-form" element={<Admission />}>
-            <Route index element={<FormStatusCards />}></Route>
-            <Route
-              path="program-of-study"
-              element={<ProgramSelectionForm />}
-            ></Route>
-            <Route
-              path="personal-information"
-              element={<PersonalInfo />}
-            ></Route>
-            <Route path="father-information" element={<FatherInfo />}></Route>
-            <Route
-              path="guardian-information"
-              element={<GuardianInfo />}
-            ></Route>
-            <Route path="academic-record" element={<AcademicRecord />} />
-            <Route
-              path="photograph-and-document"
-              element={<PhotographAndDocument />}
-            />
-          </Route>
+            <Route path="SALU-CMS-FYP/admission-form" element={<Admission />}>
+              <Route index element={<FormStatusCards />}></Route>
+              <Route
+                path="program-of-study"
+                element={<ProgramSelectionForm />}
+              ></Route>
+              <Route
+                path="personal-information"
+                element={<PersonalInfo />}
+              ></Route>
+              <Route path="father-information" element={<FatherInfo />}></Route>
+              <Route
+                path="guardian-information"
+                element={<GuardianInfo />}
+              ></Route>
+              <Route path="academic-record" element={<AcademicRecord />} />
+              <Route
+                path="photograph-and-document"
+                element={<PhotographAndDocument />}
+              />
+            </Route>
 
-          <Route path="SALU-CMS-FYP/about" element={<About />} />
-          <Route path="SALU-CMS-FYP/login" element={<Login />} />
-          <Route path="SALU-CMS-FYP/signup" element={<Signup />} />
-        </Routes>
-        <Footer></Footer>
-      </Router>
+            <Route path="SALU-CMS-FYP/about" element={<About />} />
+            <Route path="SALU-CMS-FYP/login" element={<Login />} />
+            <Route path="SALU-CMS-FYP/signup" element={<Signup />} />
+          </Routes>
+          <Footer></Footer>
+        </Router>
+      </SignupContextProvider>
     </FormStatusProvider>
   );
 };

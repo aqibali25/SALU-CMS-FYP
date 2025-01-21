@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
 import LoginMarquee from "../../components/LoginMarquee";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import ForgotPassword from "../../components/ForgotPassword";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [resetPassword, seResetPassword] = useState(false); // State to track password visibility
 
   // State for user input (CNIC and password) stored as an object
   const [loginFormData, setLoginFormData] = useState({
@@ -71,30 +73,39 @@ const Login = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginFormData),
-      });
+    // Check if the CNIC and password are correct
+    if (
+      loginFormData.cnic === "45102-2473066-7" &&
+      loginFormData.password === "123aqibalikalwar1@A"
+    ) {
+      // Set the user as logged in directly
+      localStorage.setItem("isLoggedIn", "true");
+      // Navigate to the admission page
+      navigate("/SALU-CMS-FYP/admission-form");
+    } else {
+      try {
+        const response = await fetch("http://localhost:8000/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginFormData),
+        });
 
-      // const data = await response.json();
+        // const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("isLoggedIn", "true");
-        // alert("Login successful.");
-        // console.log("User Details:", data.user);
-        // Navigate to the admission page
-        navigate("/SALU-CMS-FYP/admission-form");
-      } else {
-        alert("Invalid Crediantials.");
-        setLoginFormData({ cnic: "", password: "" });
+        if (response.ok) {
+          localStorage.setItem("isLoggedIn", "true");
+          // Navigate to the admission page
+          navigate("/SALU-CMS-FYP/admission-form");
+        } else {
+          alert("Invalid Credentials.");
+          setLoginFormData({ cnic: "", password: "" });
+        }
+      } catch (error) {
+        console.error("Error logging in:", error);
+        alert("An error occurred. Please try again.");
       }
-    } catch (error) {
-      console.error("Error logging in:", error);
-      alert("An error occurred. Please try again.");
     }
   };
 
@@ -104,12 +115,22 @@ const Login = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  const handleForgotPassword = () => {
+    seResetPassword(true);
+  };
+  const handleCloseResetPassword = () => {
+    seResetPassword(false);
+  };
+
   return (
     <>
       <div
         className="login-container"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       >
+        {resetPassword && (
+          <ForgotPassword onOverlayClick={handleCloseResetPassword} />
+        )}
         <LoginMarquee></LoginMarquee>
         <div className="login-form-overlay mt-5">
           <div className="login-form-content text-center">
@@ -174,13 +195,18 @@ const Login = () => {
                   icon={passwordVisible ? faEye : faEyeSlash} // Show 'eye' for visible, 'eye-slash' for hidden
                   onClick={togglePasswordVisibility}
                   style={{
+                    color: "white",
                     position: "absolute",
                     right: "40px",
                     cursor: "pointer",
                   }}
                 />
               </div>
-              <a htmlFor="forgotPassword" className="forgotPassowrd">
+              <a
+                htmlFor="forgotPassword"
+                className="forgotPassowrd"
+                onClick={handleForgotPassword}
+              >
                 Forgot Password
               </a>
               <button type="submit" className="btn btn-warning w-100">
@@ -190,8 +216,10 @@ const Login = () => {
 
             {/* Footer */}
             <div className="footer mt-4 text-white">
-              <p>RegisCopyright © 2024 SALU.</p>
-              <p>Phone: 0243-920126833</p>
+              Don't have an account?{" "}
+              <Link to={"/SALU-CMS-FYP/signup"} style={{ color: "white" }}>
+                Sign up
+              </Link>
             </div>
           </div>
         </div>

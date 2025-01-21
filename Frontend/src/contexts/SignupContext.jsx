@@ -1,9 +1,11 @@
-// src/contexts/SignupContext.js
+// src/contexts/SignupContext.jsx
 import React, { createContext, useState } from "react";
 
+// Create the context
 export const SignupContext = createContext();
 
-export const SignupProvider = ({ children }) => {
+// The provider component
+export const SignupContextProvider = ({ children }) => {
   const [signupData, setSignupData] = useState({
     cnic: "",
     password: "",

@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../Login/Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
 import LoginMarquee from "../../components/LoginMarquee";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-// import { SignupContext } from "../../contexts/SignupContext";
+import { SignupContext } from "../../contexts/SignupContext"; // Import context
 
 const Signup = () => {
   const navigate = useNavigate();
-  // const { setSignupData } = useContext(SignupContext); // Access context to save signup data
+  const { updateSignupData } = useContext(SignupContext); // Access context to save signup data
 
   const [signupFormData, setSignupFormData] = useState({
     cnic: "",
+    email: "",
     password: "",
     confirmPassword: "",
   });
@@ -53,6 +54,9 @@ const Signup = () => {
         validatePasswordStrength(value);
       }
     }
+
+    // Update context with the latest form data
+    updateSignupData({ [name]: value });
   };
 
   const formatCnic = (value) => {
@@ -87,7 +91,7 @@ const Signup = () => {
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/signup", {
+      const response = await fetch("http://localhost:8000/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(signupFormData),
@@ -97,7 +101,6 @@ const Signup = () => {
 
       if (response.ok) {
         localStorage.setItem("isLoggedIn", "true");
-        // alert("Signup successful!");
         navigate("/SALU-CMS-FYP/admission-form");
       } else {
         alert(data.message || "Signup failed!");
@@ -113,157 +116,126 @@ const Signup = () => {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
   };
 
   return (
-    <>
-      <div
-        className="login-container"
-        style={{ backgroundImage: `url(${BackgroundImage})` }}
-      >
-        <LoginMarquee></LoginMarquee>
-        <div className="login-form-overlay mt-5">
-          <div className="login-form-content text-center">
-            <div className="logo-container mb-3">
-              <img
-                src={Logo}
-                alt="University Logo"
-                className="university-logo"
+    <div
+      className="login-container"
+      style={{ backgroundImage: `url(${BackgroundImage})` }}
+    >
+      <LoginMarquee />
+      <div className="login-form-overlay mt-5">
+        <div className="login-form-content text-center">
+          <div className="logo-container mb-3">
+            <img src={Logo} alt="University Logo" className="university-logo" />
+          </div>
+
+          <h2 className="text-gray">New User Registration</h2>
+          <h3 className="text-warning">Kindly Register for Admission</h3>
+          <p className="text-gray">Fill the form below to create an account.</p>
+
+          <form onSubmit={handleSignupSubmit}>
+            {/* CNIC Input */}
+            <div className="form-group mb-3">
+              <input
+                type="text"
+                className="form-control form-input"
+                placeholder="CNIC (#####-#######-#)"
+                name="cnic"
+                value={signupFormData.cnic}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                maxLength={15}
+                style={{ border: !isCnicValid ? "2px solid red" : "" }}
+                autoComplete="off"
+                required
+              />
+            </div>
+            <div className="form-group mb-3">
+              <input
+                type="email"
+                className="form-control form-input"
+                placeholder="Email Address"
+                name="email"
+                value={signupFormData.email}
+                onChange={handleInputChange}
+                autoComplete="off"
+                required
+              />
+            </div>
+            {/* Password Input */}
+            <div className="form-group mb-3">
+              <input
+                type={passwordVisible ? "text" : "password"}
+                className="form-control form-input"
+                placeholder="Password"
+                name="password"
+                value={signupFormData.password}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                style={{
+                  border:
+                    (signupFormData.password && !isPasswordMatch) ||
+                    (signupFormData.password && !isPasswordStrong)
+                      ? "2px solid red"
+                      : "",
+                }}
+                required
+              />
+              <FontAwesomeIcon
+                icon={passwordVisible ? faEye : faEyeSlash}
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: "absolute",
+                  right: "40px",
+                  cursor: "pointer",
+                }}
               />
             </div>
 
-            <h2 className="text-gray">New User Registration</h2>
-            <h3 className="text-warning">Kindly Register for Admission</h3>
-            <p className="text-gray">
-              Fill the form below to create an account.
-            </p>
-
-            <form onSubmit={handleSignupSubmit}>
-              {/* CNIC Input */}
-              <div className="form-group mb-3">
-                <input
-                  type="text"
-                  className="form-control form-input"
-                  placeholder="CNIC (#####-#######-#)"
-                  name="cnic"
-                  value={signupFormData.cnic}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  maxLength={15}
-                  style={{ border: !isCnicValid ? "2px solid red" : "" }}
-                  autoComplete="off"
-                  required
-                />
-              </div>
-              {/* Error Display */}
-              <span
-                className="invalid-feedback"
+            {/* Confirm Password Input */}
+            <div className="form-group mb-3">
+              <input
+                type={confirmPasswordVisible ? "text" : "password"}
+                className="form-control form-input"
+                placeholder="Confirm Password"
+                name="confirmPassword"
+                value={signupFormData.confirmPassword}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
                 style={{
-                  color: "red",
-                  display: !isCnicValid ? "block" : "none",
-                  marginBottom: "10px",
+                  border: !isPasswordMatch ? "2px solid red" : "",
                 }}
-              >
-                {!isCnicValid
-                  ? "Invalid CNIC format! Must be #####-#######-#"
-                  : ""}
-              </span>
-
-              {/* Password Input */}
-              <div className="form-group mb-3">
-                <input
-                  type={passwordVisible ? "text" : "password"}
-                  className="form-control form-input"
-                  placeholder="Password"
-                  name="password"
-                  value={signupFormData.password}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  style={{
-                    border:
-                      !isPasswordMatch || !isPasswordStrong
-                        ? "2px solid red"
-                        : "",
-                  }}
-                  required
-                />
-                <FontAwesomeIcon
-                  icon={passwordVisible ? faEye : faEyeSlash} // Show 'eye' for visible, 'eye-slash' for hidden
-                  onClick={togglePasswordVisibility}
-                  style={{
-                    position: "absolute",
-                    right: "40px",
-                    cursor: "pointer",
-                  }}
-                />
-              </div>
-              {/* Error Display */}
-              <span
-                className="invalid-feedback"
+                required
+              />
+              <FontAwesomeIcon
+                icon={confirmPasswordVisible ? faEye : faEyeSlash}
+                onClick={toggleConfirmPasswordVisibility}
                 style={{
-                  fontSize: "13px",
-                  color: "red",
-                  display: !isPasswordStrong ? "block" : "none",
-                  marginBottom: "10px",
+                  position: "absolute",
+                  right: "40px",
+                  cursor: "pointer",
                 }}
-              >
-                {!isPasswordStrong
-                  ? "Password requires 1 number, 1 special character, 1 uppercase letter, and at least 8 characters."
-                  : ""}
-              </span>
-
-              {/* Confirm Password Input */}
-              <div className="form-group mb-3">
-                <input
-                  type={confirmPasswordVisible ? "text" : "password"}
-                  className="form-control form-input"
-                  placeholder="Confirm Password"
-                  name="confirmPassword"
-                  value={signupFormData.confirmPassword}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  style={{
-                    border: !isPasswordMatch ? "2px solid red" : "",
-                  }}
-                  required
-                />
-                <FontAwesomeIcon
-                  icon={confirmPasswordVisible ? faEye : faEyeSlash} // Show 'eye' for visible, 'eye-slash' for hidden
-                  onClick={toggleConfirmPasswordVisibility}
-                  style={{
-                    position: "absolute",
-                    right: "40px",
-                    cursor: "pointer",
-                  }}
-                />
-              </div>
-              {/* Error Display */}
-              <span
-                className="invalid-feedback"
-                style={{
-                  color: "red",
-                  display: !isPasswordMatch ? "block" : "none",
-                  marginBottom: "10px",
-                }}
-              >
-                {!isPasswordMatch ? "Confirm Password does not match!" : ""}
-              </span>
-
-              <button type="submit" className="btn btn-warning w-100">
-                Register
-              </button>
-            </form>
-
-            <div className="footer mt-4 text-white">
-              <p>RegisCopyright © 2024 SALU.</p>
-              <p>Phone: 0243-920126833</p>
+              />
             </div>
+
+            <button type="submit" className="btn btn-warning w-100">
+              Register
+            </button>
+          </form>
+
+          <div className="footer mt-4 text-white">
+            Already have an account?{" "}
+            <Link to={"/SALU-CMS-FYP/login"} style={{ color: "white" }}>
+              Login
+            </Link>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

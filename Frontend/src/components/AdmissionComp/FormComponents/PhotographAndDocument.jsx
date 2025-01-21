@@ -1,8 +1,9 @@
-import React, { useReducer, useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import InputContainer from "../InputContainer";
 import UploadedDoc from "../UploadedDoc";
 import { useFormStatus } from "../../../contexts/AdmissionFormContext.jsx";
 import { useNavigate } from "react-router-dom";
+import SkeletonLoader from "../SkeletonLoader.jsx";
 
 // Define initial state
 const initialState = {
@@ -66,6 +67,7 @@ const reducer = (state, action) => {
 };
 
 const PhotographAndDocument = () => {
+  const [loading, setLoading] = useState(true); // State to track loading state
   const [state, dispatch] = useReducer(reducer, initialState);
   const { updateFormStatus } = useFormStatus(); // Call useFormStatus to access its properties
   const navigate = useNavigate(); // Define navigate for redirection
@@ -81,6 +83,13 @@ const PhotographAndDocument = () => {
       reader.onerror = (error) => reject(error);
     });
   };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false); // Set loading to false after a delay
+    }, 800);
+
+    return () => clearTimeout(timer); // Clear timeout to avoid memory leaks
+  }, []);
 
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0];
@@ -157,50 +166,58 @@ const PhotographAndDocument = () => {
           position: "relative",
         }}
       >
-        <div
-          className="text-white text-center px-3 py-1"
-          style={{
-            backgroundColor: "grey",
-            maxWidth: "fit-content",
-            fontSize: ".8rem",
-          }}
-        >
-          Kindly upload all relevant documents as mentioned in the checklist
-          item.
-        </div>
-        <div className="inputContainer">
-          <label htmlFor="documentType">
-            <span className="required">*</span>Document Type:
-          </label>
-          <select
-            name="documentType"
-            id="documentType"
-            className="col-6"
-            required
-            value={state.selectedDoc}
-            onChange={(e) =>
-              dispatch({ type: "SET_SELECTED_DOC", payload: e.target.value })
-            }
-            disabled={state.uploadDisabled}
-          >
-            <option value="" disabled>
-              [Select an Option]
-            </option>
-            {state.availableDocs.map((doc) => (
-              <option key={doc.value} value={doc.value}>
-                {doc.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <InputContainer
-          inputType="file"
-          required={true}
-          title={"Upload Attachment"}
-          onChange={handleFileChange}
-          ref={fileInputRef}
-          disabled={state.uploadDisabled}
-        ></InputContainer>
+        {loading && <SkeletonLoader length={2} />}
+        {!loading && (
+          <>
+            <div
+              className="text-white text-center px-3 py-1"
+              style={{
+                backgroundColor: "grey",
+                maxWidth: "fit-content",
+                fontSize: ".8rem",
+              }}
+            >
+              Kindly upload all relevant documents as mentioned in the checklist
+              item.
+            </div>
+            <div className="inputContainer">
+              <label htmlFor="documentType">
+                <span className="required">*</span>Document Type:
+              </label>
+              <select
+                name="documentType"
+                id="documentType"
+                className="col-6"
+                required
+                value={state.selectedDoc}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SET_SELECTED_DOC",
+                    payload: e.target.value,
+                  })
+                }
+                disabled={state.uploadDisabled}
+              >
+                <option value="" disabled>
+                  [Select an Option]
+                </option>
+                {state.availableDocs.map((doc) => (
+                  <option key={doc.value} value={doc.value}>
+                    {doc.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <InputContainer
+              inputType="file"
+              required={true}
+              title={"Upload Attachment"}
+              onChange={handleFileChange}
+              ref={fileInputRef}
+              disabled={state.uploadDisabled}
+            ></InputContainer>
+          </>
+        )}
         <div
           className="buttonContainer"
           style={{
