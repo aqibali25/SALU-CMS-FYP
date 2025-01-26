@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home/Home.jsx";
 import Faculty from "./pages/Faculty/Faculty.jsx";
@@ -16,9 +21,18 @@ import FatherInfo from "./components/AdmissionComp/FormComponents/FatherInfo.jsx
 import AcademicRecord from "./components/AdmissionComp/FormComponents/AcademicRecord.jsx";
 import PhotographAndDocument from "./components/AdmissionComp/FormComponents/PhotographAndDocument.jsx";
 import Loader from "./components/Loaders/Loader.jsx";
-import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
+// import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
 import { FormStatusProvider } from "./contexts/AdmissionFormContext.jsx";
 import { SignupContextProvider } from "./contexts/SignupContext.jsx";
+import FormHeaderCard from "./components/AdmissionComp/FormHeaderCard.jsx";
+import AdmissionGuide from "./components/AdmissionComp/FormComponents/AdmissionGuide.jsx";
+
+const FormLayout = () => (
+  <>
+    <FormHeaderCard />
+    <Outlet />
+  </>
+);
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -51,33 +65,43 @@ const App = () => {
             <Route path="SALU-CMS-FYP/" element={<Home />} />
             <Route path="SALU-CMS-FYP/faculty" element={<Faculty />} />
 
-            <Route path="SALU-CMS-FYP/admission-form" element={<Admission />}>
-              <Route index element={<FormStatusCards />}></Route>
-              <Route
-                path="program-of-study"
-                element={<ProgramSelectionForm />}
-              ></Route>
-              <Route
-                path="personal-information"
-                element={<PersonalInfo />}
-              ></Route>
-              <Route path="father-information" element={<FatherInfo />}></Route>
-              <Route
-                path="guardian-information"
-                element={<GuardianInfo />}
-              ></Route>
-              <Route path="academic-record" element={<AcademicRecord />} />
-              <Route
-                path="photograph-and-document"
-                element={<PhotographAndDocument />}
-              />
+            <Route path="SALU-CMS-FYP/admissions" element={<Admission />}>
+              <Route index element={<AdmissionGuide />} />
+              <Route path="form" element={<FormLayout />}>
+                <Route index element={<FormStatusCards />} />
+                <Route
+                  path="program-of-study"
+                  element={<ProgramSelectionForm />}
+                />
+                <Route path="personal-information" element={<PersonalInfo />} />
+                <Route
+                  path="father-information"
+                  element={<FatherInfo title={"father"} />}
+                />
+                <Route
+                  path="guardian-information"
+                  element={<FatherInfo title={"guardian"} />}
+                />
+                <Route
+                  path="academic-record-intermediate"
+                  element={<AcademicRecord title={"Intermediate"} />}
+                />
+                <Route
+                  path="academic-record-matric"
+                  element={<AcademicRecord title={"Matriculation"} />}
+                />
+                <Route
+                  path="photograph-and-document"
+                  element={<PhotographAndDocument />}
+                />
+              </Route>
             </Route>
 
             <Route path="SALU-CMS-FYP/about" element={<About />} />
             <Route path="SALU-CMS-FYP/login" element={<Login />} />
             <Route path="SALU-CMS-FYP/signup" element={<Signup />} />
           </Routes>
-          <Footer></Footer>
+          <Footer />
         </Router>
       </SignupContextProvider>
     </FormStatusProvider>

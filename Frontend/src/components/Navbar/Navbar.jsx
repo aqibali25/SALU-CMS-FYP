@@ -21,7 +21,7 @@ const Navbar = () => {
     { name: "Faculty", href: "SALU-CMS-FYP/faculty", className: "faculty" },
     {
       name: "Admission",
-      href: "SALU-CMS-FYP/admission-form",
+      href: "SALU-CMS-FYP/admissions",
       className: "admission",
     },
     { name: "About", href: "SALU-CMS-FYP/about", className: "about" },

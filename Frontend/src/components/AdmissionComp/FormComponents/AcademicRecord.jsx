@@ -4,7 +4,7 @@ import SkeletonLoader from "../SkeletonLoader"; // Import SkeletonLoader
 import InputContainer from "../InputContainer";
 import { useFormStatus } from "../../../contexts/AdmissionFormContext";
 
-const AcademicRecord = () => {
+const AcademicRecord = ({ title }) => {
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1949 },
@@ -20,7 +20,7 @@ const AcademicRecord = () => {
     totalMarks: "",
     marksObtained: "",
     grade: "A+",
-    percentage: "90%",
+    percentage: "",
   });
 
   const navigate = useNavigate();
@@ -32,6 +32,25 @@ const AcademicRecord = () => {
     const timer = setTimeout(() => setLoading(false), 800); // Simulate 800ms loading
     return () => clearTimeout(timer);
   }, []);
+
+  // Calculate percentage dynamically
+  useEffect(() => {
+    const { totalMarks, marksObtained } = formData;
+
+    if (totalMarks && marksObtained) {
+      const total = parseFloat(totalMarks);
+      const obtained = parseFloat(marksObtained);
+
+      if (!isNaN(total) && !isNaN(obtained) && total > 0) {
+        const percentage = ((obtained / total) * 100).toFixed(2) + "%";
+        setFormData((prev) => ({ ...prev, percentage }));
+      } else {
+        setFormData((prev) => ({ ...prev, percentage: "" })); // Clear percentage if invalid
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, percentage: "" })); // Clear percentage if either field is empty
+    }
+  }, [formData.totalMarks, formData.marksObtained]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -49,13 +68,31 @@ const AcademicRecord = () => {
     // Log the form data
     console.log("Form Data Submitted:", formData);
 
-    updateFormStatus("academicRecord", "Completed");
-    navigate("/SALU-CMS-FYP/admission-form");
+    title !== "Intermediate"
+      ? updateFormStatus("academicRecord", "Completed")
+      : null;
+
+    navigate(
+      `/SALU-CMS-FYP/admissions/form${
+        title === "Intermediate" ? "/academic-record-matric" : ""
+      }`
+    );
+    setFormData({
+      group: "",
+      degreeYear: "",
+      seatNo: "",
+      collegeName: "",
+      board: "",
+      totalMarks: "",
+      marksObtained: "",
+      grade: "A+",
+      percentage: "",
+    });
   };
 
   return (
     <div className="formConitainer p-4">
-      <h4>Degree Information (Intermediate)</h4>
+      <h4>Degree Information ({title})</h4>
 
       <form onSubmit={handleSubmit}>
         {loading ? (

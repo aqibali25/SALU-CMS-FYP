@@ -54,8 +54,7 @@ const PersonalInfo = () => {
 
     // Update the form status
     updateFormStatus("personalInformation", "Completed");
-    // Redirect user to /SALU-CMS-FYP/admission-form
-    navigate("/SALU-CMS-FYP/admission-form");
+    navigate("/SALU-CMS-FYP/admissions/form");
   };
 
   return (

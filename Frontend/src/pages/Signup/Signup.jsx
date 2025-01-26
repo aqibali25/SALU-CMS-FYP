@@ -101,7 +101,7 @@ const Signup = () => {
 
       if (response.ok) {
         localStorage.setItem("isLoggedIn", "true");
-        navigate("/SALU-CMS-FYP/admission-form");
+        navigate("SALU-CMS-FYP/admissions");
       } else {
         alert(data.message || "Signup failed!");
       }
@@ -186,6 +186,7 @@ const Signup = () => {
                 required
               />
               <FontAwesomeIcon
+                className="text-white"
                 icon={passwordVisible ? faEye : faEyeSlash}
                 onClick={togglePasswordVisibility}
                 style={{
@@ -212,6 +213,7 @@ const Signup = () => {
                 required
               />
               <FontAwesomeIcon
+                className="text-white"
                 icon={confirmPasswordVisible ? faEye : faEyeSlash}
                 onClick={toggleConfirmPasswordVisibility}
                 style={{

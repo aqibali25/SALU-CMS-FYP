@@ -1,17 +1,18 @@
 import React from "react";
 import { Card } from "react-bootstrap";
 import "./CourseCard.css"; // Import the CSS file
+import { Link } from "react-router-dom";
 
-const CourseCard = ({ image, title, guideLink }) => {
+const CourseCard = ({ image, title }) => {
   return (
     <Card className="custom-card shadow-sm mb-4">
       <Card.Img variant="top" src={image} alt={title} />
       <Card.Body>
         <Card.Title className="cardTitle">{title}</Card.Title>
         <Card.Text>
-          <a href={guideLink} className="course-link">
+          <Link to={"/SALU-CMS-FYP/admissions"} className="course-link">
             SEE COURSE GUIDE &rarr;
-          </a>
+          </Link>
         </Card.Text>
       </Card.Body>
     </Card>

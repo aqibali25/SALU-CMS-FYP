@@ -81,7 +81,7 @@ const Login = () => {
       // Set the user as logged in directly
       localStorage.setItem("isLoggedIn", "true");
       // Navigate to the admission page
-      navigate("/SALU-CMS-FYP/admission-form");
+      navigate("/SALU-CMS-FYP/admissions");
     } else {
       try {
         const response = await fetch("http://localhost:8000/api/login", {
@@ -97,7 +97,7 @@ const Login = () => {
         if (response.ok) {
           localStorage.setItem("isLoggedIn", "true");
           // Navigate to the admission page
-          navigate("/SALU-CMS-FYP/admission-form");
+          navigate("/SALU-CMS-FYP/admissions");
         } else {
           alert("Invalid Credentials.");
           setLoginFormData({ cnic: "", password: "" });
@@ -192,10 +192,10 @@ const Login = () => {
                   required
                 />
                 <FontAwesomeIcon
+                  className="text-white"
                   icon={passwordVisible ? faEye : faEyeSlash} // Show 'eye' for visible, 'eye-slash' for hidden
                   onClick={togglePasswordVisibility}
                   style={{
-                    color: "white",
                     position: "absolute",
                     right: "40px",
                     cursor: "pointer",

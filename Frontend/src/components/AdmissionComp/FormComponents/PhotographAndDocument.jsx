@@ -153,7 +153,7 @@ const PhotographAndDocument = () => {
     }, 2000);
 
     updateFormStatus("photographAndDocument", "Completed");
-    navigate("/SALU-CMS-FYP/admission-form");
+    navigate("/SALU-CMS-FYP/admissions/form");
   };
 
   return (

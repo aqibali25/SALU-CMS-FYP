@@ -75,7 +75,7 @@ const ProgramSelectionForm = () => {
     console.log("Form Data:", choices);
 
     // Redirect user to /SALU-CMS-FYP/admission-form
-    navigate("/SALU-CMS-FYP/admission-form");
+    navigate("/SALU-CMS-FYP/admissions/form");
   };
 
   return (

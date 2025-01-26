@@ -21,17 +21,25 @@ export const FormStatusProvider = ({ children }) => {
     },
   });
 
+  // Predefined weights for each form
+  const formWeights = {
+    programOfStudy: 13,
+    personalInformation: 15,
+    fatherGuardianInformation: 25,
+    academicRecord: 23,
+    photographAndDocument: 24,
+  };
+
   // Simulated fetch function to get initial data from the database
   const fetchFormStatusFromDB = async () => {
-    // Replace this mock data with an API call to your backend
     const dataFromDB = await Promise.resolve({
-      percentage: 60,
+      percentage: 0,
       forms: {
-        programOfStudy: "Completed",
-        personalInformation: "Completed",
+        programOfStudy: "Pending",
+        personalInformation: "Pending",
         fatherGuardianInformation: "Pending",
         academicRecord: "Pending",
-        photographAndDocument: "Completed",
+        photographAndDocument: "Pending",
       },
     });
 
@@ -46,11 +54,18 @@ export const FormStatusProvider = ({ children }) => {
   const updateFormStatus = async (formName, status) => {
     setFormStatus((prev) => {
       const updatedForms = { ...prev.forms, [formName]: status };
-      const completedForms = Object.values(updatedForms).filter(
-        (status) => status === "Completed"
-      ).length;
-      const percentage =
-        (completedForms / Object.keys(updatedForms).length) * 100;
+
+      // Calculate the percentage based on completed forms and their weights
+      const completedPercentage = Object.entries(updatedForms).reduce(
+        (total, [name, currentStatus]) => {
+          return currentStatus === "Completed"
+            ? total + formWeights[name]
+            : total;
+        },
+        0
+      );
+
+      const percentage = parseFloat(completedPercentage.toFixed(1)); // Limit to 1 decimal place
 
       // Simulated save function to update the database
       saveFormStatusToDB({ forms: updatedForms, percentage });
@@ -72,6 +87,7 @@ export const FormStatusProvider = ({ children }) => {
       status: formStatus.forms.programOfStudy,
       bgColor:
         formStatus.forms.programOfStudy === "Completed" ? "#E9B82B" : "#929292",
+      url: "program-of-study",
     },
     {
       title: "Personal Information",
@@ -81,6 +97,7 @@ export const FormStatusProvider = ({ children }) => {
         formStatus.forms.personalInformation === "Completed"
           ? "#E9B82B"
           : "#929292",
+      url: "personal-information",
     },
     {
       title: "Father / Guardian Information",
@@ -90,6 +107,7 @@ export const FormStatusProvider = ({ children }) => {
         formStatus.forms.fatherGuardianInformation === "Completed"
           ? "#E9B82B"
           : "#929292",
+      url: "father-information",
     },
     {
       title: "Academic Record",
@@ -97,6 +115,7 @@ export const FormStatusProvider = ({ children }) => {
       status: formStatus.forms.academicRecord,
       bgColor:
         formStatus.forms.academicRecord === "Completed" ? "#E9B82B" : "#929292",
+      url: "academic-record-intermediate",
     },
     {
       title: "Photograph And Document",
@@ -106,6 +125,7 @@ export const FormStatusProvider = ({ children }) => {
         formStatus.forms.photographAndDocument === "Completed"
           ? "#E9B82B"
           : "#929292",
+      url: "photograph-and-document",
     },
   ];
 

@@ -2,16 +2,16 @@ import "../../styles/FormStatusCard.css";
 import { FaPencilAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-const FormStatusCard = ({ title, icon, status, bgColor }) => {
+const FormStatusCard = ({ title, icon, status, bgColor, url }) => {
   const navigate = useNavigate(); // Initialize useNavigate
 
   // Handle click for navigation
   const handleStatusClick = () => {
-    let formattedTitle = title.replace(/\s+/g, "-").toLowerCase();
-    if (formattedTitle === "father-/-guardian-information") {
-      formattedTitle = "father-information";
-    }
-    navigate(`/SALU-CMS-FYP/admission-form/${formattedTitle}`);
+    // let formattedTitle = title.replace(/\s+/g, "-").toLowerCase();
+    // if (formattedTitle === "father-/-guardian-information") {
+    //   formattedTitle = "father-information";
+    // }
+    navigate(`/SALU-CMS-FYP/admissions/form/${url}`);
   };
 
   return (

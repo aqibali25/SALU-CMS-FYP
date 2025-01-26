@@ -11,17 +11,14 @@ const courses = [
   {
     title: "BS(Computer Science)",
     image: CSImage,
-    guideLink: "/SALU-CMS-FYP/admissionForm",
   },
   {
     title: "BS(Business Administration)",
     image: BBAImage,
-    guideLink: "/SALU-CMS-FYP/admissionForm",
   },
   {
     title: "BS(English Languages & Literature)",
     image: EnglishImages,
-    guideLink: "/SALU-CMS-FYP/admissionForm",
   },
 ];
 
@@ -33,12 +30,7 @@ const Courses = () => {
         {courses.map((course, index) => (
           <Col key={index} md={4} className="mb-4">
             {" "}
-            {/* Add mb-4 for bottom margin */}
-            <CourseCard
-              title={course.title}
-              image={course.image}
-              guideLink={course.guideLink}
-            />
+            <CourseCard title={course.title} image={course.image} />
           </Col>
         ))}
       </Row>

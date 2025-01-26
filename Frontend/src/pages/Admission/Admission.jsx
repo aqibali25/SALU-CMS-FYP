@@ -9,7 +9,6 @@ import FormSideBar from "../../components/AdmissionComp/FormSideBar";
 const Admission = () => {
   // const { signupData } = useContext(SignupContext); // Access signup data from context
   const navigate = useNavigate();
-  const percentage = 10;
 
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
@@ -27,7 +26,6 @@ const Admission = () => {
     <section className="admissionSection">
       <FormSideBar />
       <div className="admissionform">
-        <FormHeaderCard percentage={percentage} />
         <Outlet></Outlet>
       </div>
     </section>
