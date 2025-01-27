@@ -2,15 +2,16 @@ import React from "react";
 import FatherAndGuardianInfo from "../FatherAndGuardianInfo";
 import { useFormStatus } from "../../../contexts/AdmissionFormContext";
 
-const FatherInfo = () => {
+const GuardianInfo = () => {
   const { updateFormStatus } = useFormStatus();
 
   return (
     <FatherAndGuardianInfo
-      title="Father"
-      redirectPath="/SALU-CMS-FYP/admissions/form/guardian-information"
+      title="Guardian"
+      updateFormStatus={updateFormStatus}
+      redirectPath="/SALU-CMS-FYP/admissions/form"
     />
   );
 };
 
-export default FatherInfo;
+export default GuardianInfo;

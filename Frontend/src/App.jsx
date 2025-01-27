@@ -21,11 +21,11 @@ import FatherInfo from "./components/AdmissionComp/FormComponents/FatherInfo.jsx
 import AcademicRecord from "./components/AdmissionComp/FormComponents/AcademicRecord.jsx";
 import PhotographAndDocument from "./components/AdmissionComp/FormComponents/PhotographAndDocument.jsx";
 import Loader from "./components/Loaders/Loader.jsx";
-// import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
 import { FormStatusProvider } from "./contexts/AdmissionFormContext.jsx";
 import { SignupContextProvider } from "./contexts/SignupContext.jsx";
 import FormHeaderCard from "./components/AdmissionComp/FormHeaderCard.jsx";
 import AdmissionGuide from "./components/AdmissionComp/FormComponents/AdmissionGuide.jsx";
+import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
 
 const FormLayout = () => (
   <>
@@ -74,14 +74,8 @@ const App = () => {
                   element={<ProgramSelectionForm />}
                 />
                 <Route path="personal-information" element={<PersonalInfo />} />
-                <Route
-                  path="father-information"
-                  element={<FatherInfo title={"father"} />}
-                />
-                <Route
-                  path="guardian-information"
-                  element={<FatherInfo title={"guardian"} />}
-                />
+                <Route path="father-information" element={<FatherInfo />} />
+                <Route path="guardian-information" element={<GuardianInfo />} />
                 <Route
                   path="academic-record-intermediate"
                   element={<AcademicRecord title={"Intermediate"} />}
