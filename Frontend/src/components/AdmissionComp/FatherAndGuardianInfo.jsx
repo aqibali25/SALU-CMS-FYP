@@ -56,7 +56,7 @@ const FatherAndGuardianInfo = ({ title, updateFormStatus, redirectPath }) => {
   };
 
   return (
-    <div className="formConitainer p-4">
+    <div className="margin-left-70 formConitainer p-4">
       <h4>{title} Information</h4>
       <form onSubmit={handleSubmit}>
         {loading ? (

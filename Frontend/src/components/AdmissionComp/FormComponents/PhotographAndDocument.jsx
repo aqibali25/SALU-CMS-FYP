@@ -157,7 +157,7 @@ const PhotographAndDocument = () => {
   };
 
   return (
-    <div className="formConitainer p-4">
+    <div className="margin-left-70 formConitainer p-4">
       <h4>Photograph And Document</h4>
       <form
         onSubmit={handleUpload}

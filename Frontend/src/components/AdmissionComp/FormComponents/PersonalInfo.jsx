@@ -58,7 +58,7 @@ const PersonalInfo = () => {
   };
 
   return (
-    <div className="formConitainer p-4">
+    <div className="margin-left-70 formConitainer p-4">
       <h4>Personal Information</h4>
       <form onSubmit={handleSubmit}>
         {loading && <SkeletonLoader length={9} />} {/* Pass length as 9 */}

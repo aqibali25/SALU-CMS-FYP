@@ -9,14 +9,15 @@ import {
   faCog,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
+import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import "../../styles/FormSideBar.css";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0); // Set initial active index to 0 for Home
+  const [activeIndex, setActiveIndex] = useState(0);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const navigate = useNavigate(); // For programmatic navigation
+  const location = useLocation(); // Access the current location object
 
   useEffect(() => {
     // Update screen width on resize
@@ -40,7 +41,18 @@ const Sidebar = () => {
     if (screenWidth <= 880) {
       setIsCollapsed(true);
     }
-  }, [screenWidth]); // Re-run this whenever screenWidth changes
+  }, [screenWidth]);
+
+  // Set the active index based on the current URL path
+  useEffect(() => {
+    if (location.pathname === "/SALU-CMS-FYP/admissions") {
+      setActiveIndex(0);
+    } else if (location.pathname === "/SALU-CMS-FYP/admissions/form") {
+      setActiveIndex(1);
+    } else if (location.pathname === "/SALU-CMS-FYP/admissions/sittings") {
+      setActiveIndex(4);
+    }
+  }, [location]);
 
   const toggleSidebar = () => {
     if (screenWidth > 880) {

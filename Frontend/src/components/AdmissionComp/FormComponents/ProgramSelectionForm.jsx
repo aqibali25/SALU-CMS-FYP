@@ -80,7 +80,7 @@ const ProgramSelectionForm = () => {
 
   return (
     <div
-      className="program-selection-form formConitainer p-4"
+      className="margin-left-70 program-selection-form formConitainer p-4"
       style={{ minHeight: "200px" }}
     >
       <h4>Program of Study</h4>

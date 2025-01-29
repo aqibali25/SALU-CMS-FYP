@@ -91,7 +91,7 @@ const AcademicRecord = ({ title }) => {
   };
 
   return (
-    <div className="formConitainer p-4">
+    <div className="margin-left-70 formConitainer p-4">
       <h4>Degree Information ({title})</h4>
 
       <form onSubmit={handleSubmit}>

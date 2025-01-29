@@ -12,7 +12,7 @@ const FormHeaderCard = () => {
       <div className="formHeaderInner formHeaderIcon mb-3 mb-md-0">
         <i className="fa-solid fa-user fa-4x"></i>
       </div>
-      <div
+      {/* <div
         className="formHeaderInner d-flex flex-column align-items-start text-center text-md-start mb-3 mb-md-0"
         style={{ maxWidth: "250px" }}
       >
@@ -26,7 +26,7 @@ const FormHeaderCard = () => {
         <p>
           <label>Phone No:</label> {"" || "-----------"}
         </p>
-      </div>
+      </div> */}
       <div
         className="formHeaderInner d-flex flex-column align-items-start text-center text-md-start mb-3 mb-md-0"
         style={{ maxWidth: "230px" }}

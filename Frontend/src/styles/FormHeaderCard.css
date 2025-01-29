@@ -1,6 +1,7 @@
 .formHeaderCard {
   min-height: 150px;
   width: 100%;
+
   padding: 20px;
   display: flex;
   justify-content: space-between;
@@ -34,6 +35,7 @@
 }
 @media (max-width: 865px) {
   .formHeaderCard {
+    height: 90svh;
     flex-direction: column;
     gap: 20px;
   }
