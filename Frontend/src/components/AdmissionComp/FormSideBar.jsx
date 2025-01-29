@@ -2,29 +2,30 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
-  faHome,
-  faUser,
-  faBell,
-  faQuestionCircle,
+  faInfoCircle,
+  faFileSignature,
+  faUniversity,
+  faClipboardList,
+  faMoneyCheckAlt,
+  faBook,
+  faFileAlt,
   faCog,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useLocation
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../../styles/FormSideBar.css";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const navigate = useNavigate(); // For programmatic navigation
-  const location = useLocation(); // Access the current location object
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    // Update screen width on resize
     const handleResize = () => {
       setScreenWidth(window.innerWidth);
     };
-
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -37,26 +38,24 @@ const Sidebar = () => {
       setActiveIndex(parseInt(savedActiveIndex));
     }
 
-    // Automatically add the collapsed class when the screen size is <= 865px
     if (screenWidth <= 880) {
       setIsCollapsed(true);
     }
   }, [screenWidth]);
 
-  // Set the active index based on the current URL path
   useEffect(() => {
     if (location.pathname === "/SALU-CMS-FYP/admissions") {
       setActiveIndex(0);
     } else if (location.pathname === "/SALU-CMS-FYP/admissions/form") {
       setActiveIndex(1);
     } else if (location.pathname === "/SALU-CMS-FYP/admissions/sittings") {
-      setActiveIndex(4);
+      setActiveIndex(7); // Active index for Sittings
     }
   }, [location]);
 
   const toggleSidebar = () => {
     if (screenWidth > 880) {
-      setIsCollapsed(!isCollapsed); // Toggle the collapsed class only if screenWidth > 865px
+      setIsCollapsed(!isCollapsed);
     }
   };
 
@@ -66,8 +65,8 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear all localStorage items
-    navigate("/SALU-CMS-FYP/login"); // Redirect to login page
+    localStorage.clear();
+    navigate("/SALU-CMS-FYP/login");
   };
 
   return (
@@ -88,7 +87,7 @@ const Sidebar = () => {
           className={`menu-item ${activeIndex === 0 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(0)}
         >
-          <FontAwesomeIcon icon={faQuestionCircle} size="lg" />
+          <FontAwesomeIcon icon={faInfoCircle} size="lg" />
           {!isCollapsed && <span>Instructions</span>}
         </Link>
         <Link
@@ -96,32 +95,56 @@ const Sidebar = () => {
           className={`menu-item ${activeIndex === 1 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(1)}
         >
-          <FontAwesomeIcon icon={faUser} size="lg" />
-          {!isCollapsed && <span>Admission Form</span>}
+          <FontAwesomeIcon icon={faFileSignature} size="lg" />
+          {!isCollapsed && <span>Application Form</span>}
         </Link>
         <Link
           to="#"
           className={`menu-item ${activeIndex === 2 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(2)}
         >
-          <FontAwesomeIcon icon={faBell} size="lg" />
-          {!isCollapsed && <span>Notification</span>}
+          <FontAwesomeIcon icon={faUniversity} size="lg" />
+          {!isCollapsed && <span>Eligibility Criteria</span>}
         </Link>
         <Link
           to="#"
           className={`menu-item ${activeIndex === 3 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(3)}
         >
-          <FontAwesomeIcon icon={faHome} size="lg" />
-          {!isCollapsed && <span>Home</span>}
+          <FontAwesomeIcon icon={faClipboardList} size="lg" />
+          {!isCollapsed && <span>Admission Procedure</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/sittings"
+          to="#"
           className={`menu-item ${activeIndex === 4 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(4)}
         >
+          <FontAwesomeIcon icon={faMoneyCheckAlt} size="lg" />
+          {!isCollapsed && <span>Fee Structure</span>}
+        </Link>
+        <Link
+          to="#"
+          className={`menu-item ${activeIndex === 5 ? "active" : ""}`}
+          onClick={() => handleMenuItemClick(5)}
+        >
+          <FontAwesomeIcon icon={faBook} size="lg" />
+          {!isCollapsed && <span>Prospectus</span>}
+        </Link>
+        <Link
+          to="#"
+          className={`menu-item ${activeIndex === 6 ? "active" : ""}`}
+          onClick={() => handleMenuItemClick(6)}
+        >
+          <FontAwesomeIcon icon={faFileAlt} size="lg" />
+          {!isCollapsed && <span>Sample Papers</span>}
+        </Link>
+        <Link
+          to="/SALU-CMS-FYP/admissions/sittings"
+          className={`menu-item ${activeIndex === 7 ? "active" : ""}`}
+          onClick={() => handleMenuItemClick(7)}
+        >
           <FontAwesomeIcon icon={faCog} size="lg" />
-          {!isCollapsed && <span>Settings</span>}
+          {!isCollapsed && <span>Sittings</span>}
         </Link>
         <hr />
         {/* Logout Button */}

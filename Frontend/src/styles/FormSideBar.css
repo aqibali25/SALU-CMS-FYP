@@ -29,7 +29,7 @@
   gap: 20px;
   padding: 18px 20px;
   font-size: 18px;
-  color: #5c5c5c;
+  color: #343434;
   border-radius: 12px;
   text-decoration: none; /* Remove underline for links */
   transition: all 0.3s ease;
@@ -38,7 +38,7 @@
 
 .menu-item.active {
   background-color: #e5b300b7;
-  color: #000;
+  color: #000000;
 }
 
 .menu-item.active svg {
@@ -46,7 +46,11 @@
 }
 
 .menu-item:hover {
-  color: #000000 !important;
+  color: #e5b300 !important;
+}
+.menu-item.active * {
+  transition: all 0.5s ease;
+  color: #ffffff !important;
 }
 
 .menu-icon {
@@ -74,7 +78,7 @@
 }
 
 .logout-button:hover {
-  color: #000000 !important;
+  color: #e5b300 !important;
 }
 
 .sidebar-container.collapsed .menu-item span,
@@ -84,6 +88,6 @@
 }
 @media (max-width: 880px) {
   .sidebar-container {
-    max-height: 90svh;
+    max-height: 130svh;
   }
 }

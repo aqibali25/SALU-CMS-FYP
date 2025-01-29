@@ -35,7 +35,7 @@
 }
 @media (max-width: 865px) {
   .formHeaderCard {
-    height: 90svh;
+    height: 130svh;
     flex-direction: column;
     gap: 20px;
   }
