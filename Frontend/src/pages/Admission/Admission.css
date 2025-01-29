@@ -22,10 +22,11 @@
 /* Media query for responsiveness */
 @media (max-width: 865px) {
   .admissionSection {
-    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
   }
   .admissionform {
-    width: 100%;
+    width: 80%;
   }
 }
 .formConitainer {
@@ -107,4 +108,9 @@ button.btn-warning:hover {
 .admissionform input,
 .admissionform select {
   color: #2a2a2a;
+}
+@media (max-width: 375px) {
+  .formConitainer h4 {
+    font-size: 1rem !important;
+  }
 }

@@ -1,21 +1,83 @@
-.formSidebar {
-  position: sticky;
-  /* top: 20px;
-  left: 20px; */
-  width: 200px;
-  min-height: 80vh;
-  z-index: 3;
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 280px;
+  min-height: 90vh;
+  background-color: #f0f8f5;
+  position: relative;
+  transition: all 0.4s ease;
 }
 
-@media (max-width: 865px) {
-  .formSidebar {
-    display: none;
-    /* position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: auto;
-    min-height: auto;
-    margin: 20px 0;  */
-  }
+.sidebar-container.collapsed {
+  width: 60px;
+}
+
+.menu {
+  margin: 40px 0 0 0;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.menu-item,
+.menu-icon {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 20px;
+  font-size: 18px;
+  color: #5c5c5c;
+  border-radius: 12px;
+  text-decoration: none; /* Remove underline for links */
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.menu-item.active {
+  background-color: #e5b300b7;
+  color: #000;
+}
+
+.menu-item.active svg {
+  color: #000;
+}
+
+.menu-item:hover {
+  color: #000000 !important;
+}
+
+.menu-icon {
+  position: absolute;
+  top: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.menu hr {
+  border: none;
+  border-top: 2px solid #cccccc;
+  margin: 20px;
+}
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 25px 20px;
+  font-size: 18px;
+  color: #333;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  color: #000000 !important;
+}
+
+.sidebar-container.collapsed .menu-item span,
+.sidebar-container.collapsed .logout-button span {
+  opacity: 0;
+  visibility: hidden;
 }

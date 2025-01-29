@@ -24,8 +24,9 @@ import Loader from "./components/Loaders/Loader.jsx";
 import { FormStatusProvider } from "./contexts/AdmissionFormContext.jsx";
 import { SignupContextProvider } from "./contexts/SignupContext.jsx";
 import FormHeaderCard from "./components/AdmissionComp/FormHeaderCard.jsx";
-import AdmissionGuide from "./components/AdmissionComp/FormComponents/AdmissionGuide.jsx";
+import AdmissionGuide from "./components/AdmissionComp/AdmissionGuide.jsx";
 import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
+import UserSittings from "./components/AdmissionComp/UserSittings.jsx";
 
 const FormLayout = () => (
   <>
@@ -89,6 +90,7 @@ const App = () => {
                   element={<PhotographAndDocument />}
                 />
               </Route>
+              <Route path="sittings" element={<UserSittings />} />
             </Route>
 
             <Route path="SALU-CMS-FYP/about" element={<About />} />
