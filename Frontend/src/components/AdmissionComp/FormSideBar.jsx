@@ -78,7 +78,7 @@ const Sidebar = () => {
       <div className="menu">
         {/* Menu Icon */}
         <span onClick={toggleSidebar} className="menu-icon">
-          <FontAwesomeIcon icon={faBars} size="lg" />
+          <FontAwesomeIcon icon={faBars} size="2x" />
         </span>
         <hr />
         {/* Menu Items */}
@@ -99,7 +99,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Application Form</span>}
         </Link>
         <Link
-          to="#"
+          to="/SALU-CMS-FYP/admissions/eligibility-criteria"
           className={`menu-item ${activeIndex === 2 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(2)}
         >
@@ -107,7 +107,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Eligibility Criteria</span>}
         </Link>
         <Link
-          to="#"
+          to="/SALU-CMS-FYP/admissions/admission-procedure"
           className={`menu-item ${activeIndex === 3 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(3)}
         >
@@ -115,7 +115,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Admission Procedure</span>}
         </Link>
         <Link
-          to="#"
+          to="/SALU-CMS-FYP/admissions/fee-structure"
           className={`menu-item ${activeIndex === 4 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(4)}
         >
@@ -123,7 +123,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Fee Structure</span>}
         </Link>
         <Link
-          to="#"
+          to="/SALU-CMS-FYP/admissions/prospectus"
           className={`menu-item ${activeIndex === 5 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(5)}
         >
@@ -131,7 +131,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Prospectus</span>}
         </Link>
         <Link
-          to="#"
+          to="/SALU-CMS-FYP/admissions/sample-papers"
           className={`menu-item ${activeIndex === 6 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(6)}
         >

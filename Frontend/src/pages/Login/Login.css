@@ -59,14 +59,17 @@
   padding: 15px;
   font-size: 16px;
 }
-
+.noBorderRadius {
+  border: 2px solid #dfdfdf !important;
+  border-radius: 0 !important;
+}
 .form-input::placeholder {
   font-size: 0.8rem !important;
-  color: #c2c2c2 !important;
+  color: #d6d6d6 !important;
 }
 
 .form-input:focus {
-  border: 1px solid #e5b300 !important;
+  border: 2px solid #e5b300 !important;
   box-shadow: none !important;
 }
 

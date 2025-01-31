@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 
 const InputContainer = forwardRef(
   (
@@ -12,6 +12,7 @@ const InputContainer = forwardRef(
       onChange,
       placeholder = "",
       disabled,
+      width = "70%",
     },
     ref
   ) => {
@@ -22,6 +23,7 @@ const InputContainer = forwardRef(
           {title}:
         </label>
         <input
+          style={{ width: width }}
           ref={ref} // Attach the ref here
           value={value}
           type={inputType}

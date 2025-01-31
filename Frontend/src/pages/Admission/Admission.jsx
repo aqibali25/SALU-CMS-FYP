@@ -1,9 +1,12 @@
 import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./Admission.css";
 import FormSideBar from "../../components/AdmissionComp/FormSideBar";
+import AdmissionHeader from "../../components/AdmissionComp/otherAdmissionComp/AdmissionHeader";
 
 const Admission = () => {
+  // Get the current URL path
+  const currentPathname = useLocation().pathname;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,7 +21,13 @@ const Admission = () => {
     <section className="admissionSection">
       <FormSideBar />
       <div className="admissionform">
-        <Outlet></Outlet>
+        {/* Check if the current path includes "SALU-CMS-FYP/admissions/form" */}
+        {currentPathname.includes("/admissions/form") ? (
+          <></>
+        ) : (
+          <AdmissionHeader />
+        )}
+        <Outlet />
       </div>
     </section>
   );

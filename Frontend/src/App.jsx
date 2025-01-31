@@ -5,6 +5,7 @@ import {
   Route,
   Outlet,
 } from "react-router-dom";
+
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home/Home.jsx";
 import Faculty from "./pages/Faculty/Faculty.jsx";
@@ -14,19 +15,31 @@ import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import "./App.css";
+
+// Import components and forms
 import ProgramSelectionForm from "./components/AdmissionComp/FormComponents/ProgramSelectionForm.jsx";
 import PersonalInfo from "./components/AdmissionComp/FormComponents/PersonalInfo.jsx";
 import FormStatusCards from "./components/AdmissionComp/FormStatusCards.jsx";
 import FatherInfo from "./components/AdmissionComp/FormComponents/FatherInfo.jsx";
+import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
 import AcademicRecord from "./components/AdmissionComp/FormComponents/AcademicRecord.jsx";
 import PhotographAndDocument from "./components/AdmissionComp/FormComponents/PhotographAndDocument.jsx";
+
 import Loader from "./components/Loaders/Loader.jsx";
+
+// Import context providers
 import { FormStatusProvider } from "./contexts/AdmissionFormContext.jsx";
 import { SignupContextProvider } from "./contexts/SignupContext.jsx";
+
+// Import other components and forms
 import FormHeaderCard from "./components/AdmissionComp/FormHeaderCard.jsx";
-import AdmissionGuide from "./components/AdmissionComp/AdmissionGuide.jsx";
-import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
-import UserSittings from "./components/AdmissionComp/UserSittings.jsx";
+import AdmissionGuide from "./components/AdmissionComp/otherAdmissionComp/AdmissionGuide.jsx";
+import UserSittings from "./components/AdmissionComp/otherAdmissionComp/UserSittings.jsx";
+import EligibilityCriteria from "./components/AdmissionComp/otherAdmissionComp/EligibilityCriteria.jsx";
+import AdmissionProcedure from "./components/AdmissionComp/otherAdmissionComp/AdmissionProcedure.jsx";
+import FeeStructure from "./components/AdmissionComp/otherAdmissionComp/FeeStructure.jsx";
+import Prospectus from "./components/AdmissionComp/otherAdmissionComp/Prospectus.jsx";
+import SamplePapers from "./components/AdmissionComp/otherAdmissionComp/SamplePapers.jsx";
 
 const FormLayout = () => (
   <>
@@ -90,6 +103,17 @@ const App = () => {
                   element={<PhotographAndDocument />}
                 />
               </Route>
+              <Route
+                path="eligibility-criteria"
+                element={<EligibilityCriteria />}
+              />
+              <Route
+                path="admission-procedure"
+                element={<AdmissionProcedure />}
+              />
+              <Route path="fee-structure" element={<FeeStructure />} />
+              <Route path="prospectus" element={<Prospectus />} />
+              <Route path="sample-papers" element={<SamplePapers />} />
               <Route path="sittings" element={<UserSittings />} />
             </Route>
 

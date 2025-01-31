@@ -22,6 +22,7 @@ const Signup = () => {
   const [isPasswordMatch, setIsPasswordMatch] = useState(true);
   const [isCnicValid, setIsCnicValid] = useState(true);
   const [isPasswordStrong, setIsPasswordStrong] = useState(true);
+  const [isEmailValid, setIsEmailValid] = useState(true); // Track email validity
 
   useEffect(() => {
     document.title = "Signup | SALU Ghotki";
@@ -44,6 +45,15 @@ const Signup = () => {
 
       const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
       setIsCnicValid(cnicPattern.test(formattedCnic));
+    } else if (name === "email") {
+      setSignupFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+
+      // Validate email format
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      setIsEmailValid(emailPattern.test(value));
     } else {
       setSignupFormData((prevData) => ({
         ...prevData,
@@ -90,6 +100,11 @@ const Signup = () => {
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
+    if (!isEmailValid) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:8000/signup", {
         method: "POST",
@@ -142,26 +157,29 @@ const Signup = () => {
             <div className="form-group mb-3">
               <input
                 type="text"
-                className="form-control form-input"
+                className="noBorderRadius form-control form-input"
                 placeholder="CNIC (#####-#######-#)"
-                name="cnic"
+                name="username" // Changed to "username"
                 value={signupFormData.cnic}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
                 maxLength={15}
                 style={{ border: !isCnicValid ? "2px solid red" : "" }}
-                autoComplete="off"
                 required
               />
             </div>
+
+            {/* Email Input */}
             <div className="form-group mb-3">
               <input
                 type="email"
-                className="form-control form-input"
+                className="noBorderRadius form-control form-input"
                 placeholder="Email Address"
-                name="email"
+                name="form-email"
                 value={signupFormData.email}
                 onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                style={{ border: !isEmailValid ? "2px solid red" : "" }}
                 autoComplete="off"
                 required
               />
@@ -170,7 +188,7 @@ const Signup = () => {
             <div className="form-group mb-3">
               <input
                 type={passwordVisible ? "text" : "password"}
-                className="form-control form-input"
+                className="noBorderRadius form-control form-input"
                 placeholder="Password"
                 name="password"
                 value={signupFormData.password}
@@ -201,7 +219,7 @@ const Signup = () => {
             <div className="form-group mb-3">
               <input
                 type={confirmPasswordVisible ? "text" : "password"}
-                className="form-control form-input"
+                className="noBorderRadius form-control form-input"
                 placeholder="Confirm Password"
                 name="confirmPassword"
                 value={signupFormData.confirmPassword}
@@ -224,9 +242,14 @@ const Signup = () => {
               />
             </div>
 
-            <button type="submit" className="btn btn-warning w-100">
-              Register
-            </button>
+            <div className="buttonContainer w-100">
+              <button
+                type="submit"
+                className="button buttonFilled text-white w-100"
+              >
+                Register
+              </button>
+            </div>
           </form>
 
           <div className="footer mt-4 text-white">

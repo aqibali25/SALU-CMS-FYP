@@ -73,16 +73,16 @@ button.btn-warning:hover {
   background-color: #f9f9f9;
 }
 .inputContainer {
-  align-items: start !important;
+  align-items: center !important;
   justify-content: start !important;
 }
 .admissionform select {
   max-width: 40% !important;
 }
-.admissionform input {
+/* .admissionform input {
   min-width: 70%;
   max-width: 70%;
-}
+} */
 
 .admissionform select option:first-child {
   color: #a5a5a5;

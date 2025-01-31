@@ -153,7 +153,7 @@ const Login = () => {
               <div className="form-group mb-3">
                 <input
                   type="text"
-                  className="form-control form-input"
+                  className="noBorderRadius form-control form-input"
                   placeholder="CNIC (#####-#######-#)"
                   name="cnic" // Name for identification
                   value={loginFormData.cnic} // Access CNIC from loginFormData
@@ -184,7 +184,7 @@ const Login = () => {
               <div className="form-group mb-3">
                 <input
                   type={passwordVisible ? "text" : "password"}
-                  className="form-control form-input"
+                  className="noBorderRadius form-control form-input"
                   placeholder="Enter Password"
                   name="password" // Name for identification
                   value={loginFormData.password} // Access password from loginFormData
@@ -209,9 +209,14 @@ const Login = () => {
               >
                 Forgot Password
               </a>
-              <button type="submit" className="btn btn-warning w-100">
-                Login
-              </button>
+              <div className="buttonContainer w-100 mt-3">
+                <button
+                  type="submit"
+                  className="button buttonFilled text-white w-100"
+                >
+                  Register
+                </button>
+              </div>
             </form>
 
             {/* Footer */}
