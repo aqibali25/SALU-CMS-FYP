@@ -214,7 +214,7 @@ const Login = () => {
                   type="submit"
                   className="button buttonFilled text-white w-100"
                 >
-                  Register
+                  Login
                 </button>
               </div>
             </form>

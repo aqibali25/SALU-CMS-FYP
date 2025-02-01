@@ -48,8 +48,22 @@ const Sidebar = () => {
       setActiveIndex(0);
     } else if (location.pathname === "/SALU-CMS-FYP/admissions/form") {
       setActiveIndex(1);
-    } else if (location.pathname === "/SALU-CMS-FYP/admissions/sittings") {
-      setActiveIndex(7); // Active index for Sittings
+    } else if (
+      location.pathname === "/SALU-CMS-FYP/admissions/eligibility-criteria"
+    ) {
+      setActiveIndex(2);
+    } else if (
+      location.pathname === "/SALU-CMS-FYP/admissions/admission-procedure"
+    ) {
+      setActiveIndex(3);
+    } else if (location.pathname === "/SALU-CMS-FYP/admissions/fee-structure") {
+      setActiveIndex(4);
+    } else if (location.pathname === "/SALU-CMS-FYP/admissions/prospectus") {
+      setActiveIndex(5);
+    } else if (location.pathname === "/SALU-CMS-FYP/admissions/sample-papers") {
+      setActiveIndex(6);
+    } else if (location.pathname === "/SALU-CMS-FYP/admissions/settings") {
+      setActiveIndex(7);
     }
   }, [location]);
 
@@ -139,12 +153,12 @@ const Sidebar = () => {
           {!isCollapsed && <span>Sample Papers</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/sittings"
+          to="/SALU-CMS-FYP/admissions/settings"
           className={`menu-item ${activeIndex === 7 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(7)}
         >
           <FontAwesomeIcon icon={faCog} size="lg" />
-          {!isCollapsed && <span>Sittings</span>}
+          {!isCollapsed && <span>Settings</span>}
         </Link>
         <hr />
         {/* Logout Button */}

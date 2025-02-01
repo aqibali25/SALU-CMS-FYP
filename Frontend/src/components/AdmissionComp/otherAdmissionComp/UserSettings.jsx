@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import InputContainer from "../InputContainer";
 
-const UserSittings = () => {
+const UserSettings = () => {
   // State to store form input values
   const [formData, setFormData] = useState({
     currentPassword: "",
@@ -33,7 +33,7 @@ const UserSittings = () => {
 
   return (
     <div className="formConitainer col-md-12 p-4">
-      <h4>Sittings</h4>
+      <h4>Settings</h4>
       <form
         className="formContainer formInnerContainer pb-5 position-relative"
         onSubmit={handleSubmit}
@@ -75,4 +75,4 @@ const UserSittings = () => {
   );
 };
 
-export default UserSittings;
+export default UserSettings;

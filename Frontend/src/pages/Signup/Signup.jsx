@@ -36,7 +36,7 @@ const Signup = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "cnic") {
+    if (name === "username") {
       const formattedCnic = formatCnic(value);
       setSignupFormData((prevData) => ({
         ...prevData,
@@ -175,7 +175,7 @@ const Signup = () => {
                 type="email"
                 className="noBorderRadius form-control form-input"
                 placeholder="Email Address"
-                name="form-email"
+                name="email"
                 value={signupFormData.email}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}

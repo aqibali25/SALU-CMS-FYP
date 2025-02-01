@@ -34,7 +34,7 @@ import { SignupContextProvider } from "./contexts/SignupContext.jsx";
 // Import other components and forms
 import FormHeaderCard from "./components/AdmissionComp/FormHeaderCard.jsx";
 import AdmissionGuide from "./components/AdmissionComp/otherAdmissionComp/AdmissionGuide.jsx";
-import UserSittings from "./components/AdmissionComp/otherAdmissionComp/UserSittings.jsx";
+import UserSettings from "./components/AdmissionComp/otherAdmissionComp/UserSettings.jsx";
 import EligibilityCriteria from "./components/AdmissionComp/otherAdmissionComp/EligibilityCriteria.jsx";
 import AdmissionProcedure from "./components/AdmissionComp/otherAdmissionComp/AdmissionProcedure.jsx";
 import FeeStructure from "./components/AdmissionComp/otherAdmissionComp/FeeStructure.jsx";
@@ -114,7 +114,7 @@ const App = () => {
               <Route path="fee-structure" element={<FeeStructure />} />
               <Route path="prospectus" element={<Prospectus />} />
               <Route path="sample-papers" element={<SamplePapers />} />
-              <Route path="sittings" element={<UserSittings />} />
+              <Route path="settings" element={<UserSettings />} />
             </Route>
 
             <Route path="SALU-CMS-FYP/about" element={<About />} />

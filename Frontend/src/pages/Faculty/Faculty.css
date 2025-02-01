@@ -1,0 +1,115 @@
+.gallery {
+  width: 95%;
+  overflow: hidden;
+  position: relative;
+}
+
+.slider {
+  display: flex;
+  gap: 10px; /* Add gap between images */
+}
+
+.image-container {
+  position: relative;
+  box-sizing: border-box;
+  text-align: center;
+  overflow: hidden;
+}
+
+.image-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.overlay,
+.overlayImg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  transition: opacity 0.3s ease-in-out;
+}
+.overlayImg {
+  z-index: 99;
+}
+.overlay h3,
+.overlay p {
+  z-index: 100 !important;
+}
+
+.image-container:hover .overlay {
+  opacity: 1;
+}
+
+.faculty-card {
+  width: 100%;
+  max-width: 350px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.image-container-inner {
+  position: relative;
+  width: 100%;
+}
+
+.profile-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.gradient-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.5) 0% /* 50% opacity at bottom */,
+    rgba(0, 0, 0, 0.3) 30% /* 30% opacity at 30% height */,
+    rgba(0, 0, 0, 0.1) 60% /* 10% opacity at 60% height */,
+    rgba(0, 0, 0, 0) 100% /* Fully transparent at top */
+  );
+}
+
+.text-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  z-index: 2;
+}
+
+.text-overlay h2 {
+  color: white;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.text-overlay p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Optional hover effect */
+.image-container:hover .gradient-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.6) 0% /* Slightly darker on hover */,
+    rgba(0, 0, 0, 0.4) 30%,
+    rgba(0, 0, 0, 0.2) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
