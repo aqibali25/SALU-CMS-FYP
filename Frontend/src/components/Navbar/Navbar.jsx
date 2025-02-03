@@ -3,6 +3,7 @@ import Logo from "./Logo";
 import NavLinks from "./NavLink";
 import "../../styles/Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
+import Profile from "./Profile";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -66,16 +67,17 @@ const Navbar = () => {
         </div>
         <div className="buttonContainer">
           {isLoggedIn ? (
-            <Link
-              to="/SALU-CMS-FYP/login"
-              className="button buttonNotFilled"
-              onClick={() => {
-                localStorage.removeItem("isLoggedIn");
-              }}
-            >
-              Logout
-            </Link>
+            <Profile />
           ) : (
+            // <Link
+            //   to="/SALU-CMS-FYP/login"
+            //   className="button buttonNotFilled"
+            //   onClick={() => {
+            //     localStorage.removeItem("isLoggedIn");
+            //   }}
+            // >
+            //   Logout
+            // </Link>
             <>
               <Link to="SALU-CMS-FYP/login" className="button buttonNotFilled">
                 LOGIN

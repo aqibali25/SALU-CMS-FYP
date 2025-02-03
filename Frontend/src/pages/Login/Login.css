@@ -56,7 +56,7 @@
   background-color: transparent !important;
   color: #dfdfdf !important;
   outline: none;
-  padding: 15px;
+  /* padding: 15px; */
   font-size: 16px;
 }
 .noBorderRadius {
@@ -125,7 +125,6 @@
   }
 
   .form-input {
-    padding: 12px;
     font-size: 14px;
   }
 

@@ -46,6 +46,7 @@
 .faculty-card {
   width: 100%;
   max-width: 350px;
+  max-height: 400px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -59,6 +60,7 @@
 
 .profile-image {
   width: 100%;
+  object-fit: fill;
   height: auto;
   display: block;
 }
@@ -80,7 +82,7 @@
 
 .text-overlay {
   position: absolute;
-  bottom: 0;
+  bottom: 20px;
   left: 0;
   right: 0;
   padding: 20px;

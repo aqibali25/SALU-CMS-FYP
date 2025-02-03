@@ -7,7 +7,7 @@ import MrShahidAliMahar from "../../assets/FacultyImages/Mr.ShahidAliMahar.png";
 import MrSadaquatAliRuk from "../../assets/FacultyImages/Mr.SadaquatAliRuk.png";
 import MrNaseeruddinKamran from "../../assets/FacultyImages/Mr.NaseeruddinKamran.png";
 import MrBadarUdDin from "../../assets/FacultyImages/Mr.BadarUdDin.png";
-// import MrImranSidique from "../../assets/FacultyImages/Mr.ImranSidique.png";
+import MrImranSiddique from "../../assets/FacultyImages/Mr.ImranSiddique.jpg";
 
 const Faculty = () => {
   const CsFacultyImages = [
@@ -24,7 +24,7 @@ const Faculty = () => {
       title: "Professor",
     },
     { id: 3, src: MrBadarUdDin, name: "Badar Ud Din", title: "Professor" },
-    { id: 4, src: MrBadarUdDin, name: "Imran Sidique", title: "Professor" },
+    { id: 4, src: MrImranSiddique, name: "Imran Siddique", title: "Professor" },
     {
       id: 5,
       src: MrNaseeruddinKamran,

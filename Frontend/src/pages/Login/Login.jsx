@@ -26,7 +26,7 @@ const Login = () => {
     // Check if the user is logged in
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     if (isLoggedIn === "true") {
-      navigate("/SALU-CMS-FYP/admission-form");
+      navigate("/SALU-CMS-FYP/admissions");
     }
   }, [navigate]);
 
