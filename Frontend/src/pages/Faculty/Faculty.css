@@ -1,3 +1,4 @@
+/* General container settings */
 .gallery {
   width: 95%;
   overflow: hidden;
@@ -6,12 +7,12 @@
 
 .slider {
   display: flex;
-  gap: 10px; /* Add gap between images */
+  gap: 10px;
 }
 
+/* Image container and styling */
 .image-container {
   position: relative;
-  box-sizing: border-box;
   text-align: center;
   overflow: hidden;
 }
@@ -22,6 +23,7 @@
   display: block;
 }
 
+/* Overlay styling */
 .overlay,
 .overlayImg {
   position: absolute;
@@ -30,10 +32,9 @@
   right: 0;
   text-align: center;
   transition: opacity 0.3s ease-in-out;
-}
-.overlayImg {
   z-index: 99;
 }
+
 .overlay h3,
 .overlay p {
   z-index: 100 !important;
@@ -43,6 +44,7 @@
   opacity: 1;
 }
 
+/* Faculty card styling */
 .faculty-card {
   width: 100%;
   max-width: 350px;
@@ -53,6 +55,7 @@
   background: white;
 }
 
+/* Profile image container */
 .image-container-inner {
   position: relative;
   width: 100%;
@@ -60,11 +63,12 @@
 
 .profile-image {
   width: 100%;
-  object-fit: fill;
-  height: auto;
+  object-fit: cover;
+  height: 100%;
   display: block;
 }
 
+/* Gradient overlay */
 .gradient-overlay {
   position: absolute;
   bottom: 0;
@@ -73,13 +77,14 @@
   height: 100%;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.5) 0% /* 50% opacity at bottom */,
-    rgba(0, 0, 0, 0.3) 30% /* 30% opacity at 30% height */,
-    rgba(0, 0, 0, 0.1) 60% /* 10% opacity at 60% height */,
-    rgba(0, 0, 0, 0) 100% /* Fully transparent at top */
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.6) 30%,
+    rgba(0, 0, 0, 0.2) 60%,
+    rgba(0, 0, 0, 0) 100%
   );
 }
 
+/* Text overlay */
 .text-overlay {
   position: absolute;
   bottom: 20px;
@@ -87,6 +92,7 @@
   right: 0;
   padding: 20px;
   z-index: 2;
+  text-align: center;
 }
 
 .text-overlay h2 {
@@ -95,23 +101,21 @@
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 4px;
-  text-align: center;
 }
 
 .text-overlay p {
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
   font-size: 16px;
-  text-align: center;
 }
 
-/* Optional hover effect */
+/* Hover effects */
 .image-container:hover .gradient-overlay {
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.6) 0% /* Slightly darker on hover */,
-    rgba(0, 0, 0, 0.4) 30%,
-    rgba(0, 0, 0, 0.2) 60%,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.8) 30%,
+    rgba(0, 0, 0, 0.4) 60%,
     rgba(0, 0, 0, 0) 100%
   );
 }

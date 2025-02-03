@@ -1,5 +1,3 @@
-import "../../styles/ImageContainer.css";
-
 const ImageContainer = ({ image, visibleCount }) => {
   return (
     <div
