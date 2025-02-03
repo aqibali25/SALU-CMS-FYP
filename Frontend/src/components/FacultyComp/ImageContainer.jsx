@@ -1,5 +1,27 @@
-const ImageContainer = ({ image, visibleCount }) => {
-  return (
+import { Card, Placeholder } from "react-bootstrap";
+
+const ImageContainer = ({ image, visibleCount, isloading }) => {
+  return isloading ? (
+    <Card
+      className="skeleton-card"
+      style={{
+        width: `${100 / 4}%`,
+        minWidth: "350px ",
+        minHeight: "400px",
+        borderRadius: "8px",
+        overflow: "hidden",
+      }}
+    >
+      <Placeholder animation="glow h-100">
+        <Placeholder className="profile-skeleton h-100" xs={12} />
+      </Placeholder>
+      <Card.Body>
+        <Placeholder animation="glow">
+          <Placeholder xs={8} /> <Placeholder xs={6} />
+        </Placeholder>
+      </Card.Body>
+    </Card>
+  ) : (
     <div
       className="image-container"
       style={{ flex: `0 0 ${97.5 / visibleCount}%`, cursor: "pointer" }}

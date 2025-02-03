@@ -11,6 +11,7 @@ import MrImranSiddique from "../../assets/FacultyImages/Mr.ImranSiddique.jpg";
 
 const Faculty = () => {
   const [activeFilter, setActiveFilter] = useState("Computer Science");
+  const [isLoading, setIsLoading] = useState(true); // State to track loading
 
   const faculty = {
     CsFacultyFacultyData: [
@@ -85,6 +86,10 @@ const Faculty = () => {
   };
 
   useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
     // Set the document title to "Faculty"
     document.title = "Faculty | SALU Ghotki";
   }, []);
@@ -110,15 +115,24 @@ const Faculty = () => {
         ))}
       </div>
 
-      {/* Sliding Gallery */}
+      {/* Pass isLoading directly to SlidingGallery */}
       {activeFilter === "Computer Science" && (
-        <SlidingGallery images={faculty.CsFacultyFacultyData} />
+        <SlidingGallery
+          images={faculty.CsFacultyFacultyData}
+          isloading={isLoading}
+        />
       )}
       {activeFilter === "Business Administration" && (
-        <SlidingGallery images={faculty.BusinessAdminFacultyData} />
+        <SlidingGallery
+          images={faculty.BusinessAdminFacultyData}
+          isloading={isLoading}
+        />
       )}
       {activeFilter === "English Language & Literature" && (
-        <SlidingGallery images={faculty.EnglishLanguageFacultyData} />
+        <SlidingGallery
+          images={faculty.EnglishLanguageFacultyData}
+          isloading={isLoading}
+        />
       )}
     </div>
   );

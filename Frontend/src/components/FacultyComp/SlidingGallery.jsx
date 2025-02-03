@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ImageContainer from "./ImageContainer";
 import "../../pages/Faculty/Faculty.css";
 
-const SlidingGallery = ({ images }) => {
+const SlidingGallery = ({ images, isloading }) => {
   const [isPaused, setIsPaused] = useState(false);
   const [visibleCount, setVisibleCount] = useState(4); // Default number of visible images
   const sliderRef = useRef(null);
@@ -67,6 +67,7 @@ const SlidingGallery = ({ images }) => {
             key={image.id}
             image={image}
             visibleCount={visibleCount}
+            isloading={isloading}
           />
         ))}
       </div>
