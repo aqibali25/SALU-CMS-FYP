@@ -1,6 +1,6 @@
 import { Card, Placeholder } from "react-bootstrap";
 
-const ImageContainer = ({ image, visibleCount, isloading }) => {
+const ImageContainer = ({ image, visibleCount, isloading, onClick }) => {
   return isloading ? (
     <Card
       className="skeleton-card"
@@ -25,6 +25,7 @@ const ImageContainer = ({ image, visibleCount, isloading }) => {
     <div
       className="image-container"
       style={{ flex: `0 0 ${97.5 / visibleCount}%`, cursor: "pointer" }}
+      onClick={onClick} // Call onClick when clicked
     >
       <div className="faculty-card">
         <div className="image-container-inner">

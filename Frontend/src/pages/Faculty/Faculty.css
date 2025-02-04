@@ -144,6 +144,26 @@
     rgba(0, 0, 0, 0) 100%
   );
 }
+
+/* Faculty Member details */
+.facultyMemDetails {
+  /* width: 100%; */
+  min-height: 400px;
+  padding: 25px;
+  margin: 15px;
+}
+.facultyMemImage {
+  width: fit-content;
+}
+.facultyMemImage img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border: 2px solid #000000;
+  background-color: #000000;
+  border-radius: 50%;
+}
+
 @media (max-width: 880px) {
   .filterFaculty {
     flex-direction: column;
@@ -154,5 +174,16 @@
   .filter {
     width: 100%;
     font-size: 0.9rem;
+  }
+  .facultydetailsMain {
+    flex-direction: column;
+  }
+  .facultyMemImage {
+    width: 100% !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .facultyDetails {
+    padding: 0 !important;
   }
 }
