@@ -36,15 +36,18 @@ const Signup = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "cnic") {
+    if (name === "username") {
       const formattedCnic = formatCnic(value);
       setSignupFormData((prevData) => ({
         ...prevData,
-        [name]: formattedCnic, // Correct key
+        cnic: formattedCnic, // Ensure CNIC is updated, even if input name is "username"
       }));
 
       const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
       setIsCnicValid(cnicPattern.test(formattedCnic));
+
+      // Update context with the latest CNIC value
+      updateSignupData({ cnic: formattedCnic });
     } else if (name === "email") {
       setSignupFormData((prevData) => ({
         ...prevData,
@@ -54,6 +57,8 @@ const Signup = () => {
       // Validate email format
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       setIsEmailValid(emailPattern.test(value));
+
+      updateSignupData({ email: value });
     } else {
       setSignupFormData((prevData) => ({
         ...prevData,
@@ -63,10 +68,9 @@ const Signup = () => {
       if (name === "password") {
         validatePasswordStrength(value);
       }
-    }
 
-    // Update context with the latest form data
-    updateSignupData({ [name]: value });
+      updateSignupData({ [name]: value });
+    }
   };
 
   const formatCnic = (value) => {
@@ -116,7 +120,7 @@ const Signup = () => {
 
       if (response.ok) {
         localStorage.setItem("isLoggedIn", "true");
-        navigate("SALU-CMS-FYP/admissions");
+        navigate("/SALU-CMS-FYP/admissions");
       } else {
         alert(data.message || "Signup failed!");
       }
@@ -159,7 +163,7 @@ const Signup = () => {
                 type="text"
                 className="noBorderRadius form-control form-input"
                 placeholder="CNIC (#####-#######-#)"
-                name="cnic" // Changed to "cnic"
+                name="username" // Changed to "cnic"
                 value={signupFormData.cnic}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
