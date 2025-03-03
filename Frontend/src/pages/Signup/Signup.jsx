@@ -36,7 +36,7 @@ const Signup = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "username") {
+    if (name === "cnic") {
       const formattedCnic = formatCnic(value);
       setSignupFormData((prevData) => ({
         ...prevData,
