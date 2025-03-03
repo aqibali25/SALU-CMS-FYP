@@ -62,8 +62,7 @@ app.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user into the database (fixed query to include email)
-    const query =
-      "INSERT INTO sign_up (CNIC, EMAIL, PASSWORD) VALUES (?, ?, ?)";
+    const query = "INSERT INTO users (CNIC, EMAIL, PASSWORD) VALUES (?, ?, ?)";
     db.query(query, [cnic, email, password], (err, result) => {
       if (err) {
         if (err.code === "ER_DUP_ENTRY") {
