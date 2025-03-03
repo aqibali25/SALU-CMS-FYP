@@ -5,7 +5,7 @@ const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 
 const app = express();
-const PORT = 8000; // You can use port 8000 for the API
+const PORT = 3306; // You can use port 3306 for the API
 
 // Middleware
 app.use(cors());
@@ -13,10 +13,14 @@ app.use(bodyParser.json());
 
 // MySQL Database Connection
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root", // Replace with your MySQL username
-  password: "", // Replace with your MySQL password
-  database: "salu_cms", // Database name
+  host: "mydb.c1s48muq8i92.eu-north-1.rds.amazonaws.com",
+  user: "muhammadfaizan25", // Replace with your MySQL username
+  password: "Faizan2502$", // Replace with your MySQL password
+  database: "cmsprojectdatabase", // Database name
+  port: 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
 // Connect to the Database
@@ -55,11 +59,11 @@ app.post("/signup", async (req, res) => {
 
   try {
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    //const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user into the database (fixed query to include email)
-    const query = "INSERT INTO users (cnic, email, password) VALUES (?, ?, ?)";
-    db.query(query, [cnic, email, hashedPassword], (err, result) => {
+    const query = "INSERT INTO users (CNIC, EMAIL, PASSWORD) VALUES (?, ?, ?)";
+    db.query(query, [cnic, email, password], (err, result) => {
       if (err) {
         if (err.code === "ER_DUP_ENTRY") {
           return res

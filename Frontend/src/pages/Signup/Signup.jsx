@@ -40,7 +40,7 @@ const Signup = () => {
       const formattedCnic = formatCnic(value);
       setSignupFormData((prevData) => ({
         ...prevData,
-        [name]: formattedCnic,
+        [name]: formattedCnic, // Correct key
       }));
 
       const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
@@ -106,7 +106,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/signup", {
+      const response = await fetch("http://localhost:3306/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(signupFormData),
@@ -159,7 +159,7 @@ const Signup = () => {
                 type="text"
                 className="noBorderRadius form-control form-input"
                 placeholder="CNIC (#####-#######-#)"
-                name="username" // Changed to "username"
+                name="cnic" // Changed to "cnic"
                 value={signupFormData.cnic}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
