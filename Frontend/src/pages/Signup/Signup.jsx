@@ -110,7 +110,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3306/signup", {
+      const response = await fetch("http://localhost:3306/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(signupFormData),

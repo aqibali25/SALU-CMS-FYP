@@ -84,7 +84,7 @@ const Login = () => {
       navigate("/SALU-CMS-FYP/admissions");
     } else {
       try {
-        const response = await fetch("http://localhost:8000/api/login", {
+        const response = await fetch("http://localhost:3306/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
