@@ -150,6 +150,12 @@ const PersonalInfo = () => {
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
+              {formData.disability === "Yes" && (
+                <input
+                  type="text"
+                  placeholder="Add Disability Description Here..."
+                />
+              )}
             </div>
             <InputContainer
               htmlFor="nativeLanguage"
