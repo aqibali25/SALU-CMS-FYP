@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import DateOfBirth from "../DateOfBirth";
 import CnicInput from "../CNICInput.jsx";
 import InputContainer from "../InputContainer";
 import { useFormStatus } from "../../../contexts/AdmissionFormContext.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../SkeletonLoader";
+import ProvinceCitySelector from "../ProvinceCitySelector.jsx";
 
 const PersonalInfo = () => {
-  const [loading, setLoading] = useState(true); // State for loading
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -16,43 +16,49 @@ const PersonalInfo = () => {
     cnic: "45102-2473066-7",
     religion: "",
     disability: "",
+    disabilityDescription: "",
     nativeLanguage: "",
-    bloodGroup: null,
-  }); // Initialize state with empty values
+    bloodGroup: "",
+    province: "",
+    city: "",
+    postalAddress: "",
+    permanentAddress: "",
+  });
 
-  const { updateFormStatus } = useFormStatus(); // Call useFormStatus to access its properties
-  const navigate = useNavigate(); // Define navigate for redirection
+  const religions = ["Islam", "Hinduism", "Christianity", "Sikhism"];
+  const nativeLanguages = ["Sindhi", "Urdu", "English"];
+  const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+  const { updateFormStatus } = useFormStatus();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false); // Set loading to false after a delay
+      setLoading(false);
     }, 800);
-
-    return () => clearTimeout(timer); // Clear timeout to avoid memory leaks
+    return () => clearTimeout(timer);
   }, []);
 
   const handleInputChange = (e) => {
-    const { id, value } = e.target; // Get id and value of the input
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value, // Update the corresponding field in the form data
-    }));
+    const { id, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
   const handleSelectChange = (e) => {
-    const { id, value } = e.target; // Get id and value of the select element
+    const { id, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [id]: value,
+      disabilityDescription:
+        id === "disability" && value !== "Yes"
+          ? ""
+          : prevData.disabilityDescription,
     }));
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent form from reloading the page
-
-    console.log("Submitted Personal Info:", formData); // Log the form data for testing
-
-    // Update the form status
+    e.preventDefault();
+    console.log("Final Submitted Personal Info:", formData);
     updateFormStatus("personalInformation", "Completed");
     navigate("/SALU-CMS-FYP/admissions/form");
   };
@@ -61,13 +67,13 @@ const PersonalInfo = () => {
     <div className="margin-left-70 formConitainer p-4">
       <h4>Personal Information</h4>
       <form onSubmit={handleSubmit}>
-        {loading && <SkeletonLoader length={9} />} {/* Pass length as 9 */}
+        {loading && <SkeletonLoader length={9} />}
         {!loading && (
           <div className="formContainer">
             <InputContainer
               htmlFor="firstName"
               title="First Name"
-              required={true}
+              required
               inputType="text"
               value={formData.firstName}
               onChange={handleInputChange}
@@ -75,11 +81,12 @@ const PersonalInfo = () => {
             <InputContainer
               htmlFor="lastName"
               title="Last Name"
-              required={true}
+              required
               inputType="text"
               value={formData.lastName}
               onChange={handleInputChange}
             />
+
             <div className="inputContainer">
               <label htmlFor="gender">
                 <span className="required">*</span>Gender:
@@ -98,17 +105,16 @@ const PersonalInfo = () => {
                 <option value="other">Other</option>
               </select>
             </div>
-            <div className="inputContainer">
-              <label htmlFor="dob-month">
-                <span className="required">* </span>Date of Birth:
-              </label>
-              <DateOfBirth
-                value={formData.dob}
-                onChange={(dob) =>
-                  setFormData((prevData) => ({ ...prevData, dob }))
-                }
-              />
-            </div>
+
+            <InputContainer
+              htmlFor="dob"
+              title="Date of Birth"
+              required
+              inputType="date"
+              value={formData.dob}
+              onChange={handleInputChange}
+            />
+
             <div className="inputContainer">
               <label htmlFor="cnic">
                 <span className="required">*</span>CNIC:
@@ -116,24 +122,33 @@ const PersonalInfo = () => {
               <CnicInput
                 id="cnic"
                 value={formData.cnic}
-                readonly={"true"}
+                readOnly
                 required
-                onChange={(e) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    cnic: e.target.value,
-                  }))
-                }
+                onChange={handleInputChange}
               />
             </div>
-            <InputContainer
-              htmlFor="religion"
-              title="Religion"
-              required={true}
-              inputType="text"
-              value={formData.religion}
-              onChange={handleInputChange}
-            />
+
+            <div className="inputContainer">
+              <label htmlFor="religion">
+                <span className="required">*</span>Religion:
+              </label>
+              <select
+                id="religion"
+                className="col-6"
+                value={formData.religion}
+                onChange={handleSelectChange}
+              >
+                <option value="" disabled>
+                  [Select an Option]
+                </option>
+                {religions.map((religion, index) => (
+                  <option key={index} value={religion}>
+                    {religion}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="inputContainer">
               <label htmlFor="disability">
                 <span className="required">*</span>Disability:
@@ -150,27 +165,82 @@ const PersonalInfo = () => {
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
-              {formData.disability === "Yes" && (
-                <input
-                  type="text"
-                  placeholder="Add Disability Description Here..."
-                />
-              )}
             </div>
+
+            {formData.disability === "Yes" && (
+              <InputContainer
+                htmlFor="disabilityDescription"
+                title="Disability Details"
+                required
+                inputType="text"
+                value={formData.disabilityDescription}
+                onChange={handleInputChange}
+              />
+            )}
+
+            <div className="inputContainer">
+              <label htmlFor="nativeLanguage">
+                <span className="required">*</span>Native Language:
+              </label>
+              <select
+                id="nativeLanguage"
+                className="col-6"
+                value={formData.nativeLanguage}
+                onChange={handleSelectChange}
+              >
+                <option value="" disabled>
+                  [Select an Option]
+                </option>
+                {nativeLanguages.map((lang, index) => (
+                  <option key={index} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="inputContainer">
+              <label htmlFor="bloodGroup">Blood Group:</label>
+              <select
+                id="bloodGroup"
+                className="col-6"
+                value={formData.bloodGroup}
+                onChange={handleSelectChange}
+              >
+                <option value="" disabled>
+                  [Select an Option]
+                </option>
+                {bloodGroups.map((group, index) => (
+                  <option key={index} value={group}>
+                    {group}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <ProvinceCitySelector
+              onProvinceChange={(province) =>
+                setFormData((prev) => ({ ...prev, province }))
+              }
+              onCityChange={(city) =>
+                setFormData((prev) => ({ ...prev, city }))
+              }
+            />
+
             <InputContainer
-              htmlFor="nativeLanguage"
-              title="Native Language"
-              required={true}
+              htmlFor="postalAddress"
+              title="Postal Address"
+              required
               inputType="text"
-              value={formData.nativeLanguage}
+              value={formData.postalAddress}
               onChange={handleInputChange}
             />
             <InputContainer
-              htmlFor="bloodGroup"
-              title="Blood Group"
-              required={false}
+              htmlFor="permanentAddress"
+              title="Permanent Address"
+              required
               inputType="text"
-              value={formData.bloodGroup}
+              value={formData.permanentAddress}
               onChange={handleInputChange}
             />
           </div>

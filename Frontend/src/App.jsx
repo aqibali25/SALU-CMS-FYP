@@ -20,8 +20,7 @@ import "./App.css";
 import ProgramSelectionForm from "./components/AdmissionComp/FormComponents/ProgramSelectionForm.jsx";
 import PersonalInfo from "./components/AdmissionComp/FormComponents/PersonalInfo.jsx";
 import FormStatusCards from "./components/AdmissionComp/FormStatusCards.jsx";
-import FatherInfo from "./components/AdmissionComp/FormComponents/FatherInfo.jsx";
-import GuardianInfo from "./components/AdmissionComp/FormComponents/GuardianInfo.jsx";
+import FatherAndGuardianInfo from "./components/AdmissionComp/FormComponents/FatherAndGuardianInfo.jsx";
 import AcademicRecord from "./components/AdmissionComp/FormComponents/AcademicRecord.jsx";
 import PhotographAndDocument from "./components/AdmissionComp/FormComponents/PhotographAndDocument.jsx";
 
@@ -88,8 +87,11 @@ const App = () => {
                   element={<ProgramSelectionForm />}
                 />
                 <Route path="personal-information" element={<PersonalInfo />} />
-                <Route path="father-information" element={<FatherInfo />} />
-                <Route path="guardian-information" element={<GuardianInfo />} />
+                <Route
+                  path="father-and-guardian-information"
+                  element={<FatherAndGuardianInfo />}
+                />
+
                 <Route
                   path="academic-record-intermediate"
                   element={<AcademicRecord title={"Intermediate"} />}

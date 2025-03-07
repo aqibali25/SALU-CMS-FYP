@@ -31,8 +31,11 @@ const ProvinceCitySelector = ({ onProvinceChange, onCityChange }) => {
           className="col-6"
           value={selectedProvince}
           onChange={handleProvinceChange}
+          required
         >
-          <option value="">[Select an Option]</option>
+          <option value="" disabled selected>
+            [Select an Option]
+          </option>
           {Object.keys(citiesByProvince).map((province) => (
             <option key={province} value={province}>
               {province}
@@ -50,8 +53,11 @@ const ProvinceCitySelector = ({ onProvinceChange, onCityChange }) => {
           className="col-6"
           disabled={!selectedProvince}
           onChange={(e) => onCityChange(e.target.value)}
+          required
         >
-          <option value="">[Select an Option]</option>
+          <option value="" disabled selected>
+            [Select an Option]
+          </option>
           {cities.map((city) => (
             <option key={city} value={city}>
               {city}
