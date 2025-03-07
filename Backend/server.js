@@ -4,7 +4,8 @@ const cors = require("cors");
 const db = require("./db"); // Database connection
 const authRoutes = require("./routes/auth"); // Auth routes
 require("dotenv").config(); // Load environment variables
-
+const programSelectionRoutes = require("./routes/programSelection");
+const departmentRoutes = require("./routes/department");
 const app = express();
 const PORT = process.env.PORT || 3306; // Use environment variable for port
 
@@ -14,7 +15,8 @@ app.use(bodyParser.json());
 
 // Routes
 app.use("/api", authRoutes); // All auth routes will start with /api
-
+app.use("/api", programSelectionRoutes);
+app.use("/api", departmentRoutes);
 // Start the Server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
