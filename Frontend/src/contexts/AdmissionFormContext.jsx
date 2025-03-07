@@ -107,7 +107,7 @@ export const FormStatusProvider = ({ children }) => {
         formStatus.forms.fatherGuardianInformation === "Completed"
           ? "#E9B82B"
           : "#929292",
-      url: "father-information",
+      url: "father-and-guardian-information",
     },
     {
       title: "Academic Record",

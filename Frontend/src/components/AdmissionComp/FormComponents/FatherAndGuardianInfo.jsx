@@ -116,6 +116,7 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
             <hr />
 
             {/* Guardian Information */}
+            <h5>Guardian's Information</h5>
             <div className="inputContainer">
               <input
                 type="checkbox"
@@ -127,8 +128,6 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
                 Same as Father
               </label>
             </div>
-
-            <h5>Guardian's Information</h5>
             <InputContainer
               htmlFor="guardianName"
               title="Guardian's Name"

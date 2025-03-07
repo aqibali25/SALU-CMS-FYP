@@ -7,7 +7,7 @@ require("dotenv").config(); // Load environment variables
 const programSelectionRoutes = require("./routes/programSelection");
 const departmentRoutes = require("./routes/department");
 const app = express();
-const PORT = process.env.PORT || 3306; // Use environment variable for port
+const PORT = process.env.DB_PORT || 3306; // Use environment variable for port
 
 // Middleware
 app.use(cors());
