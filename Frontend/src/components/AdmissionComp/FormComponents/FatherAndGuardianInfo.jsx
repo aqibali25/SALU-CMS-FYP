@@ -3,8 +3,9 @@ import SkeletonLoader from "../SkeletonLoader.jsx";
 import CnicInput from "../CNICInput.jsx";
 import InputContainer from "../InputContainer.jsx";
 import { useNavigate } from "react-router-dom";
+import { useFormStatus } from "../../../contexts/AdmissionFormContext.jsx";
 
-const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
+const FatherAndGuardianInfo = () => {
   const [fatherData, setFatherData] = useState({
     name: "",
     cnic: "",
@@ -22,6 +23,7 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
   const [loading, setLoading] = useState(true);
   const [sameAsFather, setSameAsFather] = useState(false);
   const navigate = useNavigate();
+  const { updateFormStatus } = useFormStatus();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 800);
@@ -57,11 +59,17 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateFormStatus("fatherGuardianInformation", "Completed");
 
     console.log("Father Data", fatherData);
     console.log("Guardian Data", guardianData);
-    navigate(redirectPath);
+
+    // Ensure form status is updated before navigation
+    updateFormStatus("fatherGuardianInformation", "Completed");
+
+    // Small delay to ensure state updates before navigation
+    setTimeout(() => {
+      navigate("/SALU-CMS-FYP/admissions/form");
+    }, 100);
   };
 
   return (
