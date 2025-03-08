@@ -172,8 +172,6 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
             />
           </div>
         )}
-
-        <hr />
         <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
           <button type="submit" className="button buttonFilled">
             Save & Proceed
