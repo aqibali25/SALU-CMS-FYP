@@ -5,15 +5,18 @@ import InputContainer from "../InputContainer.jsx";
 import { useNavigate } from "react-router-dom";
 
 const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
-  const [formData, setFormData] = useState({
-    fatherName: "",
-    fatherCnic: "",
-    fatherMobileNumber: "",
-    fatherOccupation: "",
-    guardianName: "",
-    guardianCnic: "",
-    guardianMobileNumber: "",
-    guardianOccupation: "",
+  const [fatherData, setFatherData] = useState({
+    name: "",
+    cnic: "",
+    mobileNumber: "",
+    occupation: "",
+  });
+
+  const [guardianData, setGuardianData] = useState({
+    name: "",
+    cnic: "",
+    mobileNumber: "",
+    occupation: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -25,12 +28,20 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleChange = (e) => {
+  const handleFatherChange = (e) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+    setFatherData((prev) => ({ ...prev, [id]: value }));
+
+    if (sameAsFather) {
+      setGuardianData((prev) => ({ ...prev, [id]: value }));
+    }
+  };
+
+  const handleGuardianChange = (e) => {
+    if (!sameAsFather) {
+      const { id, value } = e.target;
+      setGuardianData((prev) => ({ ...prev, [id]: value }));
+    }
   };
 
   const handleCheckboxChange = (e) => {
@@ -38,21 +49,9 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
     setSameAsFather(checked);
 
     if (checked) {
-      setFormData((prev) => ({
-        ...prev,
-        guardianName: prev.fatherName,
-        guardianCnic: prev.fatherCnic,
-        guardianMobileNumber: prev.fatherMobileNumber,
-        guardianOccupation: prev.fatherOccupation,
-      }));
+      setGuardianData({ ...fatherData });
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        guardianName: "",
-        guardianCnic: "",
-        guardianMobileNumber: "",
-        guardianOccupation: "",
-      }));
+      setGuardianData({ name: "", cnic: "", mobileNumber: "", occupation: "" });
     }
   };
 
@@ -60,7 +59,8 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
     e.preventDefault();
     updateFormStatus("fatherGuardianInformation", "Completed");
 
-    console.log("Father & Guardian Info", formData);
+    console.log("Father Data", fatherData);
+    console.log("Guardian Data", guardianData);
     navigate(redirectPath);
   };
 
@@ -75,99 +75,100 @@ const FatherAndGuardianInfo = ({ updateFormStatus, redirectPath }) => {
             {/* Father Information */}
             <h5>Father's Information</h5>
             <InputContainer
-              htmlFor="fatherName"
+              htmlFor="name"
               title="Father's Name"
               required={true}
               inputType="text"
               autoComplete="off"
-              value={formData.fatherName}
-              onChange={handleChange}
+              value={fatherData.name}
+              onChange={handleFatherChange}
             />
             <div className="inputContainer">
-              <label htmlFor="fatherCnic">
+              <label htmlFor="cnic">
                 <span className="required">*</span>Father's CNIC:
               </label>
               <CnicInput
-                id="fatherCnic"
+                id="cnic"
                 required
-                value={formData.fatherCnic}
-                onChange={handleChange}
+                value={fatherData.cnic}
+                onChange={handleFatherChange}
               />
             </div>
             <InputContainer
-              htmlFor="fatherMobileNumber"
+              htmlFor="mobileNumber"
               title="Father's Mobile No"
               required={true}
               inputType="text"
               autoComplete="off"
-              value={formData.fatherMobileNumber}
-              onChange={handleChange}
+              value={fatherData.mobileNumber}
+              onChange={handleFatherChange}
             />
             <InputContainer
-              htmlFor="fatherOccupation"
+              htmlFor="occupation"
               title="Father's Occupation"
               required={false}
               inputType="text"
               autoComplete="off"
-              value={formData.fatherOccupation}
-              onChange={handleChange}
+              value={fatherData.occupation}
+              onChange={handleFatherChange}
             />
 
             <hr />
 
             {/* Guardian Information */}
             <h5>Guardian's Information</h5>
-            <div className="inputContainer">
+            <div className="checkInputContainer">
               <input
                 type="checkbox"
                 id="sameAsFather"
                 checked={sameAsFather}
                 onChange={handleCheckboxChange}
+                style={{ width: "15px", height: "15px" }}
               />
               <label htmlFor="sameAsFather" className="ms-2">
                 Same as Father
               </label>
             </div>
             <InputContainer
-              htmlFor="guardianName"
+              htmlFor="name"
               title="Guardian's Name"
               required={true}
               inputType="text"
               autoComplete="off"
-              value={formData.guardianName}
-              onChange={handleChange}
+              value={guardianData.name}
+              onChange={handleGuardianChange}
               readOnly={sameAsFather}
             />
             <div className="inputContainer">
-              <label htmlFor="guardianCnic">
+              <label htmlFor="cnic">
                 <span className="required">*</span>Guardian's CNIC:
               </label>
               <CnicInput
-                id="guardianCnic"
+                id="cnic"
                 required
-                value={formData.guardianCnic}
-                onChange={handleChange}
+                value={guardianData.cnic}
+                onChange={handleGuardianChange}
                 readOnly={sameAsFather}
               />
             </div>
             <InputContainer
-              htmlFor="guardianMobileNumber"
+              htmlFor="mobileNumber"
               title="Guardian's Mobile No"
               required={true}
               inputType="text"
               autoComplete="off"
-              value={formData.guardianMobileNumber}
-              onChange={handleChange}
+              value={guardianData.mobileNumber}
+              onChange={handleGuardianChange}
               readOnly={sameAsFather}
             />
             <InputContainer
-              htmlFor="guardianOccupation"
+              htmlFor="occupation"
               title="Guardian's Occupation"
               required={false}
               inputType="text"
               autoComplete="off"
-              value={formData.guardianOccupation}
-              onChange={handleChange}
+              value={guardianData.occupation}
+              onChange={handleGuardianChange}
               readOnly={sameAsFather}
             />
           </div>

@@ -18,6 +18,9 @@
 .formContainer {
   margin-top: 40px;
 }
+.checkInputContainer {
+  padding-left: 50px;
+}
 
 /* Media query for responsiveness */
 @media (max-width: 865px) {
@@ -98,8 +101,15 @@ button.btn-warning:hover {
   }
   .admissionform select,
   .admissionform input {
-    min-width: 100% !important;
-    max-width: 100% !important;
+    min-width: 100%;
+    max-width: 100%;
+  }
+  #sameAsFather {
+    min-width: 15px !important;
+    min-height: 15px !important;
+  }
+  .checkInputContainer {
+    padding-left: 0px;
   }
 }
 .checkInput input {
