@@ -4,8 +4,14 @@ const programSelectionController = require("../controllers/programSelectionContr
 
 // Save program choices
 router.post(
-  "/program-selection",
+  "/saveProgramSelection",
   programSelectionController.saveProgramChoices
+);
+
+// Fetch program choices for a user
+router.get(
+  "/getProgramSelection/:cnic",
+  programSelectionController.getProgramSelection
 );
 
 module.exports = router;
