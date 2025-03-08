@@ -45,9 +45,12 @@ const ProfileDropdown = () => {
 
         <div className={`dropDownMenu ${menuActive ? "active" : ""}`}>
           <div className="menu-header">
-            <Link to="/SALU-CMS-FYP/admissions/settings" className="link">
+            <Link
+              to="/SALU-CMS-FYP/admissions/change-password"
+              className="link"
+            >
               <FontAwesomeIcon icon={faCog} />
-              Settings
+              Change Password
             </Link>
 
             <Link

@@ -20,7 +20,7 @@
   position: absolute;
   top: 85px;
   right: 0;
-  width: 200px;
+  width: 250px;
   background: #f5f5f5;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   opacity: 0;
@@ -58,7 +58,7 @@
 
 .dropDownMenu .menu-header .link {
   text-decoration: none;
-  font-size: 1.2em;
+  font-size: 1.1rem;
   color: #000;
   display: flex;
   align-items: center;
@@ -75,10 +75,10 @@
 /* Responsive Design */
 @media (max-width: 880px) {
   .dropDownMenu {
-    right: -70px;
+    right: -85px;
     top: 65px;
   }
   .dropDownMenu::before {
-    right: 85px;
+    right: 100px;
   }
 }

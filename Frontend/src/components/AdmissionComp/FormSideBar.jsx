@@ -62,7 +62,9 @@ const Sidebar = () => {
       setActiveIndex(5);
     } else if (location.pathname === "/SALU-CMS-FYP/admissions/sample-papers") {
       setActiveIndex(6);
-    } else if (location.pathname === "/SALU-CMS-FYP/admissions/settings") {
+    } else if (
+      location.pathname === "/SALU-CMS-FYP/admissions/change-password"
+    ) {
       setActiveIndex(7);
     }
   }, [location]);
@@ -158,7 +160,7 @@ const Sidebar = () => {
           onClick={() => handleMenuItemClick(7)}
         >
           <FontAwesomeIcon icon={faCog} size="lg" />
-          {!isCollapsed && <span>Settings</span>}
+          {!isCollapsed && <span>Change Password</span>}
         </Link>
         <hr />
         {/* Logout Button */}

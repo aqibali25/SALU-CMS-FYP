@@ -69,15 +69,6 @@ const Navbar = () => {
           {isLoggedIn ? (
             <Profile />
           ) : (
-            // <Link
-            //   to="/SALU-CMS-FYP/login"
-            //   className="button buttonNotFilled"
-            //   onClick={() => {
-            //     localStorage.removeItem("isLoggedIn");
-            //   }}
-            // >
-            //   Logout
-            // </Link>
             <>
               <Link to="SALU-CMS-FYP/login" className="button buttonNotFilled">
                 LOGIN

@@ -33,12 +33,12 @@ import { SignupContextProvider } from "./contexts/SignupContext.jsx";
 // Import other components and forms
 import FormHeaderCard from "./components/AdmissionComp/FormHeaderCard.jsx";
 import AdmissionGuide from "./components/AdmissionComp/otherAdmissionComp/AdmissionGuide.jsx";
-import UserSettings from "./components/AdmissionComp/otherAdmissionComp/UserSettings.jsx";
 import EligibilityCriteria from "./components/AdmissionComp/otherAdmissionComp/EligibilityCriteria.jsx";
 import AdmissionProcedure from "./components/AdmissionComp/otherAdmissionComp/AdmissionProcedure.jsx";
 import FeeStructure from "./components/AdmissionComp/otherAdmissionComp/FeeStructure.jsx";
 import Prospectus from "./components/AdmissionComp/otherAdmissionComp/Prospectus.jsx";
 import SamplePapers from "./components/AdmissionComp/otherAdmissionComp/SamplePapers.jsx";
+import ChangePassword from "./components/AdmissionComp/otherAdmissionComp/ChangePassword.jsx";
 
 const FormLayout = () => (
   <>
@@ -116,7 +116,7 @@ const App = () => {
               <Route path="fee-structure" element={<FeeStructure />} />
               <Route path="prospectus" element={<Prospectus />} />
               <Route path="sample-papers" element={<SamplePapers />} />
-              <Route path="settings" element={<UserSettings />} />
+              <Route path="change-password" element={<ChangePassword />} />
             </Route>
 
             <Route path="SALU-CMS-FYP/about" element={<About />} />
