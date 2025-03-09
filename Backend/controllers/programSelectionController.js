@@ -11,9 +11,9 @@ const saveProgramChoices = (req, res) => {
     });
   }
 
-  // Insert program choices into the database
+  // Insert or update program choices in the database
   const query =
-    "INSERT INTO program_of_study (cnic, applied_department, first_choice, second_choice, third_choice) VALUES (?, ?, ?, ?, ?)";
+    "INSERT INTO program_of_study (cnic, applied_department, first_choice, second_choice, third_choice) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE applied_department = VALUES(applied_department), first_choice = VALUES(first_choice), second_choice = VALUES(second_choice), third_choice = VALUES(third_choice)";
   db.query(
     query,
     [cnic, appliedDepartment, firstChoice, secondChoice, thirdChoice],
