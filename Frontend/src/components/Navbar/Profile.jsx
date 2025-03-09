@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Cookies from "js-cookie";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/Profile.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -31,6 +32,12 @@ const ProfileDropdown = () => {
     };
   }, [menuActive]);
 
+  const handleLogout = () => {
+    Cookies.remove("isLoggedIn");
+    Cookies.remove("cnic");
+    navigate("/SALU-CMS-FYP/login");
+  };
+
   return (
     <>
       <div className="profile" onClick={toggleMenu} ref={dropdownRef}>
@@ -56,9 +63,7 @@ const ProfileDropdown = () => {
             <Link
               to="/SALU-CMS-FYP/login"
               className="link"
-              onClick={() => {
-                localStorage.removeItem("isLoggedIn");
-              }}
+              onClick={handleLogout}
             >
               <FontAwesomeIcon icon={faSignOutAlt} />
               Log Out

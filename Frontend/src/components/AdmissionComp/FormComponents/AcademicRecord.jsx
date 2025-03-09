@@ -4,6 +4,8 @@ import SkeletonLoader from "../SkeletonLoader";
 import InputContainer from "../InputContainer";
 import { useFormStatus } from "../../../contexts/AdmissionFormContext";
 import { boards, educationGroups } from "../../../contexts/BoardsData";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 const AcademicRecord = () => {
   const currentYear = new Date().getFullYear();
@@ -38,11 +40,44 @@ const AcademicRecord = () => {
   const navigate = useNavigate();
   const { updateFormStatus } = useFormStatus();
   const [loading, setLoading] = useState(true);
+  const cnic = Cookies.get("cnic");
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!cnic) return;
+
+    const fetchAcademicRecord = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3306/api/getAcademicRecord/${cnic}`
+        );
+        if (response.data) {
+          updateFormStatus("academicRecord", "Completed");
+
+          const formatAcademicData = (data) => ({
+            group: data?.group_name || "",
+            degreeYear: data?.degree_year || "",
+            seatNo: data?.seat_no || "",
+            institutionName: data?.institution_name || "",
+            board: data?.board || "",
+            totalMarks: data?.total_marks || "",
+            marksObtained: data?.marks_obtained || "",
+            percentage: data?.percentage || "",
+          });
+
+          setAcademicData({
+            intermediate: formatAcademicData(response.data.intermediate),
+            matriculation: formatAcademicData(response.data.matriculation),
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching academic record:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAcademicRecord();
+  }, [cnic]);
 
   const calculatePercentage = (category) => {
     const { totalMarks, marksObtained } = academicData[category];
@@ -93,11 +128,23 @@ const AcademicRecord = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Academic Data Submitted:", academicData);
-    updateFormStatus("academicRecord", "Completed");
-    navigate("/SALU-CMS-FYP/admissions/form");
+
+    const payload = {
+      cnic,
+      ...academicData,
+    };
+    console.log("Payload:", payload);
+
+    try {
+      await axios.post("http://localhost:3306/api/saveAcademicRecord", payload);
+      console.log("Academic Data Saved:", payload);
+      updateFormStatus("academicRecord", "Completed");
+      navigate("/SALU-CMS-FYP/admissions/form");
+    } catch (error) {
+      console.error("Error saving academic record:", error);
+    }
   };
 
   const categories = [

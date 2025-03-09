@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie"; // Import js-cookie
 import "./Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
@@ -10,31 +11,29 @@ import ForgotPassword from "../../components/ForgotPassword";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [resetPassword, seResetPassword] = useState(false); // State to track password visibility
+  const [resetPassword, seResetPassword] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
-  // State for user input (CNIC and password) stored as an object
   const [loginFormData, setLoginFormData] = useState({
     cnic: "",
     password: "",
   });
 
-  const [isCnicValid, setIsCnicValid] = useState(true); // State to track CNIC validity
+  const [isCnicValid, setIsCnicValid] = useState(true);
 
   useEffect(() => {
     document.title = "Login | SALU Ghotki";
 
-    // Check if the user is logged in
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    // Check if the user is logged in using cookies
+    const isLoggedIn = Cookies.get("isLoggedIn");
     if (isLoggedIn === "true") {
       navigate("/SALU-CMS-FYP/admissions");
     }
   }, [navigate]);
 
-  // Handle input changes and update state
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    // Only allow CNIC to be formatted with numbers and hyphens
     if (name === "cnic") {
       const formattedCnic = formatCnic(value);
       setLoginFormData((prevData) => ({
@@ -42,7 +41,6 @@ const Login = () => {
         [name]: formattedCnic,
       }));
 
-      // Check if CNIC format is valid (#####-#######-#)
       const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
       setIsCnicValid(cnicPattern.test(formattedCnic));
     } else {
@@ -53,12 +51,8 @@ const Login = () => {
     }
   };
 
-  // Function to format CNIC while typing
   const formatCnic = (value) => {
-    // Remove all non-numeric characters except for hyphen
     const cleanValue = value.replace(/\D/g, "");
-
-    // Format the CNIC as #####-#######-#
     const part1 = cleanValue.substring(0, 5);
     const part2 = cleanValue.substring(5, 12);
     const part3 = cleanValue.substring(12, 13);
@@ -73,14 +67,12 @@ const Login = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if the CNIC and password are correct
     if (
       loginFormData.cnic === "45102-2473066-7" &&
       loginFormData.password === "123aqibalikalwar1@A"
     ) {
-      // Set the user as logged in directly
-      localStorage.setItem("isLoggedIn", "true");
-      // Navigate to the admission page
+      Cookies.set("isLoggedIn", "true", { expires: 1 }); // Save login status in cookies (1-day expiration)
+      Cookies.set("cnic", loginFormData.cnic, { expires: 1 }); // Save CNIC in cookies
       navigate("/SALU-CMS-FYP/admissions");
     } else {
       try {
@@ -92,11 +84,9 @@ const Login = () => {
           body: JSON.stringify(loginFormData),
         });
 
-        // const data = await response.json();
-
         if (response.ok) {
-          localStorage.setItem("isLoggedIn", "true");
-          // Navigate to the admission page
+          Cookies.set("isLoggedIn", "true", { expires: 1 });
+          Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
           navigate("/SALU-CMS-FYP/admissions");
         } else {
           alert("Invalid Credentials.");
@@ -109,8 +99,6 @@ const Login = () => {
     }
   };
 
-  const [passwordVisible, setPasswordVisible] = useState(false);
-
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -121,7 +109,6 @@ const Login = () => {
   const handleCloseResetPassword = () => {
     seResetPassword(false);
   };
-
   return (
     <>
       <div

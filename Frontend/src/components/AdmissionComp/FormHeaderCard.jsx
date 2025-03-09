@@ -2,10 +2,12 @@ import "../../styles/FormHeaderCard.css";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useFormStatus } from "../../contexts/AdmissionFormContext"; // Update the path to your context file
+import Cookeies from "js-cookie";
 
 const FormHeaderCard = () => {
   const { formStatus } = useFormStatus();
   const currentYear = new Date().getFullYear();
+  const cnic = Cookeies.get("cnic");
 
   return (
     <div className="formHeaderCard formConitainer d-flex flex-wrap justify-content-around align-items-center float-end col-md-12 mx-auto p-4">
@@ -17,11 +19,11 @@ const FormHeaderCard = () => {
         style={{ maxWidth: "250px" }}
       >
         <h6>Personal Information</h6>
-        <p>
+        {/* <p>
           <label>Tracking ID:</label> {"" || "-----------------"}
-        </p>
+        </p> */}
         <p>
-          <label>Username:</label> {"" || "------------------"}
+          <label>Username:</label> {cnic || "------------------"}
         </p>
         <p>
           <label>Phone No:</label> {"" || "-----------"}
@@ -36,7 +38,7 @@ const FormHeaderCard = () => {
           Undergraduate Admission {currentYear} (Main and Sub-Campuses) -
           Engineering
         </p>
-        <p>Fall - {currentYear}</p>
+        <p>Spring - {currentYear}</p>
       </div>
       <div
         className="formHeaderInner"

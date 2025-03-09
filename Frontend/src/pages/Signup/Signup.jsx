@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"; // Import axios
 import "../Login/Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
 import LoginMarquee from "../../components/LoginMarquee";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { SignupContext } from "../../contexts/SignupContext"; // Import context
+import { SignupContext } from "../../contexts/SignupContext";
+import Cookies from "js-cookie";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { updateSignupData } = useContext(SignupContext); // Access context to save signup data
+  const { updateSignupData } = useContext(SignupContext);
 
   const [signupFormData, setSignupFormData] = useState({
     cnic: "",
@@ -22,12 +24,11 @@ const Signup = () => {
   const [isPasswordMatch, setIsPasswordMatch] = useState(true);
   const [isCnicValid, setIsCnicValid] = useState(true);
   const [isPasswordStrong, setIsPasswordStrong] = useState(true);
-  const [isEmailValid, setIsEmailValid] = useState(true); // Track email validity
+  const [isEmailValid, setIsEmailValid] = useState(true);
 
   useEffect(() => {
     document.title = "Signup | SALU Ghotki";
-
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const isLoggedIn = Cookies.get("isLoggedIn");
     if (isLoggedIn === "true") {
       navigate("/SALU-CMS-FYP/admission-form");
     }
@@ -40,13 +41,11 @@ const Signup = () => {
       const formattedCnic = formatCnic(value);
       setSignupFormData((prevData) => ({
         ...prevData,
-        cnic: formattedCnic, // Ensure CNIC is updated, even if input name is "username"
+        cnic: formattedCnic,
       }));
 
       const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
       setIsCnicValid(cnicPattern.test(formattedCnic));
-
-      // Update context with the latest CNIC value
       updateSignupData({ cnic: formattedCnic });
     } else if (name === "email") {
       setSignupFormData((prevData) => ({
@@ -54,7 +53,6 @@ const Signup = () => {
         [name]: value,
       }));
 
-      // Validate email format
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       setIsEmailValid(emailPattern.test(value));
 
@@ -110,22 +108,25 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3306/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(signupFormData),
-      });
+      const response = await axios.post(
+        "http://localhost:3306/api/signup",
+        signupFormData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
-      const data = await response.json();
+      sessionStorage.setItem("cn", JSON.stringify(signupFormData.cnic));
 
-      if (response.ok) {
-        localStorage.setItem("isLoggedIn", "true");
+      if (response.status === 200) {
+        Cookies.set("isLoggedIn", "true", { expires: 1 });
+        Cookies.set("cnic", signupFormData.cnic, { expires: 1 });
         navigate("/SALU-CMS-FYP/admissions");
       } else {
-        alert(data.message || "Signup failed!");
+        alert(response.data.message || "Signup failed!");
       }
     } catch (error) {
-      alert("Error: " + error.message);
+      alert("Error: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -163,7 +164,7 @@ const Signup = () => {
                 type="text"
                 className="noBorderRadius form-control form-input"
                 placeholder="CNIC (#####-#######-#)"
-                name="username" // Changed to "cnic"
+                name="username"
                 value={signupFormData.cnic}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
@@ -188,6 +189,7 @@ const Signup = () => {
                 required
               />
             </div>
+
             {/* Password Input */}
             <div className="form-group mb-3">
               <input
@@ -198,13 +200,6 @@ const Signup = () => {
                 value={signupFormData.password}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                style={{
-                  border:
-                    (signupFormData.password && !isPasswordMatch) ||
-                    (signupFormData.password && !isPasswordStrong)
-                      ? "2px solid red"
-                      : "",
-                }}
                 required
               />
               <FontAwesomeIcon
@@ -229,9 +224,6 @@ const Signup = () => {
                 value={signupFormData.confirmPassword}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                style={{
-                  border: !isPasswordMatch ? "2px solid red" : "",
-                }}
                 required
               />
               <FontAwesomeIcon
@@ -246,7 +238,7 @@ const Signup = () => {
               />
             </div>
 
-            <div className="buttonContainer w-100">
+            <div className="buttonContainer w-100 mt-3">
               <button
                 type="submit"
                 className="button buttonFilled text-white w-100"
@@ -255,13 +247,6 @@ const Signup = () => {
               </button>
             </div>
           </form>
-
-          <div className="footer mt-4 text-white">
-            Already have an account?{" "}
-            <Link to={"/SALU-CMS-FYP/login"} style={{ color: "white" }}>
-              Login
-            </Link>
-          </div>
         </div>
       </div>
     </div>

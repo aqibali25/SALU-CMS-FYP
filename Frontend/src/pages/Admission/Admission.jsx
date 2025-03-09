@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import "./Admission.css";
 import FormSideBar from "../../components/AdmissionComp/FormSideBar";
 import AdmissionHeader from "../../components/AdmissionComp/otherAdmissionComp/AdmissionHeader";
@@ -11,8 +12,8 @@ const Admission = () => {
 
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (isLoggedIn !== "true") {
+    const isLoggedIn = Cookies.get("isLoggedIn"); // Get authentication status from cookies
+    if (!isLoggedIn) {
       navigate("/SALU-CMS-FYP/login");
     }
   }, [navigate]);
@@ -21,12 +22,8 @@ const Admission = () => {
     <section className="admissionSection">
       <FormSideBar />
       <div className="admissionform">
-        {/* Check if the current path includes "SALU-CMS-FYP/admissions/form" */}
-        {currentPathname.includes("/admissions/form") ? (
-          <></>
-        ) : (
-          <AdmissionHeader />
-        )}
+        {/* Hide AdmissionHeader if current path includes "SALU-CMS-FYP/admissions/form" */}
+        {!currentPathname.includes("/admissions/form") && <AdmissionHeader />}
         <Outlet />
       </div>
     </section>

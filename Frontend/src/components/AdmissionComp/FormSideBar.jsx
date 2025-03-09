@@ -14,6 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../../styles/FormSideBar.css";
+import Cookies from "js-cookie";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -81,7 +82,8 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    Cookies.remove("isLoggedIn");
+    Cookies.remove("cnic");
     navigate("/SALU-CMS-FYP/login");
   };
 

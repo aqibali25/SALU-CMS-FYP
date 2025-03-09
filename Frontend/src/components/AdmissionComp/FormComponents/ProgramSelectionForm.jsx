@@ -4,6 +4,7 @@ import "../../../styles/ProgramSelectionForm.css";
 import axios from "axios";
 import { useFormStatus } from "../../../contexts/AdmissionFormContext";
 import SkeletonLoader from "../SkeletonLoader";
+import Cookies from "js-cookie";
 
 const ProgramSelectionForm = () => {
   const [programOptions, setProgramOptions] = useState([]);
@@ -14,11 +15,12 @@ const ProgramSelectionForm = () => {
     thirdChoice: "",
   });
   const [loading, setLoading] = useState(true);
+  const cnic = Cookies.get("cnic");
 
   const navigate = useNavigate();
-  const { updateFormStatus, statusItems } = useFormStatus();
+  const { updateFormStatus } = useFormStatus();
 
-  // Fetch program options from backend
+  // Fetch program options
   useEffect(() => {
     const fetchProgramOptions = async () => {
       try {
@@ -26,19 +28,67 @@ const ProgramSelectionForm = () => {
           "http://localhost:3306/api/departments"
         );
         const options = response.data.map((dept) => ({
-          value: dept.department_name,
-          label: dept.department_name,
+          value: dept.department_name.trim(), // Trim spaces for consistency
+          label: dept.department_name.trim(),
         }));
         setProgramOptions(options);
         console.log("Program Options:", options);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching program options:", error);
       } finally {
         setLoading(false);
       }
     };
     fetchProgramOptions();
   }, []);
+
+  useEffect(() => {
+    if (programOptions.length === 0) return; // Ensure options are loaded first
+
+    const fetchUserProgramChoices = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3306/api/getProgramSelection/${cnic}`
+        );
+        const programChoices = response.data;
+
+        console.log("Fetched Program Choices:", programChoices);
+
+        if (programChoices) {
+          updateFormStatus("programOfStudy", "Completed");
+
+          setChoices({
+            appliedDepartment: programOptions.some(
+              (opt) =>
+                opt.value === (programChoices.applied_department || "").trim()
+            )
+              ? (programChoices.applied_department || "").trim()
+              : "",
+            firstChoice: programOptions.some(
+              (opt) => opt.value === (programChoices.first_choice || "").trim()
+            )
+              ? (programChoices.first_choice || "").trim()
+              : "",
+            secondChoice: programOptions.some(
+              (opt) => opt.value === (programChoices.second_choice || "").trim()
+            )
+              ? (programChoices.second_choice || "").trim()
+              : "",
+            thirdChoice: programOptions.some(
+              (opt) => opt.value === (programChoices.third_choice || "").trim()
+            )
+              ? (programChoices.third_choice || "").trim()
+              : "",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user's program choices:", error);
+      }
+    };
+
+    fetchUserProgramChoices();
+  }, [programOptions]); // Runs only when programOptions are available
+  // Runs only when programOptions are available
 
   // Prevents loading state from persisting too long
   useEffect(() => {
@@ -48,7 +98,7 @@ const ProgramSelectionForm = () => {
     return () => clearTimeout(timer);
   }, [programOptions]);
 
-  // Handles dropdown selection
+  // Handle dropdown selection change
   const handleChoiceChange = (choice, selectedValue) => {
     setChoices((prevChoices) => ({
       ...prevChoices,
@@ -56,27 +106,32 @@ const ProgramSelectionForm = () => {
     }));
   };
 
-  // Filters out selected choices to prevent duplicate selection
-  const getFilteredOptions = (excludedChoices) => {
+  // Filters out already selected choices, except the current one
+  const getFilteredOptions = (excludedChoices, currentKey) => {
     return programOptions.filter(
-      (option) => !excludedChoices.includes(option.value)
+      (option) =>
+        !excludedChoices.includes(option.value) ||
+        option.value === choices[currentKey]
     );
   };
 
-  // Handles form submission
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!choices.appliedDepartment || !choices.firstChoice) {
-      alert("Please select both an Applied Department and a First Choice.");
+
+    if (!cnic) {
+      console.error("CNIC not found in sessionStorage!");
       return;
     }
+
     try {
       await axios.post(
         "http://localhost:3306/api/saveProgramSelection",
-        choices
+        { ...choices, cnic },
+        { headers: { "Content-Type": "application/json" } }
       );
       updateFormStatus("programOfStudy", "Completed");
-      console.log("Form Data Sent:", choices);
+      console.log("Form Data Sent:", { ...choices, cnic });
       navigate("/SALU-CMS-FYP/admissions/form");
     } catch (error) {
       console.error("Error saving data:", error);
@@ -114,13 +169,14 @@ const ProgramSelectionForm = () => {
                   onChange={(e) => handleChoiceChange(key, e.target.value)}
                   required={required}
                 >
-                  <option value="" disabled>
+                  <option value="">
                     {key === "appliedDepartment"
                       ? "[Select an Option]"
                       : "Select a Program"}
                   </option>
                   {getFilteredOptions(
-                    Object.values(choices).filter((c) => c !== choices[key])
+                    Object.values(choices).filter((c) => c !== choices[key]),
+                    key
                   ).map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 import Logo from "./Logo";
 import NavLinks from "./NavLink";
 import "../../styles/Navbar.css";
@@ -9,14 +10,15 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
+  const isLoggedIn = Cookies.get("isLoggedIn"); // Get authentication status from cookies
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoggedIn === "true") {
+    if (isLoggedIn) {
       // navigate("/SALU-CMS-FYP/");
     }
   }, []);
+
   const navLinksData = [
     { name: "Home", href: "SALU-CMS-FYP/", className: "home" },
     { name: "Faculty", href: "SALU-CMS-FYP/faculty", className: "faculty" },
@@ -60,7 +62,6 @@ const Navbar = () => {
         style={{ width: getNavAndSignupWidth() }}
       >
         <div className="navLinks">
-          {/* Pass navLinksData as a prop to NavLinks */}
           {navLinksData.map((link, index) => (
             <NavLinks key={index} link={link} />
           ))}

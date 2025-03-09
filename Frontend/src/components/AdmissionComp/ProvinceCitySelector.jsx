@@ -1,22 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { citiesByProvince } from "../../contexts/provinceCitiesData";
 
-const ProvinceCitySelector = ({ onProvinceChange, onCityChange }) => {
-  const [selectedProvince, setSelectedProvince] = useState("");
+const ProvinceCitySelector = ({
+  initialProvince = "",
+  initialCity = "",
+  onProvinceChange,
+  onCityChange,
+}) => {
+  const [selectedProvince, setSelectedProvince] = useState(initialProvince);
+  const [selectedCity, setSelectedCity] = useState(initialCity);
   const [cities, setCities] = useState([]);
 
+  // Update cities when province changes
   useEffect(() => {
     if (selectedProvince) {
-      setCities(citiesByProvince[selectedProvince]);
+      setCities(citiesByProvince[selectedProvince] || []);
     } else {
       setCities([]);
     }
   }, [selectedProvince]);
 
+  // Update province and city when initial values change (after fetching data)
+  useEffect(() => {
+    setSelectedProvince(initialProvince);
+    setSelectedCity(initialCity);
+    setCities(citiesByProvince[initialProvince] || []);
+  }, [initialProvince, initialCity]);
+
   const handleProvinceChange = (e) => {
     const province = e.target.value;
     setSelectedProvince(province);
+    setSelectedCity(""); // Reset city when province changes
+    setCities(citiesByProvince[province] || []);
     onProvinceChange(province);
+  };
+
+  const handleCityChange = (e) => {
+    const city = e.target.value;
+    setSelectedCity(city);
+    onCityChange(city);
   };
 
   return (
@@ -33,7 +55,7 @@ const ProvinceCitySelector = ({ onProvinceChange, onCityChange }) => {
           onChange={handleProvinceChange}
           required
         >
-          <option value="" disabled selected>
+          <option value="" disabled>
             [Select an Option]
           </option>
           {Object.keys(citiesByProvince).map((province) => (
@@ -43,6 +65,7 @@ const ProvinceCitySelector = ({ onProvinceChange, onCityChange }) => {
           ))}
         </select>
       </div>
+
       <div className="inputContainer">
         <label htmlFor="city">
           <span className="required">*</span>City:
@@ -52,10 +75,11 @@ const ProvinceCitySelector = ({ onProvinceChange, onCityChange }) => {
           id="city"
           className="col-6"
           disabled={!selectedProvince}
-          onChange={(e) => onCityChange(e.target.value)}
+          value={selectedCity}
+          onChange={handleCityChange}
           required
         >
-          <option value="" disabled selected>
+          <option value="" disabled>
             [Select an Option]
           </option>
           {cities.map((city) => (
