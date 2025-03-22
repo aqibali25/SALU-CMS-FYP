@@ -1,31 +1,27 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-require("dotenv").config(); // Load environment variables
-const db = require("./db"); // Database connection
-
-// Import Routes
-const authRoutes = require("./routes/auth");
-const programSelectionRoutes = require("./routes/programSelection");
-const departmentRoutes = require("./routes/department");
-const fatherGuardianInfoRoutes = require("./routes/fatherGuardianInfo");
-const academicRecordRoutes = require("./routes/academicRecord");
-const personalInfoRoutes = require("./routes/personalInfo"); // Missing route added
+require("dotenv").config();
+const db = require("./db");
 
 const app = express();
-const PORT = process.env.PORT || 3306; // Fix: Use PORT instead of DB_PORT
+const PORT = process.env.PORT || 3306;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+
+// Increase payload size limit (e.g., 50MB)
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Routes
-app.use("/api", authRoutes);
-app.use("/api", programSelectionRoutes);
-app.use("/api", departmentRoutes);
-app.use("/api", fatherGuardianInfoRoutes);
-app.use("/api", academicRecordRoutes);
-app.use("/api", personalInfoRoutes); // Ensure the new route is included
+app.use("/api", require("./routes/auth"));
+app.use("/api", require("./routes/programSelection"));
+app.use("/api", require("./routes/department"));
+app.use("/api", require("./routes/fatherGuardianInfo"));
+app.use("/api", require("./routes/academicRecord"));
+app.use("/api", require("./routes/personalInfo"));
+app.use("/api", require("./routes/documents"));
 
 // Start the Server
 app.listen(PORT, () => {

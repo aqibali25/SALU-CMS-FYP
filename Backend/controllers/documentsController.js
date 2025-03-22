@@ -1,37 +1,33 @@
 const db = require("../db");
 
-// Upload Document
 const uploadDocument = async (req, res) => {
   const { cnic, docType, docName } = req.body;
-  const filePath = req.file.path; // File path from multer
 
-  // Validate required fields
-  if (!cnic || !docType || !docName || !filePath) {
-    return res.status(400).json({ message: "All fields are required." });
+  // Check if file was uploaded
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded." });
   }
 
-  try {
-    // Convert file to Base64
-    const fileData = await convertToBase64(req.file.path);
+  const filePath = req.file.path; // File path from multer
 
+  try {
     // Insert document into the database
     const query =
-      "INSERT INTO uploaded_docs (cnic, docType, docName, filePath, fileData) VALUES (?, ?, ?, ?, ?)";
-    db.query(
-      query,
-      [cnic, docType, docName, filePath, fileData],
-      (err, result) => {
-        if (err) {
-          console.error("Error uploading document: ", err);
-          return res
-            .status(500)
-            .json({ message: "Database error!", error: err.message });
-        }
-        res.status(201).json({ message: "Document uploaded successfully!" });
+      "INSERT INTO uploaded_docs (cnic, docType, docName, filePath) VALUES (?, ?, ?, ?)";
+    db.query(query, [cnic, docType, docName, filePath], (err, result) => {
+      if (err) {
+        console.error("Error uploading document: ", err);
+        return res
+          .status(500)
+          .json({ message: "Database error!", error: err.message });
       }
-    );
+      res.status(201).json({
+        message: "Document uploaded successfully!",
+        filePath: filePath, // Return the file path
+      });
+    });
   } catch (error) {
-    console.error("Error converting file to Base64: ", error);
+    console.error("Error uploading document: ", error);
     res.status(500).json({ message: "Server error!", error: error.message });
   }
 };

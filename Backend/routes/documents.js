@@ -11,6 +11,6 @@ router.post(
 );
 
 // Fetch Uploaded Documents Route
-router.get("/:cnic", documentsController.getUploadedDocuments);
+router.get("/upload/:cnic", documentsController.getUploadedDocuments);
 
 module.exports = router;

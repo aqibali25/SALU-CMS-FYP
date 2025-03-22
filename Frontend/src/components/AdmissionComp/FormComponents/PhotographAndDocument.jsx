@@ -1,79 +1,27 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import InputContainer from "../InputContainer";
 import UploadedDoc from "../UploadedDoc";
-import { useFormStatus } from "../../../contexts/AdmissionFormContext.jsx";
-import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../SkeletonLoader.jsx";
-
-// Define initial state
-const initialState = {
-  availableDocs: [
-    { value: "passportsizephoto", label: "Passport Size Photo" },
-    { value: "cnic", label: "CNIC/B-Form" },
-    { value: "marksheet12", label: "12th Mark Sheet" },
-    { value: "marksheet10", label: "10th Mark Sheet" },
-    { value: "domicileB", label: "Domicile (For Bachelors)" },
-    { value: "domicileCert", label: "Domicile Certificate" },
-  ],
-  uploadedDocs: [],
-  selectedDoc: "",
-  file: null,
-  fileData: null,
-  uploading: false,
-  uploadDisabled: false,
-};
-
-// Define reducer function
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "SET_SELECTED_DOC":
-      return { ...state, selectedDoc: action.payload };
-    case "SET_FILE":
-      return { ...state, file: action.payload };
-    case "ADD_UPLOADED_DOC":
-      return {
-        ...state,
-        uploadedDocs: [...state.uploadedDocs, action.payload],
-        availableDocs: state.availableDocs.filter(
-          (doc) => doc.value !== action.payload.docType
-        ),
-        selectedDoc: "",
-        file: null,
-        fileData: null,
-      };
-    case "REMOVE_UPLOADED_DOC":
-      const removedDoc = state.uploadedDocs.find(
-        (doc) => doc.docType === action.payload
-      );
-      return {
-        ...state,
-        uploadedDocs: state.uploadedDocs.filter(
-          (doc) => doc.docType !== action.payload
-        ),
-        availableDocs: [
-          ...state.availableDocs,
-          { value: removedDoc.docType, label: removedDoc.docName },
-        ],
-      };
-    case "SET_FILE_DATA":
-      return { ...state, fileData: action.payload };
-    case "SET_UPLOADING":
-      return { ...state, uploading: action.payload };
-    case "DISABLE_UPLOAD":
-      return { ...state, uploadDisabled: true };
-    default:
-      return state;
-  }
-};
+import useDocumentStore from "../../../contexts/useDocumentStore";
+import Cookies from "js-cookie";
 
 const PhotographAndDocument = () => {
-  const [loading, setLoading] = useState(true); // State to track loading state
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const { updateFormStatus } = useFormStatus(); // Call useFormStatus to access its properties
-  const navigate = useNavigate(); // Define navigate for redirection
+  const [loading, setLoading] = useState(true);
+  const {
+    availableDocs,
+    selectedDoc,
+    file,
+    setSelectedDoc,
+    setFile,
+    addUploadedDoc,
+    uploadedDocs,
+    removeUploadedDoc,
+  } = useDocumentStore();
   const fileInputRef = useRef(null);
-  const initialStateLength = initialState.availableDocs.length;
-  const [previewImage, setPreviewImage] = useState(null);
+  const cnic = Cookies.get("cnic");
+  const [base64Files, setBase64Files] = useState([]);
+  const [previewImage, setPreviewImage] = useState(null); // State for preview image
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -83,18 +31,18 @@ const PhotographAndDocument = () => {
       reader.onerror = (error) => reject(error);
     });
   };
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false); // Set loading to false after a delay
+      setLoading(false);
     }, 800);
-
-    return () => clearTimeout(timer); // Clear timeout to avoid memory leaks
+    return () => clearTimeout(timer);
   }, []);
 
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0];
     if (uploadedFile && uploadedFile.type.startsWith("image/")) {
-      dispatch({ type: "SET_FILE", payload: uploadedFile });
+      setFile(uploadedFile);
     } else {
       alert("Please upload an image file only.");
       fileInputRef.current.value = "";
@@ -103,57 +51,72 @@ const PhotographAndDocument = () => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (state.selectedDoc && state.file) {
+    if (selectedDoc && file) {
       try {
-        const docLabel = state.availableDocs.find(
-          (doc) => doc.value === state.selectedDoc
+        const docLabel = availableDocs.find(
+          (doc) => doc.value === selectedDoc
         ).label;
 
-        const base64File = await convertToBase64(state.file);
+        // Create a FormData object
+        const formData = new FormData();
+        formData.append("cnic", cnic);
+        formData.append("docType", selectedDoc);
+        formData.append("docName", docLabel);
+        formData.append("file", file);
 
-        dispatch({
-          type: "ADD_UPLOADED_DOC",
-          payload: {
-            docType: state.selectedDoc,
+        console.log(...formData);
+
+        // Send the data to the database
+        const response = await axios.post(
+          "http://localhost:3306/api/upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data", // Set the content type for file upload
+            },
+          }
+        );
+
+        // Handle the response from the server
+        if (response.data.message === "Document uploaded successfully!") {
+          alert("File uploaded successfully!");
+          // Add the uploaded document to the state
+          addUploadedDoc({
+            docType: selectedDoc,
             docName: docLabel,
-            file: base64File,
-          },
-        });
+            filePath: response.data.filePath, // Assuming the server returns the file path
+          });
+        } else {
+          alert("Failed to upload file.");
+        }
 
+        // Clear the file input
         fileInputRef.current.value = "";
       } catch (error) {
-        console.error("Error converting file to Base64", error);
+        console.error("Error uploading file:", error);
+        alert(
+          error.response?.data?.message ||
+            "An error occurred while uploading the file."
+        );
       }
+    } else {
+      alert("Please select a document type and upload a file.");
     }
   };
 
+  // Function to handle removing a document
   const handleRemove = (docType) => {
-    dispatch({ type: "REMOVE_UPLOADED_DOC", payload: docType });
+    removeUploadedDoc(docType);
   };
 
+  // Function to handle previewing an image
   const handlePreview = (file) => {
     setPreviewImage(file);
-
-    // const previewWindow = window.open("", "_blank");
-    // const imageElement = new Image();
-    // imageElement.src = file;
-    // previewWindow.document.body.appendChild(imageElement);
   };
+
+  // Function to close the preview modal
   const closePreview = () => {
     setPreviewImage(null);
-  };
-
-  const handleSaveAndProceed = () => {
-    dispatch({ type: "SET_UPLOADING", payload: true });
-    console.log("Uploading documents:", state.uploadedDocs);
-
-    setTimeout(() => {
-      console.log("All documents uploaded successfully");
-      dispatch({ type: "DISABLE_UPLOAD" });
-    }, 2000);
-
-    updateFormStatus("photographAndDocument", "Completed");
-    navigate("/SALU-CMS-FYP/admissions/form");
   };
 
   return (
@@ -162,9 +125,7 @@ const PhotographAndDocument = () => {
       <form
         onSubmit={handleUpload}
         className="formContainer formInnerContainer pb-5"
-        style={{
-          position: "relative",
-        }}
+        style={{ position: "relative" }}
       >
         {loading && <SkeletonLoader length={2} />}
         {!loading && (
@@ -189,19 +150,13 @@ const PhotographAndDocument = () => {
                 id="documentType"
                 className="col-6"
                 required
-                value={state.selectedDoc}
-                onChange={(e) =>
-                  dispatch({
-                    type: "SET_SELECTED_DOC",
-                    payload: e.target.value,
-                  })
-                }
-                disabled={state.uploadDisabled}
+                value={selectedDoc}
+                onChange={(e) => setSelectedDoc(e.target.value)}
               >
                 <option value="" disabled>
                   [Select an Option]
                 </option>
-                {state.availableDocs.map((doc) => (
+                {availableDocs.map((doc) => (
                   <option key={doc.value} value={doc.value}>
                     {doc.label}
                   </option>
@@ -210,27 +165,18 @@ const PhotographAndDocument = () => {
             </div>
             <InputContainer
               inputType="file"
-              required={true}
+              required
               title={"Upload Attachment"}
               onChange={handleFileChange}
               ref={fileInputRef}
-              disabled={state.uploadDisabled}
-            ></InputContainer>
+            />
           </>
         )}
         <div
           className="buttonContainer"
-          style={{
-            position: "absolute",
-            bottom: "0px",
-            right: "0px",
-          }}
+          style={{ position: "absolute", bottom: "0px", right: "0px" }}
         >
-          <button
-            className="button buttonNotFilled"
-            type="submit"
-            disabled={state.uploadDisabled}
-          >
+          <button className="button buttonNotFilled" type="submit">
             Upload
           </button>
         </div>
@@ -238,7 +184,7 @@ const PhotographAndDocument = () => {
       <hr />
       <h4>Uploaded Document</h4>
       <div className="p-3 d-flex flex-column">
-        {state.uploadedDocs.map((doc) => (
+        {uploadedDocs.map((doc) => (
           <UploadedDoc
             key={doc.docType}
             docName={doc.docName}
@@ -247,18 +193,11 @@ const PhotographAndDocument = () => {
           />
         ))}
       </div>
-
       <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-        <button
-          className="button buttonFilled"
-          onClick={handleSaveAndProceed}
-          disabled={
-            state.uploading || state.uploadedDocs.length !== initialStateLength
-          }
-        >
-          Save & Proceed
-        </button>
+        <button className="button buttonFilled">Save & Proceed</button>
       </div>
+
+      {/* Preview Modal */}
       {previewImage && (
         <div
           className="image-preview-modal"
