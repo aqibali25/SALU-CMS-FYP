@@ -4,25 +4,37 @@ import Cookies from "js-cookie";
 import "./Admission.css";
 import FormSideBar from "../../components/AdmissionComp/FormSideBar";
 import AdmissionHeader from "../../components/AdmissionComp/otherAdmissionComp/AdmissionHeader";
+import useProgramSelectionStore from "../../store/programSelectionStore";
+import { useFormStatus } from "../../contexts/AdmissionFormContext";
 
 const Admission = () => {
-  // Get the current URL path
   const currentPathname = useLocation().pathname;
   const navigate = useNavigate();
+  const { updateFormStatus } = useFormStatus();
+  const initializeData = useProgramSelectionStore(
+    (state) => state.initializeData
+  );
 
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
-    const isLoggedIn = Cookies.get("isLoggedIn"); // Get authentication status from cookies
+    const isLoggedIn = Cookies.get("isLoggedIn");
     if (!isLoggedIn) {
       navigate("/SALU-CMS-FYP/login");
+    } else {
+      const checkData = async () => {
+        const dataFetched = await initializeData();
+        if (dataFetched) {
+          updateFormStatus("programOfStudy", "Completed");
+        }
+      };
+      checkData();
     }
-  }, [navigate]);
+  }, [navigate, initializeData, updateFormStatus]);
 
   return (
     <section className="admissionSection">
       <FormSideBar />
       <div className="admissionform">
-        {/* Hide AdmissionHeader if current path includes "SALU-CMS-FYP/admissions/form" */}
         {!currentPathname.includes("/admissions/form") && <AdmissionHeader />}
         <Outlet />
       </div>
