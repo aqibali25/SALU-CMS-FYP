@@ -56,7 +56,7 @@ const Admission = () => {
     document.title = "Admission | SALU Ghotki";
     const isLoggedIn = Cookies.get("isLoggedIn");
     if (!isLoggedIn) {
-      navigate("/SALU-CMS-FYP/login");
+      navigate("/login");
     } else {
       const initializeAllData = async () => {
         try {
