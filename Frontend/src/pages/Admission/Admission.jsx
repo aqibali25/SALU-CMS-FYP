@@ -9,11 +9,12 @@ import usePersonalInfoStore from "../../store/personalInfoStore";
 import { useFormStatus } from "../../contexts/AdmissionFormContext";
 import useFatherGuardianStore from "../../store/fatherGuardianStore";
 import useAcademicRecordStore from "../../store/useAcademicRecordStore.js";
+import useDocumentStore from "../../store/useDocumentStore";
 
 const Admission = () => {
   const currentPathname = useLocation().pathname;
   const navigate = useNavigate();
-  const { updateFormStatus } = useFormStatus();
+  const cnic = Cookies.get("cnic");
 
   const initializeProgramData = useProgramSelectionStore(
     (state) => state.initializeData
@@ -27,6 +28,30 @@ const Admission = () => {
   const initializeAcademicRecord = useAcademicRecordStore(
     (state) => state.fetchAcademicRecord
   );
+
+  // ✅ Access uploaded documents from store
+  const uploadedDocs = useDocumentStore((state) => state.uploadedDocs);
+  const fetchUploadedDocuments = useDocumentStore(
+    (state) => state.fetchUploadedDocuments
+  );
+  const { updateFormStatus } = useFormStatus();
+
+  // ✅ Fetch documents once
+  useEffect(() => {
+    if (cnic) fetchUploadedDocuments(updateFormStatus);
+  }, [cnic, fetchUploadedDocuments, updateFormStatus]);
+
+  // ✅ Dynamically update completion status
+  useEffect(() => {
+    const totalRequired = 6; // you can also derive this from availableDocs + uploadedDocs if needed
+    const completed = uploadedDocs.length;
+    const allUploaded = completed >= totalRequired;
+
+    updateFormStatus(
+      "photographAndDocument",
+      allUploaded ? "Completed" : "Pending"
+    );
+  }, [uploadedDocs, updateFormStatus]);
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
     const isLoggedIn = Cookies.get("isLoggedIn");
@@ -54,6 +79,17 @@ const Admission = () => {
             updateFormStatus("fatherGuardianInformation", "Completed");
           if (academicRecordSuccess)
             updateFormStatus("academicRecord", "Completed");
+
+          // ✅ Fetch uploaded docs and update photograph/document form status
+          await fetchUploadedDocuments();
+          const totalRequired = 6; // you can dynamically set this based on backend
+          const completed = uploadedDocs.length;
+          const allUploaded = completed >= totalRequired;
+
+          updateFormStatus(
+            "photographAndDocument",
+            allUploaded ? "Completed" : "Pending"
+          );
         } catch (error) {
           console.error("Initialization error:", error);
         }
@@ -66,8 +102,10 @@ const Admission = () => {
     initializeProgramData,
     fetchPersonalInfo,
     fetchFatherGuardianInfo,
-    updateFormStatus,
     initializeAcademicRecord,
+    updateFormStatus,
+    fetchUploadedDocuments,
+    uploadedDocs,
   ]);
 
   return (

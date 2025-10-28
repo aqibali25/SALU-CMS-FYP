@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { useFormStatus } from "../contexts/AdmissionFormContext"; // Adjust path as needed
 
 const useProgramSelectionStore = create((set, get) => ({
-  // State
   programOptions: [],
   choices: {
     appliedDepartment: "",
@@ -17,7 +16,7 @@ const useProgramSelectionStore = create((set, get) => ({
   cnic: Cookies.get("cnic"),
   hasFetched: false,
 
-  // Actions
+  // Fetch available departments
   fetchProgramOptions: async () => {
     const { hasFetched } = get();
     if (hasFetched) return;
@@ -32,10 +31,12 @@ const useProgramSelectionStore = create((set, get) => ({
       return options;
     } catch (error) {
       console.error("Error fetching program options:", error);
+      set({ programOptions: [], loading: false });
       return [];
     }
   },
 
+  // Fetch saved program selection (if any)
   fetchUserProgramChoices: async () => {
     const { programOptions, cnic } = get();
     if (programOptions.length === 0) return;
@@ -74,31 +75,39 @@ const useProgramSelectionStore = create((set, get) => ({
           hasFetched: true,
           loading: false,
         });
-        return true; // Indicate successful fetch
+        return true;
       }
     } catch (error) {
+      // ✅ Handle 404 gracefully (no existing data)
+      if (error.response && error.response.status === 404) {
+        console.warn("No existing program data found for this CNIC.");
+        set({ hasFetched: true, loading: false }); // Stop loading & show empty fields
+        return false;
+      }
+
       console.error("Error fetching user's program choices:", error);
+      set({ hasFetched: true, loading: false }); // Still stop loading on other errors
       return false;
     }
   },
 
+  // Initialize all data (programs + saved choices if any)
   initializeData: async () => {
     const { hasFetched, fetchProgramOptions, fetchUserProgramChoices } = get();
     if (hasFetched) return false;
 
     const options = await fetchProgramOptions();
     if (options.length > 0) {
-      return await fetchUserProgramChoices();
+      await fetchUserProgramChoices();
+    } else {
+      set({ loading: false });
     }
-    return false;
+    return true;
   },
 
   updateChoice: (choice, value) => {
     set((state) => ({
-      choices: {
-        ...state.choices,
-        [choice]: value,
-      },
+      choices: { ...state.choices, [choice]: value },
     }));
   },
 
@@ -118,7 +127,7 @@ const useProgramSelectionStore = create((set, get) => ({
   },
 }));
 
-// Custom initialization hook with status updating
+// ✅ Custom initialization hook with form status update
 export const useInitializeProgramSelection = () => {
   const initializeData = useProgramSelectionStore(
     (state) => state.initializeData

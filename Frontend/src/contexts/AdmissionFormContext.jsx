@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import {
   FaGraduationCap,
   FaUser,
@@ -21,7 +27,6 @@ export const FormStatusProvider = ({ children }) => {
     },
   });
 
-  // Predefined weights for each form
   const formWeights = {
     programOfStudy: 13,
     personalInformation: 15,
@@ -30,55 +35,42 @@ export const FormStatusProvider = ({ children }) => {
     photographAndDocument: 24,
   };
 
-  // Simulated fetch function to get initial data from the database
-  const fetchFormStatusFromDB = async () => {
-    const dataFromDB = await Promise.resolve({
-      percentage: 0,
-      forms: {
-        programOfStudy: "Pending",
-        personalInformation: "Pending",
-        fatherGuardianInformation: "Pending",
-        academicRecord: "Pending",
-        photographAndDocument: "Pending",
-      },
-    });
-
-    setFormStatus(dataFromDB);
-  };
-
-  // Initialize formStatus from the database on component mount
   useEffect(() => {
+    const fetchFormStatusFromDB = async () => {
+      const dataFromDB = await Promise.resolve({
+        percentage: 0,
+        forms: {
+          programOfStudy: "Pending",
+          personalInformation: "Pending",
+          fatherGuardianInformation: "Pending",
+          academicRecord: "Pending",
+          photographAndDocument: "Pending",
+        },
+      });
+      setFormStatus(dataFromDB);
+    };
     fetchFormStatusFromDB();
   }, []);
 
-  const updateFormStatus = async (formName, status) => {
+  const saveFormStatusToDB = async (data) => {
+    await Promise.resolve(data);
+  };
+
+  // ✅ Use useCallback to prevent function recreation
+  const updateFormStatus = useCallback(async (formName, status) => {
     setFormStatus((prev) => {
       const updatedForms = { ...prev.forms, [formName]: status };
-
-      // Calculate the percentage based on completed forms and their weights
       const completedPercentage = Object.entries(updatedForms).reduce(
-        (total, [name, currentStatus]) => {
-          return currentStatus === "Completed"
-            ? total + formWeights[name]
-            : total;
-        },
+        (total, [name, currentStatus]) =>
+          currentStatus === "Completed" ? total + formWeights[name] : total,
         0
       );
 
-      const percentage = parseFloat(completedPercentage.toFixed(1)); // Limit to 1 decimal place
-
-      // Simulated save function to update the database
+      const percentage = parseFloat(completedPercentage.toFixed(1));
       saveFormStatusToDB({ forms: updatedForms, percentage });
-
       return { forms: updatedForms, percentage };
     });
-  };
-
-  // Simulated save function to update the database
-  const saveFormStatusToDB = async (data) => {
-    // Replace this with an API call to save data to your backend
-    await Promise.resolve(data);
-  };
+  }, []); // ← empty deps → stable reference
 
   const statusItems = [
     {

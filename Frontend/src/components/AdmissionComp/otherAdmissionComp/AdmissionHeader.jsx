@@ -4,27 +4,27 @@ import axios from "axios";
 const AdmissionHeader = () => {
   const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("token"); // if you’re using JWT
-        const res = await axios.get("http://localhost:3306/api/login", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const token = localStorage.getItem("token"); // if you’re using JWT
+  //       const res = await axios.get("http://localhost:3306/api/login", {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
 
-        console.log("✅ Login API Response:", res.data);
+  //       console.log("✅ Login API Response:", res.data);
 
-        // assuming API returns something like { name: "Aqib Ali Kalwar", email: "...", ... }
-        setUserData(res.data);
-      } catch (error) {
-        console.error("❌ Error fetching user data:", error);
-      }
-    };
+  //       // assuming API returns something like { name: "Aqib Ali Kalwar", email: "...", ... }
+  //       setUserData(res.data);
+  //     } catch (error) {
+  //       console.error("❌ Error fetching user data:", error);
+  //     }
+  //   };
 
-    fetchUserData();
-  }, []);
+  //   fetchUserData();
+  // }, []);
 
   return (
     <div
