@@ -1,151 +1,47 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../SkeletonLoader";
 import InputContainer from "../InputContainer";
 import { useFormStatus } from "../../../contexts/AdmissionFormContext";
-import { boards, educationGroups } from "../../../contexts/BoardsData";
-import Cookies from "js-cookie";
-import axios from "axios";
+import useAcademicRecordStore from "../../../store/useAcademicRecordStore.js";
 
 const AcademicRecord = () => {
+  const navigate = useNavigate();
+  const { updateFormStatus } = useFormStatus();
+
+  const {
+    academicData,
+    loading,
+    boards,
+    educationGroups,
+    fetchAcademicRecord,
+    updateField,
+    submitAcademicRecord,
+  } = useAcademicRecordStore();
+
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1949 },
     (_, i) => currentYear - i
   );
 
-  const [academicData, setAcademicData] = useState({
-    intermediate: {
-      group: "",
-      degreeYear: "",
-      seatNo: "",
-      institutionName: "",
-      board: "",
-      totalMarks: "",
-      marksObtained: "",
-      percentage: "",
-    },
-    matriculation: {
-      group: "",
-      degreeYear: "",
-      seatNo: "",
-      institutionName: "",
-      board: "",
-      totalMarks: "",
-      marksObtained: "",
-      percentage: "",
-    },
-  });
-
-  const navigate = useNavigate();
-  const { updateFormStatus } = useFormStatus();
-  const [loading, setLoading] = useState(true);
-  const cnic = Cookies.get("cnic");
-
-  useEffect(() => {
-    if (!cnic) return;
-
-    const fetchAcademicRecord = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3306/api/getAcademicRecord/${cnic}`
-        );
-        if (response.data) {
-          updateFormStatus("academicRecord", "Completed");
-
-          const formatAcademicData = (data) => ({
-            group: data?.group_name || "",
-            degreeYear: data?.degree_year || "",
-            seatNo: data?.seat_no || "",
-            institutionName: data?.institution_name || "",
-            board: data?.board || "",
-            totalMarks: data?.total_marks || "",
-            marksObtained: data?.marks_obtained || "",
-            percentage: data?.percentage || "",
-          });
-
-          setAcademicData({
-            intermediate: formatAcademicData(response.data.intermediate),
-            matriculation: formatAcademicData(response.data.matriculation),
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching academic record:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAcademicRecord();
-  }, [cnic]);
-
-  const calculatePercentage = (category) => {
-    const { totalMarks, marksObtained } = academicData[category];
-    if (totalMarks && marksObtained) {
-      const total = parseFloat(totalMarks);
-      const obtained = parseFloat(marksObtained);
-      if (!isNaN(total) && !isNaN(obtained) && total > 0) {
-        setAcademicData((prev) => ({
-          ...prev,
-          [category]: {
-            ...prev[category],
-            percentage: ((obtained / total) * 100).toFixed(2) + "%",
-          },
-        }));
-      } else {
-        setAcademicData((prev) => ({
-          ...prev,
-          [category]: { ...prev[category], percentage: "" },
-        }));
-      }
-    } else {
-      setAcademicData((prev) => ({
-        ...prev,
-        [category]: { ...prev[category], percentage: "" },
-      }));
-    }
-  };
-
-  useEffect(() => {
-    calculatePercentage("intermediate");
-  }, [
-    academicData.intermediate.totalMarks,
-    academicData.intermediate.marksObtained,
-  ]);
-
-  useEffect(() => {
-    calculatePercentage("matriculation");
-  }, [
-    academicData.matriculation.totalMarks,
-    academicData.matriculation.marksObtained,
-  ]);
-
   const handleChange = (e, category) => {
-    const { id, value } = e.target;
-    setAcademicData((prev) => ({
-      ...prev,
-      [category]: { ...prev[category], [id]: value },
-    }));
+    updateField(category, e.target.id, e.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = {
-      cnic,
-      ...academicData,
-    };
-    console.log("Payload:", payload);
-
-    try {
-      await axios.post("http://localhost:3306/api/saveAcademicRecord", payload);
-      console.log("Academic Data Saved:", payload);
+    const ok = await submitAcademicRecord();
+    if (ok) {
       updateFormStatus("academicRecord", "Completed");
       navigate("/SALU-CMS-FYP/admissions/form");
-    } catch (error) {
-      console.error("Error saving academic record:", error);
     }
   };
+
+  useEffect(() => {
+    fetchAcademicRecord();
+  }, [fetchAcademicRecord]);
 
   const categories = [
     { key: "intermediate", title: "Degree Information (Intermediate)" },
@@ -162,7 +58,7 @@ const AcademicRecord = () => {
             <div key={key}>
               <h4>{title}</h4>
               <div className="formContainer">
-                {/* Group Selection */}
+                {/* Group */}
                 <div className="inputContainer">
                   <label htmlFor="group">
                     <span className="required">*</span>Group:
@@ -177,9 +73,9 @@ const AcademicRecord = () => {
                     <option value="" disabled>
                       [Select an Option]
                     </option>
-                    {educationGroups[key].map((group) => (
-                      <option key={group} value={group}>
-                        {group}
+                    {educationGroups[key].map((g) => (
+                      <option key={g} value={g}>
+                        {g}
                       </option>
                     ))}
                   </select>
@@ -200,9 +96,9 @@ const AcademicRecord = () => {
                     <option value="" disabled>
                       [Select an Option]
                     </option>
-                    {years.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
+                    {years.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
                       </option>
                     ))}
                   </select>
@@ -211,7 +107,7 @@ const AcademicRecord = () => {
                 <InputContainer
                   htmlFor="seatNo"
                   title="Seat No"
-                  required={true}
+                  required
                   inputType="text"
                   value={academicData[key].seatNo}
                   onChange={(e) => handleChange(e, key)}
@@ -222,13 +118,13 @@ const AcademicRecord = () => {
                   title={
                     key === "matriculation" ? "School Name" : "College Name"
                   }
-                  required={true}
+                  required
                   inputType="text"
                   value={academicData[key].institutionName}
                   onChange={(e) => handleChange(e, key)}
                 />
 
-                {/* Board Selection */}
+                {/* Board */}
                 <div className="inputContainer">
                   <label htmlFor="board">
                     <span className="required">*</span>Board:
@@ -243,9 +139,9 @@ const AcademicRecord = () => {
                     <option value="" disabled>
                       [Select an Option]
                     </option>
-                    {boards.map((board) => (
-                      <option key={board.value} value={board.value}>
-                        {board.label}
+                    {boards.map((b) => (
+                      <option key={b.value} value={b.value}>
+                        {b.label}
                       </option>
                     ))}
                   </select>
@@ -254,7 +150,7 @@ const AcademicRecord = () => {
                 <InputContainer
                   htmlFor="totalMarks"
                   title="Total Marks"
-                  required={true}
+                  required
                   inputType="text"
                   value={academicData[key].totalMarks}
                   onChange={(e) => handleChange(e, key)}
@@ -263,7 +159,7 @@ const AcademicRecord = () => {
                 <InputContainer
                   htmlFor="marksObtained"
                   title="Marks Obtained"
-                  required={true}
+                  required
                   inputType="text"
                   value={academicData[key].marksObtained}
                   onChange={(e) => handleChange(e, key)}
@@ -272,18 +168,20 @@ const AcademicRecord = () => {
                 <InputContainer
                   htmlFor="percentage"
                   title="Percentage"
-                  required={true}
+                  required
                   inputType="text"
-                  readOnly={true}
+                  readOnly
                   value={academicData[key].percentage}
                 />
               </div>
+
               {key === "intermediate" && <hr className="my-5" />}
             </div>
           ))
         )}
+
         <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-          <button className="button buttonFilled" type="submit">
+          <button type="submit" className="button buttonFilled">
             Save & Proceed
           </button>
         </div>

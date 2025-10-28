@@ -8,6 +8,7 @@ import useProgramSelectionStore from "../../store/programSelectionStore";
 import usePersonalInfoStore from "../../store/personalInfoStore";
 import { useFormStatus } from "../../contexts/AdmissionFormContext";
 import useFatherGuardianStore from "../../store/fatherGuardianStore";
+import useAcademicRecordStore from "../../store/useAcademicRecordStore.js";
 
 const Admission = () => {
   const currentPathname = useLocation().pathname;
@@ -23,7 +24,9 @@ const Admission = () => {
   const fetchFatherGuardianInfo = useFatherGuardianStore(
     (state) => state.fetchFatherGuardianInfo
   );
-
+  const initializeAcademicRecord = useAcademicRecordStore(
+    (state) => state.fetchAcademicRecord
+  );
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
     const isLoggedIn = Cookies.get("isLoggedIn");
@@ -32,18 +35,25 @@ const Admission = () => {
     } else {
       const initializeAllData = async () => {
         try {
-          const [programSuccess, personalSuccess, fatherGuardianSuccess] =
-            await Promise.all([
-              initializeProgramData(),
-              fetchPersonalInfo(),
-              fetchFatherGuardianInfo(),
-            ]);
+          const [
+            programSuccess,
+            personalSuccess,
+            fatherGuardianSuccess,
+            academicRecordSuccess,
+          ] = await Promise.all([
+            initializeProgramData(),
+            fetchPersonalInfo(),
+            fetchFatherGuardianInfo(),
+            initializeAcademicRecord(),
+          ]);
 
           if (programSuccess) updateFormStatus("programOfStudy", "Completed");
           if (personalSuccess)
             updateFormStatus("personalInformation", "Completed");
           if (fatherGuardianSuccess)
             updateFormStatus("fatherGuardianInformation", "Completed");
+          if (academicRecordSuccess)
+            updateFormStatus("academicRecord", "Completed");
         } catch (error) {
           console.error("Initialization error:", error);
         }
@@ -57,6 +67,7 @@ const Admission = () => {
     fetchPersonalInfo,
     fetchFatherGuardianInfo,
     updateFormStatus,
+    initializeAcademicRecord,
   ]);
 
   return (
