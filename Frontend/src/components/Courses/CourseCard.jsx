@@ -10,7 +10,7 @@ const CourseCard = ({ image, title }) => {
       <Card.Body>
         <Card.Title className="cardTitle">{title}</Card.Title>
         <Card.Text>
-          <Link to={"/SALU-CMS-FYP/admissions"} className="course-link">
+          <Link to={"/admissions"} className="course-link">
             SEE COURSE GUIDE &rarr;
           </Link>
         </Card.Text>

@@ -31,7 +31,7 @@ const Signup = () => {
     document.title = "Signup | SALU Ghotki";
     const isLoggedIn = Cookies.get("isLoggedIn");
     if (isLoggedIn === "true") {
-      navigate("/SALU-CMS-FYP/admission-form");
+      navigate("/admission-form");
     }
   }, [navigate]);
 
@@ -119,7 +119,7 @@ const Signup = () => {
       if (response.status === 200) {
         Cookies.set("isLoggedIn", "true", { expires: 1 });
         Cookies.set("cnic", signupFormData.cnic, { expires: 1 });
-        navigate("/SALU-CMS-FYP/admissions");
+        navigate("/admissions");
       } else {
         alert(response.data.message || "Signup failed!");
       }
@@ -254,6 +254,12 @@ const Signup = () => {
               >
                 Register
               </button>
+            </div>
+            <div className="footer mt-4 text-white">
+              Already have an account?{" "}
+              <Link to={"/login"} style={{ color: "white" }}>
+                Login
+              </Link>
             </div>
           </form>
         </div>

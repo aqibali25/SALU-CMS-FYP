@@ -5,7 +5,7 @@ const Logo = () => {
   return (
     <div className="logo">
       <img src={logo} alt="Salu logo" />
-      <Link to="SALU-CMS-FYP/" className="name">
+      <Link to="/" className="name">
         <label htmlFor="name">SHAH ABDUL LATIF UNIVERSITY</label>
         <label>GHOTKI CAMPUS</label>
       </Link>

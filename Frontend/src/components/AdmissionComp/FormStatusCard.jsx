@@ -11,7 +11,7 @@ const FormStatusCard = ({ title, icon, status, bgColor, url }) => {
     // if (formattedTitle === "father-/-guardian-information") {
     //   formattedTitle = "father-information";
     // }
-    navigate(`/SALU-CMS-FYP/admissions/form/${url}`);
+    navigate(`/admissions/form/${url}`);
   };
 
   return (

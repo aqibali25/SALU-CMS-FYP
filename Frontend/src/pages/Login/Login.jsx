@@ -27,7 +27,7 @@ const Login = () => {
     // Check if the user is logged in using cookies
     const isLoggedIn = Cookies.get("isLoggedIn");
     if (isLoggedIn === "true") {
-      navigate("/SALU-CMS-FYP/admissions");
+      navigate("/admissions");
     }
   }, [navigate]);
 
@@ -73,7 +73,7 @@ const Login = () => {
     ) {
       Cookies.set("isLoggedIn", "true", { expires: 1 }); // Save login status in cookies (1-day expiration)
       Cookies.set("cnic", loginFormData.cnic, { expires: 1 }); // Save CNIC in cookies
-      navigate("/SALU-CMS-FYP/admissions");
+      navigate("/admissions");
     } else {
       try {
         const response = await fetch("http://localhost:3306/api/login", {
@@ -87,7 +87,7 @@ const Login = () => {
         if (response.ok) {
           Cookies.set("isLoggedIn", "true", { expires: 1 });
           Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
-          navigate("/SALU-CMS-FYP/admissions");
+          navigate("/admissions");
         } else {
           alert("Invalid Credentials.");
           setLoginFormData({ cnic: "", password: "" });
@@ -209,7 +209,7 @@ const Login = () => {
             {/* Footer */}
             <div className="footer mt-4 text-white">
               Don't have an account?{" "}
-              <Link to={"/SALU-CMS-FYP/signup"} style={{ color: "white" }}>
+              <Link to={"/signup"} style={{ color: "white" }}>
                 Sign up
               </Link>
             </div>

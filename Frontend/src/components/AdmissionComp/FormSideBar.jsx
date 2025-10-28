@@ -45,27 +45,21 @@ const Sidebar = () => {
   }, [screenWidth]);
 
   useEffect(() => {
-    if (location.pathname === "/SALU-CMS-FYP/admissions") {
+    if (location.pathname === "/admissions") {
       setActiveIndex(0);
-    } else if (location.pathname === "/SALU-CMS-FYP/admissions/form") {
+    } else if (location.pathname === "/admissions/form") {
       setActiveIndex(1);
-    } else if (
-      location.pathname === "/SALU-CMS-FYP/admissions/eligibility-criteria"
-    ) {
+    } else if (location.pathname === "/admissions/eligibility-criteria") {
       setActiveIndex(2);
-    } else if (
-      location.pathname === "/SALU-CMS-FYP/admissions/admission-procedure"
-    ) {
+    } else if (location.pathname === "/admissions/admission-procedure") {
       setActiveIndex(3);
-    } else if (location.pathname === "/SALU-CMS-FYP/admissions/fee-structure") {
+    } else if (location.pathname === "/admissions/fee-structure") {
       setActiveIndex(4);
-    } else if (location.pathname === "/SALU-CMS-FYP/admissions/prospectus") {
+    } else if (location.pathname === "/admissions/prospectus") {
       setActiveIndex(5);
-    } else if (location.pathname === "/SALU-CMS-FYP/admissions/sample-papers") {
+    } else if (location.pathname === "/admissions/sample-papers") {
       setActiveIndex(6);
-    } else if (
-      location.pathname === "/SALU-CMS-FYP/admissions/change-password"
-    ) {
+    } else if (location.pathname === "/admissions/change-password") {
       setActiveIndex(7);
     }
   }, [location]);
@@ -84,7 +78,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     Cookies.remove("isLoggedIn");
     Cookies.remove("cnic");
-    navigate("/SALU-CMS-FYP/login");
+    navigate("/login");
   };
 
   return (
@@ -101,7 +95,7 @@ const Sidebar = () => {
         <hr />
         {/* Menu Items */}
         <Link
-          to="/SALU-CMS-FYP/admissions"
+          to="/admissions"
           className={`menu-item ${activeIndex === 0 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(0)}
         >
@@ -109,7 +103,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Instructions</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/form"
+          to="/admissions/form"
           className={`menu-item ${activeIndex === 1 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(1)}
         >
@@ -117,7 +111,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Application Form</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/eligibility-criteria"
+          to="/admissions/eligibility-criteria"
           className={`menu-item ${activeIndex === 2 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(2)}
         >
@@ -125,7 +119,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Eligibility Criteria</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/admission-procedure"
+          to="/admissions/admission-procedure"
           className={`menu-item ${activeIndex === 3 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(3)}
         >
@@ -133,7 +127,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Admission Procedure</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/fee-structure"
+          to="/admissions/fee-structure"
           className={`menu-item ${activeIndex === 4 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(4)}
         >
@@ -141,7 +135,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Fee Structure</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/prospectus"
+          to="/admissions/prospectus"
           className={`menu-item ${activeIndex === 5 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(5)}
         >
@@ -149,7 +143,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Prospectus</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/sample-papers"
+          to="/admissions/sample-papers"
           className={`menu-item ${activeIndex === 6 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(6)}
         >
@@ -157,7 +151,7 @@ const Sidebar = () => {
           {!isCollapsed && <span>Sample Papers</span>}
         </Link>
         <Link
-          to="/SALU-CMS-FYP/admissions/settings"
+          to="/admissions/change-password"
           className={`menu-item ${activeIndex === 7 ? "active" : ""}`}
           onClick={() => handleMenuItemClick(7)}
         >

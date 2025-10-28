@@ -72,59 +72,55 @@ const App = () => {
   return (
     <FormStatusProvider>
       <SignupContextProvider>
-        <Router>
-          <Navbar />
-          <Routes>
-            <Route path="SALU-CMS-FYP/" element={<Home />} />
-            <Route path="SALU-CMS-FYP/faculty" element={<Faculty />} />
-
-            <Route path="SALU-CMS-FYP/admissions" element={<Admission />}>
-              <Route index element={<AdmissionGuide />} />
-              <Route path="form" element={<FormLayout />}>
-                <Route index element={<FormStatusCards />} />
-                <Route
-                  path="program-of-study"
-                  element={<ProgramSelectionForm />}
-                />
-                <Route path="personal-information" element={<PersonalInfo />} />
-                <Route
-                  path="father-and-guardian-information"
-                  element={<FatherAndGuardianInfo />}
-                />
-
-                <Route
-                  path="academic-record-intermediate"
-                  element={<AcademicRecord title={"Intermediate"} />}
-                />
-                <Route
-                  path="academic-record-matric"
-                  element={<AcademicRecord title={"Matriculation"} />}
-                />
-                <Route
-                  path="photograph-and-document"
-                  element={<PhotographAndDocument />}
-                />
-              </Route>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/faculty" element={<Faculty />} />
+          <Route path="/admissions" element={<Admission />}>
+            <Route index element={<AdmissionGuide />} />
+            <Route path="form" element={<FormLayout />}>
+              <Route index element={<FormStatusCards />} />
               <Route
-                path="eligibility-criteria"
-                element={<EligibilityCriteria />}
+                path="program-of-study"
+                element={<ProgramSelectionForm />}
+              />
+              <Route path="personal-information" element={<PersonalInfo />} />
+              <Route
+                path="father-and-guardian-information"
+                element={<FatherAndGuardianInfo />}
               />
               <Route
-                path="admission-procedure"
-                element={<AdmissionProcedure />}
+                path="academic-record-intermediate"
+                element={<AcademicRecord title="Intermediate" />}
               />
-              <Route path="fee-structure" element={<FeeStructure />} />
-              <Route path="prospectus" element={<Prospectus />} />
-              <Route path="sample-papers" element={<SamplePapers />} />
-              <Route path="change-password" element={<ChangePassword />} />
+              <Route
+                path="academic-record-matric"
+                element={<AcademicRecord title="Matriculation" />}
+              />
+              <Route
+                path="photograph-and-document"
+                element={<PhotographAndDocument />}
+              />
             </Route>
+            <Route
+              path="eligibility-criteria"
+              element={<EligibilityCriteria />}
+            />
+            <Route
+              path="admission-procedure"
+              element={<AdmissionProcedure />}
+            />
+            <Route path="fee-structure" element={<FeeStructure />} />
+            <Route path="prospectus" element={<Prospectus />} />
+            <Route path="sample-papers" element={<SamplePapers />} />
+            <Route path="change-password" element={<ChangePassword />} />
+          </Route>
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
 
-            <Route path="SALU-CMS-FYP/about" element={<About />} />
-            <Route path="SALU-CMS-FYP/login" element={<Login />} />
-            <Route path="SALU-CMS-FYP/signup" element={<Signup />} />
-          </Routes>
-          <Footer />
-        </Router>
+        <Footer />
       </SignupContextProvider>
     </FormStatusProvider>
   );

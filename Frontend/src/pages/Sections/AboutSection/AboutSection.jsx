@@ -25,7 +25,7 @@ const AboutSection = () => {
             : aboutText}
         </p>
         <div className="buttonContainer d-flex mt-4">
-          <Link to="/SALU-CMS-FYP/about" className="button buttonNotFilled">
+          <Link to="/about" className="button buttonNotFilled">
             Read More
           </Link>
         </div>

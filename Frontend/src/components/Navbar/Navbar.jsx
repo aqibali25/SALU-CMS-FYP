@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import Logo from "./Logo";
 import NavLinks from "./NavLink";
 import "../../styles/Navbar.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Profile from "./Profile";
 
 const Navbar = () => {
@@ -11,23 +11,12 @@ const Navbar = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   const isLoggedIn = Cookies.get("isLoggedIn"); // Get authentication status from cookies
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      // navigate("/SALU-CMS-FYP/");
-    }
-  }, []);
 
   const navLinksData = [
-    { name: "Home", href: "SALU-CMS-FYP/", className: "home" },
-    { name: "Faculty", href: "SALU-CMS-FYP/faculty", className: "faculty" },
-    {
-      name: "Admission",
-      href: "SALU-CMS-FYP/admissions",
-      className: "admission",
-    },
-    { name: "About", href: "SALU-CMS-FYP/about", className: "about" },
+    { name: "Home", href: "/" },
+    { name: "Faculty", href: "/faculty" },
+    { name: "Admission", href: "/admissions" },
+    { name: "About", href: "/about" },
   ];
 
   // Handle the menu toggle
@@ -47,9 +36,7 @@ const Navbar = () => {
 
   // Set the width of navAndSignup based on menu state and screen width
   const getNavAndSignupWidth = () => {
-    if (screenWidth > 880) {
-      return "60%";
-    }
+    if (screenWidth > 880) return "60%";
     return isMenuOpen ? "100%" : "0%";
   };
 
@@ -71,10 +58,10 @@ const Navbar = () => {
             <Profile />
           ) : (
             <>
-              <Link to="SALU-CMS-FYP/login" className="button buttonNotFilled">
+              <Link to="/login" className="button buttonNotFilled">
                 LOGIN
               </Link>
-              <Link to="/SALU-CMS-FYP/signup" className="button buttonFilled">
+              <Link to="/signup" className="button buttonFilled">
                 SIGN UP
               </Link>
             </>
