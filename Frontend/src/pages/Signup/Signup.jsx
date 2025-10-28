@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // Import axios
+import axios from "axios";
 import "../Login/Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
@@ -16,6 +16,7 @@ const Signup = () => {
 
   const [signupFormData, setSignupFormData] = useState({
     cnic: "",
+    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -34,34 +35,29 @@ const Signup = () => {
     }
   }, [navigate]);
 
+  // 🟢 Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "username") {
+    if (name === "cnic") {
       const formattedCnic = formatCnic(value);
       setSignupFormData((prevData) => ({
         ...prevData,
         cnic: formattedCnic,
       }));
-
       const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
       setIsCnicValid(cnicPattern.test(formattedCnic));
       updateSignupData({ cnic: formattedCnic });
-    } else if (name === "email") {
-      setSignupFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      setIsEmailValid(emailPattern.test(value));
-
-      updateSignupData({ email: value });
     } else {
       setSignupFormData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
+
+      if (name === "email") {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        setIsEmailValid(emailPattern.test(value));
+      }
 
       if (name === "password") {
         validatePasswordStrength(value);
@@ -100,8 +96,10 @@ const Signup = () => {
     }
   };
 
+  // 🟢 Submit Form Data to Backend
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
+
     if (!isEmailValid) {
       alert("Please enter a valid email address.");
       return;
@@ -133,14 +131,6 @@ const Signup = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setConfirmPasswordVisible(!confirmPasswordVisible);
-  };
-
   return (
     <div
       className="login-container"
@@ -158,13 +148,28 @@ const Signup = () => {
           <p className="text-gray">Fill the form below to create an account.</p>
 
           <form onSubmit={handleSignupSubmit}>
-            {/* CNIC Input */}
+            {/* Full Name */}
+            <div className="form-group mb-3">
+              <input
+                type="text"
+                className="noBorderRadius form-control form-input"
+                placeholder="Full Name"
+                name="fullName" // ✅ fixed
+                value={signupFormData.fullName}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                autoComplete="off"
+                required
+              />
+            </div>
+
+            {/* CNIC */}
             <div className="form-group mb-3">
               <input
                 type="text"
                 className="noBorderRadius form-control form-input"
                 placeholder="CNIC (#####-#######-#)"
-                name="username"
+                name="cnic"
                 value={signupFormData.cnic}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
@@ -174,7 +179,7 @@ const Signup = () => {
               />
             </div>
 
-            {/* Email Input */}
+            {/* Email */}
             <div className="form-group mb-3">
               <input
                 type="email"
@@ -190,8 +195,8 @@ const Signup = () => {
               />
             </div>
 
-            {/* Password Input */}
-            <div className="form-group mb-3">
+            {/* Password */}
+            <div className="form-group mb-3 position-relative">
               <input
                 type={passwordVisible ? "text" : "password"}
                 className="noBorderRadius form-control form-input"
@@ -205,17 +210,18 @@ const Signup = () => {
               <FontAwesomeIcon
                 className="text-white"
                 icon={passwordVisible ? faEye : faEyeSlash}
-                onClick={togglePasswordVisibility}
+                onClick={() => setPasswordVisible(!passwordVisible)}
                 style={{
                   position: "absolute",
                   right: "40px",
+                  top: "10px",
                   cursor: "pointer",
                 }}
               />
             </div>
 
-            {/* Confirm Password Input */}
-            <div className="form-group mb-3">
+            {/* Confirm Password */}
+            <div className="form-group mb-3 position-relative">
               <input
                 type={confirmPasswordVisible ? "text" : "password"}
                 className="noBorderRadius form-control form-input"
@@ -229,10 +235,13 @@ const Signup = () => {
               <FontAwesomeIcon
                 className="text-white"
                 icon={confirmPasswordVisible ? faEye : faEyeSlash}
-                onClick={toggleConfirmPasswordVisibility}
+                onClick={() =>
+                  setConfirmPasswordVisible(!confirmPasswordVisible)
+                }
                 style={{
                   position: "absolute",
                   right: "40px",
+                  top: "10px",
                   cursor: "pointer",
                 }}
               />

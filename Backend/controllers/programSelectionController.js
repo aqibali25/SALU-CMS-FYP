@@ -1,8 +1,8 @@
-const db = require("../db");
+// programSelectionController.js - Updated for connection pool
+const { pool } = require("../db");
 
 const saveProgramChoices = (req, res) => {
-  const { cnic, appliedDepartment, firstChoice, secondChoice, thirdChoice } =
-    req.body;
+  const { cnic, appliedDepartment, firstChoice, secondChoice, thirdChoice } = req.body;
 
   // Validate required fields
   if (!cnic || !appliedDepartment || !firstChoice) {
@@ -11,43 +11,76 @@ const saveProgramChoices = (req, res) => {
     });
   }
 
-  // Insert or update program choices in the database
-  const query =
-    "INSERT INTO program_of_study (cnic, applied_department, first_choice, second_choice, third_choice) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE applied_department = VALUES(applied_department), first_choice = VALUES(first_choice), second_choice = VALUES(second_choice), third_choice = VALUES(third_choice)";
-  db.query(
-    query,
-    [cnic, appliedDepartment, firstChoice, secondChoice, thirdChoice],
-    (err, result) => {
-      if (err) {
-        console.error("Error saving program choices: ", err);
-        return res
-          .status(500)
-          .json({ message: "Database error!", error: err.message });
-      }
-      res.status(201).json({ message: "Program choices saved successfully!" });
+  // Get a connection from the pool
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting database connection: ", err);
+      return res.status(500).json({ 
+        message: "Database connection error!", 
+        error: err.message 
+      });
     }
-  );
+
+    // Insert or update program choices
+    const query =
+      "INSERT INTO program_of_study (cnic, applied_department, first_choice, second_choice, third_choice) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE applied_department = VALUES(applied_department), first_choice = VALUES(first_choice), second_choice = VALUES(second_choice), third_choice = VALUES(third_choice)";
+    
+    connection.query(
+      query,
+      [cnic, appliedDepartment, firstChoice, secondChoice, thirdChoice],
+      (err, result) => {
+        // Always release the connection back to the pool
+        connection.release();
+
+        if (err) {
+          console.error("Error saving program choices: ", err);
+          return res.status(500).json({ 
+            message: "Database error!", 
+            error: err.message 
+          });
+        }
+        res.status(201).json({ 
+          message: "Program choices saved successfully!" 
+        });
+      }
+    );
+  });
 };
 
 const getProgramSelection = (req, res) => {
   const { cnic } = req.params;
 
-  // Fetch program choices for the user
-  const query = "SELECT * FROM program_of_study WHERE cnic = ?";
-  db.query(query, [cnic], (err, results) => {
+  // Get a connection from the pool
+  pool.getConnection((err, connection) => {
     if (err) {
-      console.error("Error fetching program choices: ", err);
-      return res
-        .status(500)
-        .json({ message: "Database error!", error: err.message });
+      console.error("Error getting database connection: ", err);
+      return res.status(500).json({ 
+        message: "Database connection error!", 
+        error: err.message 
+      });
     }
-    if (results.length > 0) {
-      res.status(200).json(results[0]);
-    } else {
-      res
-        .status(404)
-        .json({ message: "No program selection found for this user." });
-    }
+
+    // Fetch program choices for the user
+    const query = "SELECT * FROM program_of_study WHERE cnic = ?";
+    connection.query(query, [cnic], (err, results) => {
+      // Always release the connection back to the pool
+      connection.release();
+
+      if (err) {
+        console.error("Error fetching program choices: ", err);
+        return res.status(500).json({ 
+          message: "Database error!", 
+          error: err.message 
+        });
+      }
+      if (results.length > 0) {
+        res.status(200).json(results[0]);
+      } else {
+        res.status(404).json({ 
+          message: "No program selection found for this user." 
+        });
+      }
+    });
   });
 };
 

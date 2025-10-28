@@ -8,6 +8,9 @@ import Cookies from "js-cookie";
 
 const PhotographAndDocument = () => {
   const [loading, setLoading] = useState(true);
+  const fileInputRef = useRef(null);
+  const cnic = Cookies.get("cnic");
+
   const {
     availableDocs,
     selectedDoc,
@@ -18,117 +21,141 @@ const PhotographAndDocument = () => {
     uploadedDocs,
     removeUploadedDoc,
   } = useDocumentStore();
-  const fileInputRef = useRef(null);
-  const cnic = Cookies.get("cnic");
-  const [base64Files, setBase64Files] = useState([]);
-  const [previewImage, setPreviewImage] = useState(null); // State for preview image
 
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
+  // ✅ Fetch uploaded documents once
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchUploadedDocuments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3306/api/getUploadedDocuments/${cnic}`
+        );
+        console.log("Fetched uploaded documents:", response.data);
+        if (response.data?.length) {
+          response.data.forEach((doc) => {
+            const exists = uploadedDocs.some(
+              (d) => d.documentId === doc.id || d.docType === doc.docType
+            );
+            if (!exists) {
+              addUploadedDoc({
+                docType: doc.docType,
+                docName: doc.docName,
+                fileName: doc.fileName,
+                documentId: doc.id,
+                fileSize: doc.fileSize,
+                uploadDate: doc.uploadDate,
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching uploaded documents:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    if (cnic) fetchUploadedDocuments();
+  }, [cnic]);
+
+  // ✅ File selection validation
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0];
-    if (uploadedFile && uploadedFile.type.startsWith("image/")) {
-      setFile(uploadedFile);
-    } else {
-      alert("Please upload an image file only.");
-      fileInputRef.current.value = "";
+    if (uploadedFile) {
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
+      if (allowedTypes.includes(uploadedFile.type)) {
+        setFile(uploadedFile);
+      } else {
+        alert("Invalid file type. Please upload JPEG, PNG, PDF, or DOC.");
+        fileInputRef.current.value = "";
+      }
     }
   };
 
+  // ✅ Upload document
   const handleUpload = async (e) => {
     e.preventDefault();
     if (selectedDoc && file) {
       try {
-        const docLabel = availableDocs.find(
-          (doc) => doc.value === selectedDoc
-        ).label;
+        const docLabel =
+          availableDocs.find((doc) => doc.value === selectedDoc)?.label ||
+          selectedDoc;
 
-        // Create a FormData object
         const formData = new FormData();
         formData.append("cnic", cnic);
         formData.append("docType", selectedDoc);
         formData.append("docName", docLabel);
-        formData.append("file", file);
+        formData.append("document", file);
 
-        console.log(...formData);
-
-        // Send the data to the database
         const response = await axios.post(
-          "http://localhost:3306/api/upload",
+          "http://localhost:3306/api/uploadDocument",
           formData,
           {
-            headers: {
-              "Content-Type": "multipart/form-data", // Set the content type for file upload
-            },
+            headers: { "Content-Type": "multipart/form-data" },
+            timeout: 30000,
           }
         );
 
-        // Handle the response from the server
         if (response.data.message === "Document uploaded successfully!") {
           alert("File uploaded successfully!");
-          // Add the uploaded document to the state
           addUploadedDoc({
             docType: selectedDoc,
             docName: docLabel,
-            filePath: response.data.filePath, // Assuming the server returns the file path
+            fileName: response.data.fileName,
+            documentId: response.data.documentId,
+            fileSize: response.data.fileSize,
+            uploadDate: new Date().toISOString(),
           });
+
+          setSelectedDoc("");
+          setFile(null);
+          fileInputRef.current.value = "";
         } else {
           alert("Failed to upload file.");
         }
-
-        // Clear the file input
-        fileInputRef.current.value = "";
       } catch (error) {
         console.error("Error uploading file:", error);
-        alert(
-          error.response?.data?.message ||
-            "An error occurred while uploading the file."
-        );
+        alert("Upload failed. Please try again.");
       }
     } else {
-      alert("Please select a document type and upload a file.");
+      alert("Please select a document type and file.");
     }
   };
 
-  // Function to handle removing a document
-  const handleRemove = (docType) => {
-    removeUploadedDoc(docType);
-  };
-
-  // Function to handle previewing an image
-  const handlePreview = (file) => {
-    setPreviewImage(file);
-  };
-
-  // Function to close the preview modal
-  const closePreview = () => {
-    setPreviewImage(null);
+  // ✅ Remove document
+  const handleRemove = async (docType, documentId) => {
+    try {
+      if (documentId) {
+        await axios.delete(
+          `http://localhost:3306/api/deleteDocument/${documentId}`
+        );
+      }
+      removeUploadedDoc(docType);
+      alert("Document removed successfully!");
+    } catch (error) {
+      console.error("Error removing document:", error);
+      alert("Failed to remove document.");
+    }
   };
 
   return (
     <div className="margin-left-70 formConitainer p-4">
-      <h4>Photograph And Document</h4>
+      <h4>Photograph And Documents</h4>
+
       <form
         onSubmit={handleUpload}
         className="formContainer formInnerContainer pb-5"
         style={{ position: "relative" }}
       >
-        {loading && <SkeletonLoader length={2} />}
-        {!loading && (
+        {loading ? (
+          <SkeletonLoader length={2} />
+        ) : (
           <>
             <div
               className="text-white text-center px-3 py-1"
@@ -141,6 +168,7 @@ const PhotographAndDocument = () => {
               Kindly upload all relevant documents as mentioned in the checklist
               item.
             </div>
+
             <div className="inputContainer">
               <label htmlFor="documentType">
                 <span className="required">*</span>Document Type:
@@ -163,15 +191,18 @@ const PhotographAndDocument = () => {
                 ))}
               </select>
             </div>
+
             <InputContainer
               inputType="file"
               required
-              title={"Upload Attachment"}
+              title="Upload Attachment"
               onChange={handleFileChange}
               ref={fileInputRef}
+              accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
             />
           </>
         )}
+
         <div
           className="buttonContainer"
           style={{ position: "absolute", bottom: "0px", right: "0px" }}
@@ -181,47 +212,44 @@ const PhotographAndDocument = () => {
           </button>
         </div>
       </form>
-      <hr />
-      <h4>Uploaded Document</h4>
-      <div className="p-3 d-flex flex-column">
-        {uploadedDocs.map((doc) => (
-          <UploadedDoc
-            key={doc.docType}
-            docName={doc.docName}
-            onRemove={() => handleRemove(doc.docType)}
-            onPreview={() => handlePreview(doc.file)}
-          />
-        ))}
-      </div>
-      <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-        <button className="button buttonFilled">Save & Proceed</button>
-      </div>
 
-      {/* Preview Modal */}
-      {previewImage && (
-        <div
-          className="image-preview-modal"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-          onClick={closePreview}
-        >
-          <img
-            src={previewImage}
-            alt="Preview"
-            style={{ maxWidth: "90%", maxHeight: "90%" }}
-          />
-        </div>
-      )}
+      <hr />
+      <h4>Uploaded Documents</h4>
+
+      <div className="p-3 d-flex flex-column">
+        {uploadedDocs.length === 0 ? (
+          <p className="text-muted">No documents uploaded yet.</p>
+        ) : (
+          // ✅ Filter out duplicate image documents before rendering
+          uploadedDocs
+            .filter((doc, index, self) => {
+              // Keep only one image per fileName or docType
+              if (doc.fileName?.match(/\.(jpg|jpeg|png)$/i)) {
+                return (
+                  index ===
+                  self.findIndex(
+                    (d) =>
+                      d.fileName === doc.fileName || d.docType === doc.docType
+                  )
+                );
+              }
+              return true; // non-images always included
+            })
+            .map((doc) => (
+              <UploadedDoc
+                key={doc.documentId || doc.docType}
+                docName={doc.docName}
+                fileName={doc.fileName}
+                fileSize={doc.fileSize}
+                uploadDate={doc.uploadDate}
+                onRemove={() => handleRemove(doc.docType, doc.documentId)}
+                onDownload={() => handleDownload(doc.documentId, doc.fileName)}
+                onPreview={() => handlePreview(doc.documentId, doc.fileName)}
+                isImage={doc.fileName?.match(/\.(jpg|jpeg|png)$/i)}
+              />
+            ))
+        )}
+      </div>
     </div>
   );
 };

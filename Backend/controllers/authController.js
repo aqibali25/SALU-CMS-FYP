@@ -1,9 +1,72 @@
-const db = require("../db");
+const { pool } = require("../db");
 const bcrypt = require("bcrypt");
 
-// Signup Controller
+// Login Controller - Fixed for connection pool
+const login = async (req, res) => {
+  const { cnic, password } = req.body;
+
+  if (!cnic || !password) {
+    return res.status(400).json({ message: "CNIC and Password are required." });
+  }
+
+  try {
+    // Use pool.query which automatically handles connections
+    pool.query(
+      "SELECT * FROM sign_up WHERE CNIC = ?",
+      [cnic],
+      async (err, results) => {
+        if (err) {
+          console.error("Error querying the database: ", err);
+          return res.status(500).json({
+            message: "Server error. Please try again later.",
+            error: err.message,
+          });
+        }
+
+        if (results.length > 0) {
+          const user = results[0];
+          const hashedPassword = user.PASSWORD;
+
+          // Compare passwords
+          bcrypt.compare(password, hashedPassword, (bcryptErr, isMatch) => {
+            if (bcryptErr) {
+              console.error("Error comparing passwords: ", bcryptErr);
+              return res.status(500).json({
+                message: "Server error. Please try again later.",
+              });
+            }
+
+            if (isMatch) {
+              // Remove password from user object
+              const { PASSWORD, ...userWithoutPassword } = user;
+              return res.status(200).json({
+                message: "Login successful.",
+                user: userWithoutPassword,
+              });
+            } else {
+              return res.status(401).json({
+                message: "Invalid CNIC or Password.",
+              });
+            }
+          });
+        } else {
+          return res.status(401).json({
+            message: "Invalid CNIC or Password.",
+          });
+        }
+      }
+    );
+  } catch (err) {
+    console.error("Error in login controller: ", err);
+    return res.status(500).json({
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+// Signup Controller - Fixed for connection pool
 const signup = async (req, res) => {
-  const { cnic, email, password, confirmPassword } = req.body;
+  const { cnic, fullName, email, password, confirmPassword } = req.body;
 
   // Validate CNIC format
   const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
@@ -27,71 +90,62 @@ const signup = async (req, res) => {
   }
 
   try {
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insert user into the database
-    const query =
-      "INSERT INTO sign_up (CNIC, EMAIL, PASSWORD) VALUES (?, ?, ?)";
-    db.query(query, [cnic, email, hashedPassword], (err, result) => {
-      if (err) {
-        if (err.code === "ER_DUP_ENTRY") {
-          return res
-            .status(400)
-            .json({ message: "CNIC or Email already registered!" });
+    // First check if user exists
+    pool.query(
+      "SELECT * FROM sign_up WHERE CNIC = ? OR EMAIL = ?",
+      [cnic, email],
+      async (checkErr, checkResults) => {
+        if (checkErr) {
+          console.error("Error checking user existence: ", checkErr);
+          return res.status(500).json({
+            message: "Database error!",
+            error: checkErr.message,
+          });
         }
-        return res
-          .status(500)
-          .json({ message: "Database error!", error: err.message });
+
+        if (checkResults.length > 0) {
+          return res.status(400).json({
+            message: "CNIC or Email already registered!",
+          });
+        }
+
+        try {
+          // Hash the password
+          const hashedPassword = await bcrypt.hash(password, 10);
+
+          // Insert user into the database
+          pool.query(
+            "INSERT INTO sign_up (CNIC, FULLNAME, EMAIL, PASSWORD) VALUES (?, ?, ?, ?)",
+            [cnic, fullName, email, hashedPassword],
+            (insertErr, insertResult) => {
+              if (insertErr) {
+                console.error("Error inserting user: ", insertErr);
+                return res.status(500).json({
+                  message: "Database error!",
+                  error: insertErr.message,
+                });
+              }
+
+              res.status(201).json({
+                message: "User registered successfully!",
+              });
+            }
+          );
+        } catch (hashErr) {
+          console.error("Error hashing password: ", hashErr);
+          return res.status(500).json({
+            message: "Server error during password hashing.",
+          });
+        }
       }
-      res.status(201).json({ message: "User registered successfully!" });
-    });
+    );
   } catch (error) {
-    res.status(500).json({ message: "Server error!", error: error.message });
+    console.error("Error in signup controller: ", error);
+    res.status(500).json({
+      message: "Database error!",
+      error: error.message,
+    });
   }
-};
-
-// Login Controller
-const login = (req, res) => {
-  const { cnic, password } = req.body;
-
-  if (!cnic || !password) {
-    return res.status(400).json({ message: "CNIC and Password are required." });
-  }
-
-  // Query the database to get the user's hashed password
-  const query = "SELECT * FROM sign_up WHERE CNIC = ?";
-  db.query(query, [cnic], (err, results) => {
-    if (err) {
-      console.error("Error querying the database: ", err);
-      return res
-        .status(500)
-        .json({ message: "Server error. Please try again later." });
-    }
-
-    if (results.length > 0) {
-      const user = results[0];
-      const hashedPassword = user.PASSWORD; // Retrieve the hashed password from the database
-
-      // Compare the provided password with the hashed password
-      bcrypt.compare(password, hashedPassword, (err, isMatch) => {
-        if (err) {
-          console.error("Error comparing passwords: ", err);
-          return res
-            .status(500)
-            .json({ message: "Server error. Please try again later." });
-        }
-
-        if (isMatch) {
-          return res.status(200).json({ message: "Login successful.", user });
-        } else {
-          return res.status(401).json({ message: "Invalid CNIC or Password." });
-        }
-      });
-    } else {
-      return res.status(401).json({ message: "Invalid CNIC or Password." });
-    }
-  });
 };
 
 module.exports = { signup, login };

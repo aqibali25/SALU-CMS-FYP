@@ -1,141 +1,48 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useFormStatus } from "../../../contexts/AdmissionFormContext";
+import usePersonalInfoStore from "../../../store/personalInfoStore";
 import CnicInput from "../CNICInput.jsx";
 import InputContainer from "../InputContainer";
-import { useFormStatus } from "../../../contexts/AdmissionFormContext.jsx";
-import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../SkeletonLoader";
 import ProvinceCitySelector from "../ProvinceCitySelector.jsx";
 import Cookies from "js-cookie";
 
 const PersonalInfo = () => {
-  const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    gender: "",
-    dob: "",
-    cnic: Cookies.get("cnic") || "", // Get CNIC from cookies
-    religion: "",
-    disability: "",
-    disabilityDescription: "",
-    nativeLanguage: "",
-    bloodGroup: "",
-    province: "",
-    city: "",
-    postalAddress: "",
-    permanentAddress: "",
-  });
-
-  const religions = ["Islam", "Hinduism", "Christianity", "Sikhism"];
-  const nativeLanguages = ["Sindhi", "Urdu", "English"];
-  const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-
-  const { updateFormStatus } = useFormStatus();
   const navigate = useNavigate();
-  const cnic = Cookies.get("cnic"); // Ensure CNIC is set
+  const { updateFormStatus } = useFormStatus();
 
-  // Fetch user data if available
-  useEffect(() => {
-    const fetchPersonalInfo = async () => {
-      if (!cnic) {
-        console.error("CNIC not found!");
-        setLoading(false);
-        return;
-      }
+  const {
+    formData,
+    loading,
+    staticData: { religions, nativeLanguages, bloodGroups },
+    updateField,
+    submitForm,
+    fetchPersonalInfo,
+  } = usePersonalInfoStore();
 
-      try {
-        const response = await axios.get(
-          `http://localhost:3306/api/getPersonalInfo/${cnic}`
-        );
+  const handleInputChange = (e) => updateField(e.target.id, e.target.value);
+  const handleSelectChange = (e) => updateField(e.target.id, e.target.value);
 
-        const userData = response.data;
-        console.log(userData);
-        if (userData) {
-          updateFormStatus("personalInformation", "Completed");
-          let formattedDOB = "";
-          if (userData.dob) {
-            const date = new Date(userData.dob);
-            if (!isNaN(date.getTime())) {
-              const year = date.getFullYear();
-              const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Ensure two-digit month
-              const day = date.getDate().toString().padStart(2, "0"); // Ensure two-digit day
-              formattedDOB = `${year}-${month}-${day}`; // Format as YYYY-MM-DD
-            }
-          }
-
-          setFormData((prevData) => ({
-            ...prevData,
-            firstName: userData.first_name || "",
-            lastName: userData.last_name || "",
-            gender: userData.gender || "",
-            dob: formattedDOB, // Set formatted DOB (YYYY-MM-DD)
-            religion: userData.religion || "",
-            disability: userData.disability || "",
-            disabilityDescription: userData.disability_description || "",
-            nativeLanguage: userData.native_language || "",
-            bloodGroup: userData.blood_group || "",
-            province: userData.province || "",
-            city: userData.city || "",
-            postalAddress: userData.postal_address || "",
-            permanentAddress: userData.permanent_address || "",
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching personal info:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPersonalInfo();
-  }, [cnic]);
-
-  // Handle input changes
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [id]: value }));
-  };
-
-  // Handle select changes
-  const handleSelectChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value,
-      disabilityDescription:
-        id === "disability" && value !== "Yes"
-          ? ""
-          : prevData.disabilityDescription,
-    }));
-  };
-
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!cnic) {
-      console.error("CNIC is missing!");
-      return;
-    }
-
-    try {
-      await axios.post("http://localhost:3306/api/savePersonalInfo", formData, {
-        headers: { "Content-Type": "application/json" },
-      });
+    const success = await submitForm();
+    if (success) {
       updateFormStatus("personalInformation", "Completed");
-      console.log("Personal Info Submitted:", formData);
       navigate("/SALU-CMS-FYP/admissions/form");
-    } catch (error) {
-      console.error("Error saving personal info:", error);
     }
   };
+
+  useEffect(() => {
+    fetchPersonalInfo();
+  }, [fetchPersonalInfo]);
 
   return (
     <div className="margin-left-70 formConitainer p-4">
       <h4>Personal Information</h4>
       <form onSubmit={handleSubmit}>
         {loading && <SkeletonLoader length={9} />}
+
         {!loading && (
           <div className="formContainer">
             <InputContainer
@@ -146,6 +53,7 @@ const PersonalInfo = () => {
               value={formData.firstName}
               onChange={handleInputChange}
             />
+
             <InputContainer
               htmlFor="lastName"
               title="Last Name"
@@ -155,6 +63,7 @@ const PersonalInfo = () => {
               onChange={handleInputChange}
             />
 
+            {/* Gender Select */}
             <div className="inputContainer">
               <label htmlFor="gender">
                 <span className="required">*</span>Gender:
@@ -164,6 +73,7 @@ const PersonalInfo = () => {
                 className="col-6"
                 value={formData.gender}
                 onChange={handleSelectChange}
+                required
               >
                 <option value="" disabled>
                   [Select an Option]
@@ -174,6 +84,7 @@ const PersonalInfo = () => {
               </select>
             </div>
 
+            {/* Date of Birth */}
             <InputContainer
               htmlFor="dob"
               title="Date of Birth"
@@ -183,19 +94,21 @@ const PersonalInfo = () => {
               onChange={handleInputChange}
             />
 
+            {/* CNIC Input */}
             <div className="inputContainer">
               <label htmlFor="cnic">
                 <span className="required">*</span>CNIC:
               </label>
               <CnicInput
                 id="cnic"
-                value={formData.cnic}
-                readOnly
+                value={Cookies.get("cnic")}
+                readonly={true}
                 required
                 onChange={handleInputChange}
               />
             </div>
 
+            {/* Religion Select */}
             <div className="inputContainer">
               <label htmlFor="religion">
                 <span className="required">*</span>Religion:
@@ -205,29 +118,69 @@ const PersonalInfo = () => {
                 className="col-6"
                 value={formData.religion}
                 onChange={handleSelectChange}
+                required
               >
                 <option value="" disabled>
                   [Select an Option]
                 </option>
-                {religions.map((religion, index) => (
-                  <option key={index} value={religion}>
+                {religions.map((religion) => (
+                  <option key={religion} value={religion}>
                     {religion}
                   </option>
                 ))}
               </select>
             </div>
 
+            {/* Native Language Select */}
+            <div className="inputContainer">
+              <label htmlFor="nativeLanguage">
+                <span className="required">*</span>Native Language:
+              </label>
+              <select
+                id="nativeLanguage"
+                className="col-6"
+                value={formData.nativeLanguage}
+                onChange={handleSelectChange}
+                required
+              >
+                <option value="" disabled>
+                  [Select an Option]
+                </option>
+                {nativeLanguages.map((language) => (
+                  <option key={language} value={language}>
+                    {language}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Blood Group Select */}
+            <div className="inputContainer">
+              <label htmlFor="bloodGroup">Blood Group:</label>
+              <select
+                id="bloodGroup"
+                className="col-6"
+                value={formData.bloodGroup}
+                onChange={handleSelectChange}
+              >
+                <option value="">[Select if known]</option>
+                {bloodGroups.map((group) => (
+                  <option key={group} value={group}>
+                    {group}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Province/City Selector */}
             <ProvinceCitySelector
               initialProvince={formData.province}
               initialCity={formData.city}
-              onProvinceChange={(province) =>
-                setFormData((prev) => ({ ...prev, province }))
-              }
-              onCityChange={(city) =>
-                setFormData((prev) => ({ ...prev, city }))
-              }
+              onProvinceChange={(province) => updateField("province", province)}
+              onCityChange={(city) => updateField("city", city)}
             />
 
+            {/* Address Fields */}
             <InputContainer
               htmlFor="postalAddress"
               title="Postal Address"
