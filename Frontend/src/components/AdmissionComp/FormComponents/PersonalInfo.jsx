@@ -29,7 +29,7 @@ const PersonalInfo = () => {
     const success = await submitForm();
     if (success) {
       updateFormStatus("personalInformation", "Completed");
-      navigate("/SALU-CMS-FYP/admissions/form");
+      navigate("/admissions/form");
     }
   };
 

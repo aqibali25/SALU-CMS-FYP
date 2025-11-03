@@ -32,7 +32,7 @@ const FatherAndGuardianInfo = () => {
     const success = await submitForm();
     if (success) {
       updateFormStatus("fatherGuardianInformation", "Completed");
-      navigate("/SALU-CMS-FYP/admissions/form");
+      navigate("/admissions/form");
     }
   };
 

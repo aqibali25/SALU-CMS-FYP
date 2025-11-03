@@ -19,16 +19,10 @@ const ProgramSelectionForm = () => {
     submitForm,
   } = useProgramSelectionStore();
 
-  // Initialize data and update status immediately when fetched
+  // Initialize data when component mounts
   useEffect(() => {
-    const checkData = async () => {
-      const dataFetched = await initializeData();
-      if (dataFetched) {
-        updateFormStatus("programOfStudy", "Completed");
-      }
-    };
-    checkData();
-  }, [initializeData, updateFormStatus]);
+    initializeData();
+  }, [initializeData]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -36,7 +30,7 @@ const ProgramSelectionForm = () => {
     const success = await submitForm();
     if (success) {
       updateFormStatus("programOfStudy", "Completed");
-      navigate("/SALU-CMS-FYP/admissions/form");
+      navigate("/admissions/form");
     }
   };
 

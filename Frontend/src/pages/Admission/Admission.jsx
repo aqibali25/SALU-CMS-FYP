@@ -52,6 +52,7 @@ const Admission = () => {
       allUploaded ? "Completed" : "Pending"
     );
   }, [uploadedDocs, updateFormStatus]);
+
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
     const isLoggedIn = Cookies.get("isLoggedIn");
@@ -61,7 +62,7 @@ const Admission = () => {
       const initializeAllData = async () => {
         try {
           const [
-            programSuccess,
+            programResult, // This now returns {dataFetched, hasExistingData}
             personalSuccess,
             fatherGuardianSuccess,
             academicRecordSuccess,
@@ -72,7 +73,11 @@ const Admission = () => {
             initializeAcademicRecord(),
           ]);
 
-          if (programSuccess) updateFormStatus("programOfStudy", "Completed");
+          // ✅ FIX: Only update program status if actual data exists
+          if (programResult.hasExistingData) {
+            updateFormStatus("programOfStudy", "Completed");
+          }
+
           if (personalSuccess)
             updateFormStatus("personalInformation", "Completed");
           if (fatherGuardianSuccess)
@@ -82,7 +87,7 @@ const Admission = () => {
 
           // ✅ Fetch uploaded docs and update photograph/document form status
           await fetchUploadedDocuments();
-          const totalRequired = 6; // you can dynamically set this based on backend
+          const totalRequired = 6;
           const completed = uploadedDocs.length;
           const allUploaded = completed >= totalRequired;
 

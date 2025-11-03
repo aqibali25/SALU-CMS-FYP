@@ -35,7 +35,7 @@ const AcademicRecord = () => {
     const ok = await submitAcademicRecord();
     if (ok) {
       updateFormStatus("academicRecord", "Completed");
-      navigate("/SALU-CMS-FYP/admissions/form");
+      navigate("/admissions/form");
     }
   };
 

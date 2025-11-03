@@ -39,7 +39,7 @@ const useProgramSelectionStore = create((set, get) => ({
   // Fetch saved program selection (if any)
   fetchUserProgramChoices: async () => {
     const { programOptions, cnic } = get();
-    if (programOptions.length === 0) return;
+    if (programOptions.length === 0) return false;
 
     try {
       const response = await axios.get(
@@ -75,34 +75,36 @@ const useProgramSelectionStore = create((set, get) => ({
           hasFetched: true,
           loading: false,
         });
-        return true;
+        return true; // Data was successfully fetched
       }
+      return false; // No program choices data
     } catch (error) {
       // ✅ Handle 404 gracefully (no existing data)
       if (error.response && error.response.status === 404) {
         console.warn("No existing program data found for this CNIC.");
-        set({ hasFetched: true, loading: false }); // Stop loading & show empty fields
-        return false;
+        set({ hasFetched: true, loading: false });
+        return false; // No data found
       }
 
       console.error("Error fetching user's program choices:", error);
-      set({ hasFetched: true, loading: false }); // Still stop loading on other errors
-      return false;
+      set({ hasFetched: true, loading: false });
+      return false; // Error occurred
     }
   },
 
   // Initialize all data (programs + saved choices if any)
   initializeData: async () => {
     const { hasFetched, fetchProgramOptions, fetchUserProgramChoices } = get();
-    if (hasFetched) return false;
+    if (hasFetched) return { dataFetched: false, hasExistingData: false };
 
     const options = await fetchProgramOptions();
     if (options.length > 0) {
-      await fetchUserProgramChoices();
+      const hasExistingData = await fetchUserProgramChoices();
+      return { dataFetched: true, hasExistingData };
     } else {
       set({ loading: false });
+      return { dataFetched: true, hasExistingData: false };
     }
-    return true;
   },
 
   updateChoice: (choice, value) => {
@@ -127,7 +129,7 @@ const useProgramSelectionStore = create((set, get) => ({
   },
 }));
 
-// ✅ Custom initialization hook with form status update
+// ✅ Custom initialization hook with form status update - ONLY when data exists
 export const useInitializeProgramSelection = () => {
   const initializeData = useProgramSelectionStore(
     (state) => state.initializeData
@@ -136,8 +138,11 @@ export const useInitializeProgramSelection = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      const dataFetched = await initializeData();
-      if (dataFetched) {
+      const { dataFetched, hasExistingData } = await initializeData();
+      console.log(dataFetched + hasExistingData);
+
+      // Only update status to "Completed" if we actually fetched existing data
+      if (dataFetched && hasExistingData) {
         updateFormStatus("programOfStudy", "Completed");
       }
     };
