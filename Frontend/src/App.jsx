@@ -23,6 +23,7 @@ import FormStatusCards from "./components/AdmissionComp/FormStatusCards.jsx";
 import FatherAndGuardianInfo from "./components/AdmissionComp/FormComponents/FatherAndGuardianInfo.jsx";
 import AcademicRecord from "./components/AdmissionComp/FormComponents/AcademicRecord.jsx";
 import PhotographAndDocument from "./components/AdmissionComp/FormComponents/PhotographAndDocument.jsx";
+import FormLayout from "./components/AdmissionComp/FormComponents/FormLayout.jsx";
 
 import Loader from "./components/Loaders/Loader.jsx";
 
@@ -39,13 +40,6 @@ import FeeStructure from "./components/AdmissionComp/otherAdmissionComp/FeeStruc
 import Prospectus from "./components/AdmissionComp/otherAdmissionComp/Prospectus.jsx";
 import SamplePapers from "./components/AdmissionComp/otherAdmissionComp/SamplePapers.jsx";
 import ChangePassword from "./components/AdmissionComp/otherAdmissionComp/ChangePassword.jsx";
-
-const FormLayout = () => (
-  <>
-    <FormHeaderCard />
-    <Outlet />
-  </>
-);
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);

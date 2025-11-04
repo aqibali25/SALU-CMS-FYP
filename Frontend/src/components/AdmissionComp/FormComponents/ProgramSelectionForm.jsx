@@ -14,15 +14,19 @@ const ProgramSelectionForm = () => {
     programOptions,
     choices,
     loading,
+    error,
+    hasFetched, // Add this to check if data is already fetched
     initializeData,
     updateChoice,
     submitForm,
   } = useProgramSelectionStore();
 
-  // Initialize data when component mounts
+  // Initialize data when component mounts - only if not already fetched
   useEffect(() => {
-    initializeData();
-  }, [initializeData]);
+    if (!hasFetched) {
+      initializeData();
+    }
+  }, [initializeData, hasFetched]); // Add hasFetched to dependency array
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -30,7 +34,10 @@ const ProgramSelectionForm = () => {
     const success = await submitForm();
     if (success) {
       updateFormStatus("programOfStudy", "Completed");
-      navigate("/admissions/form");
+      // Navigate with state to show success toast on next page
+      navigate("/admissions/form", {
+        state: { fromProgramSelection: true },
+      });
     }
   };
 
@@ -49,6 +56,14 @@ const ProgramSelectionForm = () => {
       style={{ minHeight: "200px" }}
     >
       <h4>Program of Study</h4>
+
+      {/* Error Display */}
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         {loading && <SkeletonLoader />}
         {!loading && (
@@ -93,8 +108,12 @@ const ProgramSelectionForm = () => {
           </div>
         )}
         <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-          <button type="submit" className="button buttonFilled">
-            Save & Proceed
+          <button
+            type="submit"
+            className="button buttonFilled"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save & Proceed"}
           </button>
         </div>
       </form>

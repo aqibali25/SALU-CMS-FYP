@@ -15,10 +15,12 @@ const PersonalInfo = () => {
   const {
     formData,
     loading,
+    hasFetched, // Add this to check if data is already fetched
     staticData: { religions, nativeLanguages, bloodGroups },
     updateField,
     submitForm,
     fetchPersonalInfo,
+    error,
   } = usePersonalInfoStore();
 
   const handleInputChange = (e) => updateField(e.target.id, e.target.value);
@@ -29,17 +31,31 @@ const PersonalInfo = () => {
     const success = await submitForm();
     if (success) {
       updateFormStatus("personalInformation", "Completed");
-      navigate("/admissions/form");
+      // Navigate with state to indicate successful submission
+      navigate("/admissions/form", {
+        state: { fromPersonalInfo: true },
+      });
     }
   };
 
   useEffect(() => {
-    fetchPersonalInfo();
-  }, [fetchPersonalInfo]);
+    // Only fetch if not already fetched
+    if (!hasFetched) {
+      fetchPersonalInfo();
+    }
+  }, [fetchPersonalInfo, hasFetched]); // Add hasFetched to dependency array
 
   return (
     <div className="margin-left-70 formConitainer p-4">
       <h4>Personal Information</h4>
+
+      {/* Error Display */}
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         {loading && <SkeletonLoader length={9} />}
 
@@ -199,9 +215,14 @@ const PersonalInfo = () => {
             />
           </div>
         )}
+
         <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-          <button type="submit" className="button buttonFilled">
-            Save & Proceed
+          <button
+            type="submit"
+            className="button buttonFilled"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save & Proceed"}
           </button>
         </div>
       </form>

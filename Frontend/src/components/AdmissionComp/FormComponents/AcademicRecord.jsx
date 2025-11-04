@@ -12,11 +12,13 @@ const AcademicRecord = () => {
   const {
     academicData,
     loading,
+    error,
     boards,
     educationGroups,
     fetchAcademicRecord,
     updateField,
     submitAcademicRecord,
+    hasFetched, // Add this to check if data is already fetched
   } = useAcademicRecordStore();
 
   const currentYear = new Date().getFullYear();
@@ -35,13 +37,19 @@ const AcademicRecord = () => {
     const ok = await submitAcademicRecord();
     if (ok) {
       updateFormStatus("academicRecord", "Completed");
-      navigate("/admissions/form");
+      // Navigate with state to show success toast on next page
+      navigate("/admissions/form", {
+        state: { fromAcademicRecord: true },
+      });
     }
   };
 
   useEffect(() => {
-    fetchAcademicRecord();
-  }, [fetchAcademicRecord]);
+    // Only fetch if not already fetched
+    if (!hasFetched) {
+      fetchAcademicRecord();
+    }
+  }, [fetchAcademicRecord, hasFetched]); // Add hasFetched to dependency array
 
   const categories = [
     { key: "intermediate", title: "Degree Information (Intermediate)" },
@@ -50,13 +58,22 @@ const AcademicRecord = () => {
 
   return (
     <div className="margin-left-70 formConitainer p-4">
+      <h4>Academic Record</h4>
+
+      {/* Error Display */}
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         {loading ? (
           <SkeletonLoader length={16} />
         ) : (
           categories.map(({ key, title }) => (
             <div key={key}>
-              <h4>{title}</h4>
+              <h5 className="mt-4">{title}</h5>
               <div className="formContainer">
                 {/* Group */}
                 <div className="inputContainer">
@@ -151,18 +168,22 @@ const AcademicRecord = () => {
                   htmlFor="totalMarks"
                   title="Total Marks"
                   required
-                  inputType="text"
+                  inputType="number"
                   value={academicData[key].totalMarks}
                   onChange={(e) => handleChange(e, key)}
+                  min="0"
+                  step="0.01"
                 />
 
                 <InputContainer
                   htmlFor="marksObtained"
                   title="Marks Obtained"
                   required
-                  inputType="text"
+                  inputType="number"
                   value={academicData[key].marksObtained}
                   onChange={(e) => handleChange(e, key)}
+                  min="0"
+                  step="0.01"
                 />
 
                 <InputContainer
@@ -181,8 +202,12 @@ const AcademicRecord = () => {
         )}
 
         <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-          <button type="submit" className="button buttonFilled">
-            Save & Proceed
+          <button
+            type="submit"
+            className="button buttonFilled"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save & Proceed"}
           </button>
         </div>
       </form>

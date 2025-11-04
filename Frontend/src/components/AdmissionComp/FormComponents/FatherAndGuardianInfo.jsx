@@ -14,6 +14,8 @@ const FatherAndGuardianInfo = () => {
   const {
     formData,
     loading,
+    error,
+    hasFetched, // Add this to check if data is already fetched
     sameAsFather,
     fetchFatherGuardianInfo,
     updateField,
@@ -24,21 +26,35 @@ const FatherAndGuardianInfo = () => {
   const cnic = Cookies.get("cnic");
 
   useEffect(() => {
-    fetchFatherGuardianInfo();
-  }, [fetchFatherGuardianInfo]);
+    // Only fetch if not already fetched
+    if (!hasFetched) {
+      fetchFatherGuardianInfo();
+    }
+  }, [fetchFatherGuardianInfo, hasFetched]); // Add hasFetched to dependency array
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const success = await submitForm();
     if (success) {
       updateFormStatus("fatherGuardianInformation", "Completed");
-      navigate("/admissions/form");
+      // Navigate with state to show success toast on next page
+      navigate("/admissions/form", {
+        state: { fromFatherGuardian: true },
+      });
     }
   };
 
   return (
     <div className="margin-left-70 formConitainer p-4">
       <h4>Father & Guardian Information</h4>
+
+      {/* Error Display */}
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         {loading ? (
           <SkeletonLoader length={6} />
@@ -153,8 +169,12 @@ const FatherAndGuardianInfo = () => {
         )}
 
         <div className="buttonContainer d-flex justify-content-end mt-4 float-end">
-          <button type="submit" className="button buttonFilled">
-            Save & Proceed
+          <button
+            type="submit"
+            className="button buttonFilled"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save & Proceed"}
           </button>
         </div>
       </form>

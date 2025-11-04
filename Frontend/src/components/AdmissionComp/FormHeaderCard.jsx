@@ -19,15 +19,15 @@ const FormHeaderCard = () => {
         style={{ maxWidth: "250px" }}
       >
         <h6>Personal Information</h6>
+        <p>
+          <label>Username:</label> {"" || "-----------------"}
+        </p>
+        <p>
+          <label>CNIC:</label> {cnic || "------------------"}
+        </p>
         {/* <p>
-          <label>Tracking ID:</label> {"" || "-----------------"}
-        </p> */}
-        <p>
-          <label>Username:</label> {cnic || "------------------"}
-        </p>
-        <p>
           <label>Phone No:</label> {"" || "-----------"}
-        </p>
+        </p> */}
       </div>
       <div
         className="formHeaderInner d-flex flex-column align-items-start text-center text-md-start mb-3 mb-md-0"
@@ -35,8 +35,7 @@ const FormHeaderCard = () => {
       >
         <h6>Program Group</h6>
         <p>
-          Undergraduate Admission {currentYear} (Main and Sub-Campuses) -
-          Engineering
+          Undergraduate Admission {currentYear} (Ghotki-Campus) - Engineering
         </p>
         <p>Spring - {currentYear}</p>
       </div>

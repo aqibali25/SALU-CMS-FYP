@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 import { boards, educationGroups } from "./BoardsData";
 
 const useAcademicRecordStore = create((set, get) => ({
@@ -30,6 +31,8 @@ const useAcademicRecordStore = create((set, get) => ({
 
   loading: true,
   hasFetched: false,
+  fetchAttempts: 0, // Track fetch attempts
+  maxFetchAttempts: 2, // Maximum allowed attempts
   error: null,
 
   // ===== Static Data =====
@@ -42,14 +45,20 @@ const useAcademicRecordStore = create((set, get) => ({
 
   // ===== ACTIONS =====
 
-  // Fetch data (only once)
+  // Fetch data with attempt tracking
   fetchAcademicRecord: async () => {
-    const { hasFetched } = get();
+    const { hasFetched, fetchAttempts, maxFetchAttempts } = get();
     const cnic = Cookies.get("cnic");
 
-    if (hasFetched || !cnic) return false;
+    // Stop if already fetched, no CNIC, or exceeded max attempts
+    if (hasFetched || !cnic || fetchAttempts >= maxFetchAttempts) {
+      set({ loading: false });
+      return false;
+    }
 
     try {
+      set({ loading: true, error: null, fetchAttempts: fetchAttempts + 1 });
+
       const res = await axios.get(
         `http://localhost:3306/api/getAcademicRecord/${cnic}`
       );
@@ -76,14 +85,51 @@ const useAcademicRecordStore = create((set, get) => ({
           error: null,
         });
 
+        // Only show success toast on first successful fetch
+        if (fetchAttempts === 0) {
+          toast.success("Academic records loaded successfully!");
+        }
         return true;
       }
+
+      set({ loading: false });
       return false;
     } catch (e) {
-      set({ loading: false, error: e.message });
+      // Handle 404 gracefully (no existing data)
+      if (e.response && e.response.status === 404) {
+        console.warn("No existing academic records found for this CNIC.");
+        set({
+          hasFetched: true,
+          loading: false,
+          error: null,
+        });
+        return false;
+      }
+
+      const errorMessage =
+        e.response?.data?.message ||
+        e.message ||
+        "Failed to load academic records";
+
+      set({
+        loading: false,
+        error: errorMessage,
+      });
+
+      // Only show error toast on last attempt
+      if (get().fetchAttempts >= maxFetchAttempts) {
+        toast.error(`Error: ${errorMessage}`);
+      }
       return false;
     }
   },
+
+  // Reset fetch state (useful if you need to refetch)
+  resetFetchState: () =>
+    set({
+      hasFetched: false,
+      fetchAttempts: 0,
+    }),
 
   updateField: (category, field, value) => {
     set((state) => {
@@ -116,19 +162,100 @@ const useAcademicRecordStore = create((set, get) => ({
     const { academicData } = get();
     const cnic = Cookies.get("cnic");
 
+    // Validation
+    const requiredFields = [
+      "group",
+      "degreeYear",
+      "seatNo",
+      "institutionName",
+      "board",
+      "totalMarks",
+      "marksObtained",
+    ];
+
+    for (const category of ["matriculation", "intermediate"]) {
+      const categoryData = academicData[category];
+      const missingFields = requiredFields.filter(
+        (field) => !categoryData[field]
+      );
+
+      if (missingFields.length > 0) {
+        toast.error(
+          `Please fill in all required fields for ${
+            category === "matriculation" ? "Matriculation" : "Intermediate"
+          }`
+        );
+        return false;
+      }
+
+      // Validate marks
+      const totalMarks = parseFloat(categoryData.totalMarks);
+      const marksObtained = parseFloat(categoryData.marksObtained);
+
+      if (isNaN(totalMarks) || isNaN(marksObtained)) {
+        toast.error(
+          `Please enter valid numbers for marks in ${
+            category === "matriculation" ? "Matriculation" : "Intermediate"
+          }`
+        );
+        return false;
+      }
+
+      if (marksObtained > totalMarks) {
+        toast.error(
+          `Marks obtained cannot be greater than total marks in ${
+            category === "matriculation" ? "Matriculation" : "Intermediate"
+          }`
+        );
+        return false;
+      }
+    }
+
     try {
+      set({ loading: true, error: null });
+
       const res = await axios.post(
         "http://localhost:3306/api/saveAcademicRecord",
         { cnic, ...academicData },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: { "Content-Type": "application/json" },
+          timeout: 10000,
+        }
       );
 
-      return res.status === 200;
+      const success = res.status >= 200 && res.status < 300;
+
+      if (success) {
+        set({ loading: false });
+        return true;
+      } else {
+        throw new Error(`Unexpected response status: ${res.status}`);
+      }
     } catch (e) {
+      let errorMessage = "Failed to save academic records";
+
+      if (e.response) {
+        errorMessage =
+          e.response.data?.message || `Server error: ${e.response.status}`;
+      } else if (e.request) {
+        errorMessage = "No response from server. Please check your connection.";
+      } else {
+        errorMessage = e.message;
+      }
+
       console.error("Save Error:", e);
+      set({
+        loading: false,
+        error: errorMessage,
+      });
+
+      toast.error(errorMessage);
       return false;
     }
   },
+
+  // Clear errors
+  clearError: () => set({ error: null }),
 }));
 
 export default useAcademicRecordStore;

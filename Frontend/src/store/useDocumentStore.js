@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useFormStatus } from "../contexts/AdmissionFormContext.jsx"; // Import hook
+import { toast } from "react-toastify";
 
 const useDocumentStore = create((set, get) => ({
   // ✅ State
   availableDocs: [
     { value: "passportsizephoto", label: "Passport Size Photo" },
-    { value: "cnic", label: "CNIC/B-Form" },
+    { value: "cnic", label: "CNIC Front & Back/B-Form (PDF)" },
     { value: "marksheet12", label: "12th Mark Sheet" },
     { value: "marksheet10", label: "10th Mark Sheet" },
     { value: "domicileB", label: "Domicile (For Bachelors)" },
@@ -18,6 +18,8 @@ const useDocumentStore = create((set, get) => ({
   file: null,
   loading: true,
   hasFetched: false,
+  fetchAttempts: 0, // Track fetch attempts
+  maxFetchAttempts: 2, // Maximum allowed attempts
   error: null,
 
   // ✅ Actions
@@ -25,12 +27,20 @@ const useDocumentStore = create((set, get) => ({
   setFile: (file) => set({ file }),
 
   // ✅ Fetch uploaded documents
-  fetchUploadedDocuments: async (updateFormStatus) => {
-    const { hasFetched, availableDocs } = get();
+  fetchUploadedDocuments: async () => {
+    const { hasFetched, fetchAttempts, maxFetchAttempts, availableDocs } =
+      get();
     const cnic = Cookies.get("cnic");
-    if (hasFetched || !cnic) return false;
+
+    // Stop if already fetched, no CNIC, or exceeded max attempts
+    if (hasFetched || !cnic || fetchAttempts >= maxFetchAttempts) {
+      set({ loading: false });
+      return false;
+    }
 
     try {
+      set({ loading: true, error: null, fetchAttempts: fetchAttempts + 1 });
+
       const response = await axios.get(
         `http://localhost:3306/api/getUploadedDocuments/${cnic}`
       );
@@ -55,29 +65,72 @@ const useDocumentStore = create((set, get) => ({
           ),
         });
 
-        // ✅ Check completion status
-        const allUploaded = newDocs.length >= 6; // total required documents
-        if (allUploaded && updateFormStatus) {
-          updateFormStatus("photographAndDocument", "Completed");
+        // Only show success toast on first successful fetch
+        if (fetchAttempts === 0) {
+          toast.success("Uploaded documents loaded successfully!");
         }
-
         return true;
       }
+
+      set({ loading: false });
       return false;
     } catch (error) {
-      console.error("Error fetching uploaded documents:", error);
-      set({ loading: false, error: error.message });
+      // Handle 404 gracefully (no existing data)
+      if (error.response && error.response.status === 404) {
+        console.warn("No existing documents found for this CNIC.");
+        set({
+          hasFetched: true,
+          loading: false,
+          error: null,
+        });
+        return false;
+      }
+
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to load uploaded documents";
+
+      set({
+        loading: false,
+        error: errorMessage,
+      });
+
+      // Only show error toast on last attempt
+      if (get().fetchAttempts >= maxFetchAttempts) {
+        toast.error(`Error: ${errorMessage}`);
+      }
       return false;
     }
   },
 
+  // ✅ Reset fetch state (useful if you need to refetch)
+  resetFetchState: () =>
+    set({
+      hasFetched: false,
+      fetchAttempts: 0,
+    }),
+
   // ✅ Upload a new document
-  uploadDocument: async (updateFormStatus) => {
-    const { selectedDoc, file, availableDocs, addUploadedDoc, uploadedDocs } =
-      get();
+  uploadDocument: async () => {
+    const { selectedDoc, file, availableDocs, uploadedDocs } = get();
     const cnic = Cookies.get("cnic");
-    if (!selectedDoc || !file || !cnic)
-      return alert("Please select a document type and file.");
+
+    // Validation
+    if (!selectedDoc) {
+      toast.error("Please select a document type");
+      return false;
+    }
+
+    if (!file) {
+      toast.error("Please select a file to upload");
+      return false;
+    }
+
+    if (!cnic) {
+      toast.error("CNIC not found. Please login again.");
+      return false;
+    }
 
     try {
       const docLabel =
@@ -109,43 +162,50 @@ const useDocumentStore = create((set, get) => ({
           uploadDate: new Date().toISOString(),
         };
 
-        addUploadedDoc(newDoc);
-        alert("File uploaded successfully!");
-        set({ selectedDoc: "", file: null });
+        // Add document locally
+        set((state) => ({
+          uploadedDocs: [...state.uploadedDocs, newDoc],
+          availableDocs: state.availableDocs.filter(
+            (d) => d.value !== selectedDoc
+          ),
+          selectedDoc: "",
+          file: null,
+        }));
 
-        // ✅ Check completion after upload
-        const allUploaded = uploadedDocs.length + 1 >= 6; // total required documents
-        if (allUploaded && updateFormStatus) {
-          updateFormStatus("photographAndDocument", "Completed");
-        }
-
+        toast.success("Document uploaded successfully!");
         return true;
       } else {
-        alert("Failed to upload file.");
+        toast.error("Failed to upload document");
         return false;
       }
     } catch (error) {
+      let errorMessage = "Failed to upload document";
+
+      if (error.response) {
+        errorMessage =
+          error.response.data?.message ||
+          `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        errorMessage = "No response from server. Please check your connection.";
+      } else {
+        errorMessage = error.message;
+      }
+
       console.error("Error uploading file:", error);
-      alert("Upload failed. Please try again.");
+      toast.error(errorMessage);
       return false;
     }
   },
 
-  // ✅ Add document locally
-  addUploadedDoc: (doc) =>
-    set((state) => ({
-      uploadedDocs: [...state.uploadedDocs, doc],
-      availableDocs: state.availableDocs.filter((d) => d.value !== doc.docType),
-    })),
-
   // ✅ Remove document (locally + API)
-  removeUploadedDoc: async (docType, documentId, updateFormStatus) => {
+  removeUploadedDoc: async (docType, documentId) => {
     try {
       if (documentId) {
         await axios.delete(
           `http://localhost:3306/api/deleteDocument/${documentId}`
         );
       }
+
       set((state) => {
         const removedDoc = state.uploadedDocs.find(
           (doc) => doc.docType === docType
@@ -163,23 +223,35 @@ const useDocumentStore = create((set, get) => ({
         };
       });
 
-      alert("Document removed successfully!");
-
-      // ✅ If removed, mark as pending again
-      const { uploadedDocs } = get();
-      if (uploadedDocs.length < 6 && updateFormStatus) {
-        updateFormStatus("photographAndDocument", "Pending");
-      }
-      const allUploaded = availableDocs.length === 0 && uploadedDocs.length > 0;
-      updateFormStatus(
-        "photographAndDocument",
-        allUploaded ? "Completed" : "Pending"
-      );
+      toast.success("Document removed successfully!");
+      return true;
     } catch (error) {
+      let errorMessage = "Failed to remove document";
+
+      if (error.response) {
+        errorMessage =
+          error.response.data?.message ||
+          `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        errorMessage = "No response from server. Please check your connection.";
+      } else {
+        errorMessage = error.message;
+      }
+
       console.error("Error removing document:", error);
-      alert("Failed to remove document.");
+      toast.error(errorMessage);
+      return false;
     }
   },
+
+  // ✅ Check if all documents are uploaded
+  checkAllDocumentsUploaded: () => {
+    const { availableDocs } = get();
+    return availableDocs.length === 0;
+  },
+
+  // ✅ Clear errors
+  clearError: () => set({ error: null }),
 }));
 
 export default useDocumentStore;
