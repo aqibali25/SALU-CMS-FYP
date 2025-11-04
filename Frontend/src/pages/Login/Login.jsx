@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie"; // Import js-cookie
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Login.css";
 import Logo from "../../assets/Logo.png";
 import BackgroundImage from "../../assets/Background.jpg";
@@ -13,6 +16,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [resetPassword, seResetPassword] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [loginFormData, setLoginFormData] = useState({
     cnic: "",
@@ -67,13 +71,34 @@ const Login = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate CNIC format
+    if (!isCnicValid) {
+      toast.error("Invalid CNIC format! Must be #####-#######-#");
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Test credentials
     if (
       loginFormData.cnic === "45102-2473066-7" &&
       loginFormData.password === "123aqibalikalwar1@A"
     ) {
-      Cookies.set("isLoggedIn", "true", { expires: 1 }); // Save login status in cookies (1-day expiration)
-      Cookies.set("cnic", loginFormData.cnic, { expires: 1 }); // Save CNIC in cookies
-      navigate("/admissions");
+      try {
+        Cookies.set("isLoggedIn", "true", { expires: 1 });
+        Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
+
+        toast.success("Login successful! Redirecting...");
+
+        // Add a small delay to show the success message
+        setTimeout(() => {
+          navigate("/admissions");
+        }, 1500);
+      } catch (error) {
+        console.error("Error setting cookies:", error);
+        toast.error("An error occurred during login.");
+        setIsLoading(false);
+      }
     } else {
       try {
         const response = await fetch("http://localhost:3306/api/login", {
@@ -87,14 +112,31 @@ const Login = () => {
         if (response.ok) {
           Cookies.set("isLoggedIn", "true", { expires: 1 });
           Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
-          navigate("/admissions");
+
+          toast.success("Login successful! Redirecting...");
+
+          // Add a small delay to show the success message
+          setTimeout(() => {
+            navigate("/admissions");
+          }, 1500);
         } else {
-          alert("Invalid Credentials.");
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData.message || "Invalid credentials";
+
+          toast.error(`Login failed: ${errorMessage}`);
           setLoginFormData({ cnic: "", password: "" });
+          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error logging in:", error);
-        alert("An error occurred. Please try again.");
+
+        let errorMessage = "An error occurred. Please try again.";
+        if (error.name === "TypeError" && error.message.includes("fetch")) {
+          errorMessage = "Network error. Please check your connection.";
+        }
+
+        toast.error(errorMessage);
+        setIsLoading(false);
       }
     }
   };
@@ -106,11 +148,27 @@ const Login = () => {
   const handleForgotPassword = () => {
     seResetPassword(true);
   };
+
   const handleCloseResetPassword = () => {
     seResetPassword(false);
   };
+
   return (
     <>
+      {/* Toast Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
       <div
         className="login-container"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
@@ -142,15 +200,16 @@ const Login = () => {
                   type="text"
                   className="noBorderRadius form-control form-input"
                   placeholder="CNIC (#####-#######-#)"
-                  name="cnic" // Name for identification
-                  value={loginFormData.cnic} // Access CNIC from loginFormData
-                  onChange={handleInputChange} // Update state on input change
-                  maxLength={15} // Limit length to match CNIC format
+                  name="cnic"
+                  value={loginFormData.cnic}
+                  onChange={handleInputChange}
+                  maxLength={15}
                   style={{
-                    border: !isCnicValid ? "2px solid red" : "", // Add red border if CNIC is invalid
+                    border: !isCnicValid ? "2px solid red" : "",
                   }}
                   autoComplete="off"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -168,40 +227,59 @@ const Login = () => {
                   : ""}
               </span>
 
-              <div className="form-group mb-3">
+              <div className="form-group mb-3 position-relative">
                 <input
                   type={passwordVisible ? "text" : "password"}
                   className="noBorderRadius form-control form-input"
                   placeholder="Enter Password"
-                  name="password" // Name for identification
-                  value={loginFormData.password} // Access password from loginFormData
-                  onChange={handleInputChange} // Update state on input change
+                  name="password"
+                  value={loginFormData.password}
+                  onChange={handleInputChange}
                   required
+                  disabled={isLoading}
                 />
                 <FontAwesomeIcon
                   className="text-white"
-                  icon={passwordVisible ? faEye : faEyeSlash} // Show 'eye' for visible, 'eye-slash' for hidden
+                  icon={passwordVisible ? faEye : faEyeSlash}
                   onClick={togglePasswordVisibility}
                   style={{
                     position: "absolute",
                     right: "40px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
                     cursor: "pointer",
+                    zIndex: 10,
                   }}
                 />
               </div>
+
               <a
                 htmlFor="forgotPassword"
                 className="forgotPassowrd"
                 onClick={handleForgotPassword}
+                style={{ cursor: "pointer" }}
               >
                 Forgot Password
               </a>
+
               <div className="buttonContainer w-100 mt-3">
                 <button
                   type="submit"
                   className="button buttonFilled text-white w-100"
+                  disabled={isLoading || !isCnicValid}
                 >
-                  Login
+                  {isLoading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Logging in...
+                    </>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
               </div>
             </form>
