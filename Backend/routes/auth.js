@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const authController = require("../controllers/authController");
+const { signup, login, getUserByCnic } = require("../controllers/authController");
 
 // Signup Route
-router.post("/signup", authController.signup);
+router.post("/signup", signup);
 
 // Login Route
-router.post("/login", authController.login);
+router.post("/login", login);
+
+// ✅ Fetch user details by CNIC
+router.get("/user/:cnic", getUserByCnic);
 
 module.exports = router;

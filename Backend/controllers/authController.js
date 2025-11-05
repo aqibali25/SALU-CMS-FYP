@@ -1,7 +1,10 @@
-const { pool } = require("../db");
+// controllers/authController.js
 const bcrypt = require("bcrypt");
+const { pool } = require("../db"); // ensure db.js exports { pool }
 
-// Login Controller - Fixed for connection pool
+//
+// LOGIN
+//
 const login = async (req, res) => {
   const { cnic, password } = req.body;
 
@@ -10,61 +13,42 @@ const login = async (req, res) => {
   }
 
   try {
-    // Use pool.query which automatically handles connections
-    pool.query(
-      "SELECT * FROM sign_up WHERE CNIC = ?",
-      [cnic],
-      async (err, results) => {
-        if (err) {
-          console.error("Error querying the database: ", err);
-          return res.status(500).json({
-            message: "Server error. Please try again later.",
-            error: err.message,
-          });
-        }
-
-        if (results.length > 0) {
-          const user = results[0];
-          const hashedPassword = user.PASSWORD;
-
-          // Compare passwords
-          bcrypt.compare(password, hashedPassword, (bcryptErr, isMatch) => {
-            if (bcryptErr) {
-              console.error("Error comparing passwords: ", bcryptErr);
-              return res.status(500).json({
-                message: "Server error. Please try again later.",
-              });
-            }
-
-            if (isMatch) {
-              // Remove password from user object
-              const { PASSWORD, ...userWithoutPassword } = user;
-              return res.status(200).json({
-                message: "Login successful.",
-                user: userWithoutPassword,
-              });
-            } else {
-              return res.status(401).json({
-                message: "Invalid CNIC or Password.",
-              });
-            }
-          });
-        } else {
-          return res.status(401).json({
-            message: "Invalid CNIC or Password.",
-          });
-        }
+    pool.query("SELECT * FROM sign_up WHERE CNIC = ?", [cnic], (err, results) => {
+      if (err) {
+        console.error("DB error (login):", err);
+        return res.status(500).json({ message: "Database error!", error: err.message });
       }
-    );
-  } catch (err) {
-    console.error("Error in login controller: ", err);
-    return res.status(500).json({
-      message: "Server error. Please try again later.",
+
+      if (!results || results.length === 0) {
+        return res.status(404).json({ message: "CNIC not found. Please sign up first." });
+      }
+
+      const user = results[0];
+
+      bcrypt.compare(password, user.PASSWORD, (bcryptErr, isMatch) => {
+        if (bcryptErr) {
+          console.error("Bcrypt error:", bcryptErr);
+          return res.status(500).json({ message: "Error while verifying credentials." });
+        }
+
+        if (!isMatch) {
+          return res.status(401).json({ message: "Invalid CNIC or Password." });
+        }
+
+        // remove password before sending
+        const { PASSWORD, ...safeUser } = user;
+        return res.status(200).json({ message: "Login successful!", user: safeUser });
+      });
     });
+  } catch (e) {
+    console.error("Login controller exception:", e);
+    return res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
 
-// Signup Controller - Fixed for connection pool
+//
+// SIGNUP
+//
 const signup = async (req, res) => {
   const { cnic, fullName, email, password, confirmPassword } = req.body;
 
@@ -148,4 +132,39 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { signup, login };
+//
+// GET USER BY CNIC (no password)
+//
+const getUserByCnic = (req, res) => {
+  const { cnic } = req.params;
+
+  if (!cnic) {
+    return res.status(400).json({ message: "CNIC is required." });
+  }
+
+  pool.query(
+    "SELECT CNIC, EMAIL, FULLNAME FROM sign_up WHERE CNIC = ?",
+    [cnic],
+    (err, results) => {
+      if (err) {
+        console.error("DB error (getUserByCnic):", err);
+        return res.status(500).json({ message: "Database error", error: err.message });
+      }
+
+      if (!results || results.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      return res.status(200).json({ success: true, user: results[0] });
+    }
+  );
+};
+
+//
+// Export AFTER defining functions
+//
+module.exports = {
+  signup,
+  login,
+  getUserByCnic,
+};
