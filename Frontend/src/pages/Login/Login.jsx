@@ -14,7 +14,7 @@ import ForgotPassword from "../../components/ForgotPassword";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [resetPassword, seResetPassword] = useState(false);
+  const [resetPassword, setResetPassword] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,6 +24,10 @@ const Login = () => {
   });
 
   const [isCnicValid, setIsCnicValid] = useState(true);
+  const [fieldTouched, setFieldTouched] = useState({
+    cnic: false,
+    password: false,
+  });
 
   useEffect(() => {
     document.title = "Login | SALU Ghotki";
@@ -46,7 +50,8 @@ const Login = () => {
       }));
 
       const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
-      setIsCnicValid(cnicPattern.test(formattedCnic));
+      const cnicValid = cnicPattern.test(formattedCnic);
+      setIsCnicValid(cnicValid);
     } else {
       setLoginFormData((prevData) => ({
         ...prevData,
@@ -68,16 +73,81 @@ const Login = () => {
     return formatted;
   };
 
+  const showFieldError = (name, value) => {
+    switch (name) {
+      case "cnic":
+        if (!isCnicValid && value.length === 15) {
+          toast.error("Invalid CNIC format! Must be #####-#######-#", {
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+        break;
+
+      case "password":
+        if (!value.trim()) {
+          toast.error("Password is required", {
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const handleInputBlur = (e) => {
+    const { name, value } = e.target;
+
+    // Mark field as touched
+    setFieldTouched((prev) => ({
+      ...prev,
+      [name]: true,
+    }));
+
+    // Show error for the specific field
+    showFieldError(name, value);
+  };
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate CNIC format
+    // Mark all fields as touched
+    setFieldTouched({
+      cnic: true,
+      password: true,
+    });
+
+    // Show errors for all fields on submit
+    Object.keys(loginFormData).forEach((key) => {
+      showFieldError(key, loginFormData[key]);
+    });
+
+    // Validate form
     if (!isCnicValid) {
-      toast.error("Invalid CNIC format! Must be #####-#######-#");
+      toast.error("Invalid CNIC format! Must be #####-#######-#", {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    if (!loginFormData.password.trim()) {
+      toast.error("Password is required", {
+        position: "top-center",
+        autoClose: 3000,
+      });
       return;
     }
 
     setIsLoading(true);
+
+    // Show loading toast
+    const loadingToast = toast.loading("Logging in...", {
+      position: "top-center",
+    });
 
     // Test credentials
     if (
@@ -88,15 +158,26 @@ const Login = () => {
         Cookies.set("isLoggedIn", "true", { expires: 1 });
         Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
 
-        toast.success("Login successful! Redirecting...");
+        // Update loading toast to success
+        toast.update(loadingToast, {
+          render: "Login successful! Redirecting...",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+        });
 
-        // Add a small delay to show the success message
+        // Add a small delay to show the success message then refresh and redirect
         setTimeout(() => {
-          navigate("/admissions");
+          window.location.href = "/admissions";
         }, 1500);
       } catch (error) {
         console.error("Error setting cookies:", error);
-        toast.error("An error occurred during login.");
+        toast.update(loadingToast, {
+          render: "An error occurred during login.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
         setIsLoading(false);
       }
     } else {
@@ -113,17 +194,29 @@ const Login = () => {
           Cookies.set("isLoggedIn", "true", { expires: 1 });
           Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
 
-          toast.success("Login successful! Redirecting...");
+          // Update loading toast to success
+          toast.update(loadingToast, {
+            render: "Login successful! Redirecting...",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+          });
 
-          // Add a small delay to show the success message
+          // Add a small delay to show the success message then refresh and redirect
           setTimeout(() => {
-            navigate("/admissions");
+            window.location.href = "/admission.salu-gc/admissions";
           }, 1500);
         } else {
           const errorData = await response.json().catch(() => ({}));
           const errorMessage = errorData.message || "Invalid credentials";
 
-          toast.error(`Login failed: ${errorMessage}`);
+          toast.update(loadingToast, {
+            render: `Login failed: ${errorMessage}`,
+            type: "error",
+            isLoading: false,
+            autoClose: 4000,
+          });
+
           setLoginFormData({ cnic: "", password: "" });
           setIsLoading(false);
         }
@@ -135,7 +228,13 @@ const Login = () => {
           errorMessage = "Network error. Please check your connection.";
         }
 
-        toast.error(errorMessage);
+        toast.update(loadingToast, {
+          render: `${errorMessage}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 4000,
+        });
+
         setIsLoading(false);
       }
     }
@@ -146,18 +245,18 @@ const Login = () => {
   };
 
   const handleForgotPassword = () => {
-    seResetPassword(true);
+    setResetPassword(true);
   };
 
   const handleCloseResetPassword = () => {
-    seResetPassword(false);
+    setResetPassword(false);
   };
 
   return (
     <>
       {/* Toast Container */}
       <ToastContainer
-        position="top-right"
+        position="top-center"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -167,6 +266,7 @@ const Login = () => {
         draggable
         pauseOnHover
         theme="light"
+        limit={3}
       />
 
       <div
@@ -176,7 +276,7 @@ const Login = () => {
         {resetPassword && (
           <ForgotPassword onOverlayClick={handleCloseResetPassword} />
         )}
-        <LoginMarquee></LoginMarquee>
+        <LoginMarquee />
         <div className="login-form-overlay mt-5">
           <div className="login-form-content text-center">
             {/* University Logo */}
@@ -203,29 +303,19 @@ const Login = () => {
                   name="cnic"
                   value={loginFormData.cnic}
                   onChange={handleInputChange}
+                  onBlur={handleInputBlur}
                   maxLength={15}
                   style={{
-                    border: !isCnicValid ? "2px solid red" : "",
+                    border:
+                      fieldTouched.cnic && !isCnicValid ? "2px solid red" : "",
+                    backgroundColor:
+                      fieldTouched.cnic && !isCnicValid ? "#ffe6e6" : "",
                   }}
                   autoComplete="off"
                   required
                   disabled={isLoading}
                 />
               </div>
-
-              {/* Display CNIC error if invalid */}
-              <span
-                className="invalid-feedback"
-                style={{
-                  color: "red",
-                  display: !isCnicValid ? "block" : "none",
-                  marginBottom: "10px",
-                }}
-              >
-                {!isCnicValid
-                  ? "Invalid CNIC format! Must be #####-#######-#"
-                  : ""}
-              </span>
 
               <div className="form-group mb-3 position-relative">
                 <input
@@ -235,6 +325,17 @@ const Login = () => {
                   name="password"
                   value={loginFormData.password}
                   onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  style={{
+                    border:
+                      fieldTouched.password && !loginFormData.password.trim()
+                        ? "2px solid red"
+                        : "",
+                    backgroundColor:
+                      fieldTouched.password && !loginFormData.password.trim()
+                        ? "#ffe6e6"
+                        : "",
+                  }}
                   required
                   disabled={isLoading}
                 />
@@ -254,7 +355,6 @@ const Login = () => {
               </div>
 
               <a
-                htmlFor="forgotPassword"
                 className="forgotPassowrd"
                 onClick={handleForgotPassword}
                 style={{ cursor: "pointer" }}
@@ -266,7 +366,7 @@ const Login = () => {
                 <button
                   type="submit"
                   className="button buttonFilled text-white w-100"
-                  disabled={isLoading || !isCnicValid}
+                  disabled={isLoading}
                 >
                   {isLoading ? (
                     <>

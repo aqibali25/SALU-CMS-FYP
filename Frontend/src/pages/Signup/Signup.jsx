@@ -42,7 +42,7 @@ const Signup = () => {
     document.title = "Signup | SALU Ghotki";
     const isLoggedIn = Cookies.get("isLoggedIn");
     if (isLoggedIn === "true") {
-      navigate("/admission-form");
+      navigate("/admissions");
     }
   }, [navigate]);
 
@@ -60,14 +60,6 @@ const Signup = () => {
       const cnicValid = cnicPattern.test(formattedCnic);
       setIsCnicValid(cnicValid);
 
-      // Show toast for invalid CNIC only when user has finished typing
-      if (fieldTouched.cnic && !cnicValid && formattedCnic.length === 15) {
-        toast.error("❌ Invalid CNIC format! Must be #####-#######-#", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      }
-
       updateSignupData({ cnic: formattedCnic });
     } else {
       setSignupFormData((prevData) => ({
@@ -79,18 +71,15 @@ const Signup = () => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const emailValid = emailPattern.test(value);
         setIsEmailValid(emailValid);
-
-        // Show toast for invalid email only when user has finished typing
-        if (fieldTouched.email && !emailValid && value.length > 0) {
-          toast.error("❌ Please enter a valid email address", {
-            position: "top-center",
-            autoClose: 3000,
-          });
-        }
       }
 
       if (name === "password") {
         validatePasswordStrength(value);
+      }
+
+      if (name === "confirmPassword") {
+        const passwordsMatch = signupFormData.password === value;
+        setIsPasswordMatch(passwordsMatch);
       }
 
       updateSignupData({ [name]: value });
@@ -113,43 +102,88 @@ const Signup = () => {
       /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$/;
     const isStrong = passwordPattern.test(password);
     setIsPasswordStrong(isStrong);
+    return isStrong;
+  };
 
-    // Show toast for weak password only when user has finished typing
-    if (fieldTouched.password && !isStrong && password.length > 0) {
-      if (password.length < 8) {
-        toast.error("❌ Password must be at least 8 characters long", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      } else if (!/(?=.*[A-Z])/.test(password)) {
-        toast.error("❌ Password must contain at least one uppercase letter", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      } else if (!/(?=.*[a-z])/.test(password)) {
-        toast.error("❌ Password must contain at least one lowercase letter", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      } else if (!/(?=.*[0-9])/.test(password)) {
-        toast.error("❌ Password must contain at least one number", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      } else if (!/(?=.*[!@#$%^&*])/.test(password)) {
-        toast.error(
-          "❌ Password must contain at least one special character (!@#$%^&*)",
-          {
+  const showFieldError = (name, value) => {
+    switch (name) {
+      case "fullName":
+        if (!value.trim()) {
+          toast.error("Full name is required", {
             position: "top-center",
             autoClose: 3000,
+          });
+        }
+        break;
+
+      case "cnic":
+        if (!isCnicValid && value.length === 15) {
+          toast.error("Invalid CNIC format! Must be #####-#######-#", {
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+        break;
+
+      case "email":
+        if (!isEmailValid && value.length > 0) {
+          toast.error("Please enter a valid email address", {
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+        break;
+
+      case "password":
+        if (!isPasswordStrong && value.length > 0) {
+          if (value.length < 8) {
+            toast.error("Password must be at least 8 characters long", {
+              position: "top-center",
+              autoClose: 3000,
+            });
+          } else if (!/(?=.*[A-Z])/.test(value)) {
+            toast.error("Password must contain at least one uppercase letter", {
+              position: "top-center",
+              autoClose: 3000,
+            });
+          } else if (!/(?=.*[a-z])/.test(value)) {
+            toast.error("Password must contain at least one lowercase letter", {
+              position: "top-center",
+              autoClose: 3000,
+            });
+          } else if (!/(?=.*[0-9])/.test(value)) {
+            toast.error("Password must contain at least one number", {
+              position: "top-center",
+              autoClose: 3000,
+            });
+          } else if (!/(?=.*[!@#$%^&*])/.test(value)) {
+            toast.error(
+              "Password must contain at least one special character (!@#$%^&*)",
+              {
+                position: "top-center",
+                autoClose: 3000,
+              }
+            );
           }
-        );
-      }
+        }
+        break;
+
+      case "confirmPassword":
+        if (!isPasswordMatch && value.length > 0) {
+          toast.error("Passwords do not match!", {
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+        break;
+
+      default:
+        break;
     }
   };
 
   const handleInputBlur = (e) => {
-    const { name } = e.target;
+    const { name, value } = e.target;
 
     // Mark field as touched
     setFieldTouched((prev) => ({
@@ -157,31 +191,8 @@ const Signup = () => {
       [name]: true,
     }));
 
-    if (name === "password" || name === "confirmPassword") {
-      validatePasswordStrength(signupFormData.password);
-    }
-
-    if (name === "confirmPassword") {
-      const passwordsMatch =
-        signupFormData.password === signupFormData.confirmPassword;
-      setIsPasswordMatch(passwordsMatch);
-
-      // Show toast for password mismatch
-      if (!passwordsMatch && signupFormData.confirmPassword.length > 0) {
-        toast.error("❌ Passwords do not match!", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      }
-    }
-
-    // Validate required fields
-    if (name === "fullName" && !signupFormData.fullName.trim()) {
-      toast.error("❌ Full name is required", {
-        position: "top-center",
-        autoClose: 3000,
-      });
-    }
+    // Show error for the specific field
+    showFieldError(name, value);
   };
 
   // 🟢 Validate all fields before submission
@@ -213,6 +224,28 @@ const Signup = () => {
     return errors;
   };
 
+  // 🟢 Save login credentials (CNIC and Password) for future login
+  const saveLoginCredentials = (cnic, password) => {
+    try {
+      // Save credentials to localStorage for login persistence
+      const loginCredentials = {
+        cnic: cnic,
+        password: password,
+        timestamp: new Date().toISOString(),
+      };
+
+      localStorage.setItem("userCredentials", JSON.stringify(loginCredentials));
+
+      // Also save to sessionStorage for current session
+      sessionStorage.setItem("userCnic", cnic);
+      sessionStorage.setItem("userPassword", password);
+
+      console.log("Login credentials saved for CNIC:", cnic);
+    } catch (error) {
+      console.error("Error saving login credentials:", error);
+    }
+  };
+
   // 🟢 Submit Form Data to Backend
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
@@ -226,12 +259,20 @@ const Signup = () => {
       confirmPassword: true,
     });
 
+    // Show errors for all fields on submit
+    Object.keys(signupFormData).forEach((key) => {
+      if (key !== "confirmPassword") {
+        showFieldError(key, signupFormData[key]);
+      }
+    });
+    showFieldError("confirmPassword", signupFormData.confirmPassword);
+
     // Validate all fields
     const formErrors = validateForm();
 
     if (formErrors.length > 0) {
       formErrors.forEach((error) => {
-        toast.error(`❌ ${error}`, {
+        toast.error(`${error}`, {
           position: "top-center",
           autoClose: 4000,
         });
@@ -242,7 +283,7 @@ const Signup = () => {
     setIsLoading(true);
 
     // Show loading toast
-    const loadingToast = toast.loading("🔄 Creating your account...", {
+    const loadingToast = toast.loading("Creating your account...", {
       position: "top-center",
     });
 
@@ -256,7 +297,11 @@ const Signup = () => {
         }
       );
 
+      // Save CNIC in sessionStorage
       sessionStorage.setItem("cn", JSON.stringify(signupFormData.cnic));
+
+      // 🟢 SAVE LOGIN CREDENTIALS (CNIC AND PASSWORD)
+      saveLoginCredentials(signupFormData.cnic, signupFormData.password);
 
       if (response.status === 200 || response.status === 201) {
         Cookies.set("isLoggedIn", "true", { expires: 1 });
@@ -264,18 +309,20 @@ const Signup = () => {
 
         // Update loading toast to success
         toast.update(loadingToast, {
-          render: "✅ Registration successful! Redirecting...",
+          render:
+            "Registration successful! Your CNIC and password have been saved for login.",
           type: "success",
           isLoading: false,
-          autoClose: 2000,
+          autoClose: 3000,
         });
 
+        // Redirect to admissions after successful signup
         setTimeout(() => {
-          navigate("/admissions");
-        }, 1500);
+          window.location.href = "/admission.salu-gc/admissions";
+        }, 2000);
       } else {
         toast.update(loadingToast, {
-          render: `❌ ${response.data.message || "Signup failed!"}`,
+          render: `${response.data.message || "Signup failed!"}`,
           type: "error",
           isLoading: false,
           autoClose: 4000,
@@ -288,18 +335,18 @@ const Signup = () => {
       if (error.response) {
         if (error.response.status === 409) {
           errorMessage =
-            "❌ CNIC or Email already exists! Please use different credentials.";
+            "CNIC or Email already exists! Please use different credentials.";
         } else if (error.response.status === 400) {
           errorMessage =
-            "❌ Invalid data provided. Please check your information.";
+            "Invalid data provided. Please check your information.";
         } else {
-          errorMessage = `❌ Server error: ${error.response.status}`;
+          errorMessage = `Server error: ${error.response.status}`;
         }
       } else if (error.request) {
         errorMessage =
-          "❌ No response from server. Please check your internet connection.";
+          "No response from server. Please check your internet connection.";
       } else {
-        errorMessage = `❌ ${error.message}`;
+        errorMessage = `${error.message}`;
       }
 
       toast.update(loadingToast, {
@@ -329,7 +376,7 @@ const Signup = () => {
         draggable
         pauseOnHover
         theme="light"
-        limit={3} // Limit to 3 toasts to avoid overflow
+        limit={3}
       />
 
       <div
@@ -353,6 +400,25 @@ const Signup = () => {
               Fill the form below to create an account.
             </p>
 
+            {/* Login Info Box */}
+            <div className="alert alert-info text-start small mb-4">
+              <strong>🔐 Login Information:</strong>
+              <p className="mb-1 mt-2">After registration, you will use:</p>
+              <ul className="mb-0">
+                <li>
+                  <strong>CNIC</strong> as your username
+                </li>
+                <li>
+                  <strong>Password</strong> you create here
+                </li>
+              </ul>
+              <p className="mb-0 mt-2">
+                <small>
+                  Please remember your CNIC and password for future logins.
+                </small>
+              </p>
+            </div>
+
             <form onSubmit={handleSignupSubmit}>
               {/* Full Name */}
               <div className="form-group mb-3">
@@ -364,7 +430,7 @@ const Signup = () => {
                   value={signupFormData.fullName}
                   onChange={handleInputChange}
                   onBlur={handleInputBlur}
-                  autoComplete="off"
+                  autoComplete="name"
                   required
                   disabled={isLoading}
                   style={{
@@ -380,7 +446,7 @@ const Signup = () => {
                 />
               </div>
 
-              {/* CNIC */}
+              {/* CNIC - This will be treated as username by browser */}
               <div className="form-group mb-3">
                 <input
                   type="text"
@@ -391,16 +457,19 @@ const Signup = () => {
                   onChange={handleInputChange}
                   onBlur={handleInputBlur}
                   maxLength={15}
+                  autoComplete="username"
                   style={{
-                    border: !isCnicValid ? "2px solid red" : "",
-                    backgroundColor: !isCnicValid ? "#ffe6e6" : "",
+                    border:
+                      fieldTouched.cnic && !isCnicValid ? "2px solid red" : "",
+                    backgroundColor:
+                      fieldTouched.cnic && !isCnicValid ? "#ffe6e6" : "",
                   }}
                   required
                   disabled={isLoading}
                 />
               </div>
 
-              {/* Email */}
+              {/* Email - Prevent browser from using this as username */}
               <div className="form-group mb-3">
                 <input
                   type="email"
@@ -410,11 +479,15 @@ const Signup = () => {
                   value={signupFormData.email}
                   onChange={handleInputChange}
                   onBlur={handleInputBlur}
+                  autoComplete="email"
                   style={{
-                    border: !isEmailValid ? "2px solid red" : "",
-                    backgroundColor: !isEmailValid ? "#ffe6e6" : "",
+                    border:
+                      fieldTouched.email && !isEmailValid
+                        ? "2px solid red"
+                        : "",
+                    backgroundColor:
+                      fieldTouched.email && !isEmailValid ? "#ffe6e6" : "",
                   }}
-                  autoComplete="off"
                   required
                   disabled={isLoading}
                 />
@@ -430,9 +503,16 @@ const Signup = () => {
                   value={signupFormData.password}
                   onChange={handleInputChange}
                   onBlur={handleInputBlur}
+                  autoComplete="new-password"
                   style={{
-                    border: !isPasswordStrong ? "2px solid red" : "",
-                    backgroundColor: !isPasswordStrong ? "#ffe6e6" : "",
+                    border:
+                      fieldTouched.password && !isPasswordStrong
+                        ? "2px solid red"
+                        : "",
+                    backgroundColor:
+                      fieldTouched.password && !isPasswordStrong
+                        ? "#ffe6e6"
+                        : "",
                   }}
                   required
                   disabled={isLoading}
@@ -462,9 +542,16 @@ const Signup = () => {
                   value={signupFormData.confirmPassword}
                   onChange={handleInputChange}
                   onBlur={handleInputBlur}
+                  autoComplete="new-password"
                   style={{
-                    border: !isPasswordMatch ? "2px solid red" : "",
-                    backgroundColor: !isPasswordMatch ? "#ffe6e6" : "",
+                    border:
+                      fieldTouched.confirmPassword && !isPasswordMatch
+                        ? "2px solid red"
+                        : "",
+                    backgroundColor:
+                      fieldTouched.confirmPassword && !isPasswordMatch
+                        ? "#ffe6e6"
+                        : "",
                   }}
                   required
                   disabled={isLoading}
