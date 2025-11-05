@@ -1,38 +1,55 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AdmissionHeader = () => {
+  const userCredentials = localStorage.getItem("userCredentials");
+  const cnic = userCredentials ? JSON.parse(userCredentials).cnic : null;
+
   const [userData, setUserData] = useState(null);
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const token = localStorage.getItem("token"); // if you’re using JWT
-  //       const res = await axios.get("http://localhost:3306/api/login", {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token"); // if you’re using JWT
+        const res = await axios.get(`http://localhost:3306/api/user/${cnic}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserData(res.data.user);
+        localStorage.setItem("userData", JSON.stringify(res.data.user));
+      } catch (error) {
+        console.error("❌ Error fetching user data:", error);
+      }
+    };
 
-  //       console.log("✅ Login API Response:", res.data);
-
-  //       // assuming API returns something like { name: "Aqib Ali Kalwar", email: "...", ... }
-  //       setUserData(res.data);
-  //     } catch (error) {
-  //       console.error("❌ Error fetching user data:", error);
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, []);
+    fetchUserData();
+  }, []);
 
   return (
     <div
       className="formConitainer d-flex flex-column justify-content-evenly align-items-start px-4 py-3"
       style={{ minHeight: "100px" }}
     >
+      {/* Toast Container */}
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        limit={3}
+      />
+
       <label htmlFor="name" style={{ fontSize: "1.3rem", fontWeight: "500" }}>
-        Welcome {userData?.name ? userData.name : "Loading..."}
+        Welcome {userData?.FULLNAME ? userData.FULLNAME : "Loading..."}
       </label>
 
       {/* Current date in this format: Friday, 31 January 2025 */}

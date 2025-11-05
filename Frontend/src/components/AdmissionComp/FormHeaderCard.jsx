@@ -8,6 +8,8 @@ const FormHeaderCard = () => {
   const { formStatus } = useFormStatus();
   const currentYear = new Date().getFullYear();
   const cnic = Cookeies.get("cnic");
+  const userData = localStorage.getItem("userData");
+  const user = userData ? JSON.parse(userData) : null;
 
   return (
     <div className="formHeaderCard formConitainer d-flex flex-wrap justify-content-around align-items-center float-end col-md-12 mx-auto p-4">
@@ -20,14 +22,14 @@ const FormHeaderCard = () => {
       >
         <h6>Personal Information</h6>
         <p>
-          <label>Username:</label> {"" || "-----------------"}
+          <label>Username:</label> {user.FULLNAME || "-----------------"}
         </p>
         <p>
           <label>CNIC:</label> {cnic || "------------------"}
         </p>
-        {/* <p>
-          <label>Phone No:</label> {"" || "-----------"}
-        </p> */}
+        <p>
+          <label>Email:</label> {user.EMAIL || "-----------"}
+        </p>
       </div>
       <div
         className="formHeaderInner d-flex flex-column align-items-start text-center text-md-start mb-3 mb-md-0"
