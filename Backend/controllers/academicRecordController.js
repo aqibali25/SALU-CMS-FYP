@@ -14,9 +14,9 @@ const saveAcademicRecord = (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
       console.error("Error getting database connection: ", err);
-      return res.status(500).json({ 
-        message: "Database connection error!", 
-        error: err.message 
+      return res.status(500).json({
+        message: "Database connection error!",
+        error: err.message,
       });
     }
 
@@ -26,23 +26,23 @@ const saveAcademicRecord = (req, res) => {
       if (checkErr) {
         connection.release();
         console.error("Error validating CNIC: ", checkErr);
-        return res.status(500).json({ 
-          message: "Database error!", 
-          error: checkErr.message 
+        return res.status(500).json({
+          message: "Database error!",
+          error: checkErr.message,
         });
       }
 
       if (checkResults.length === 0) {
         connection.release();
-        return res.status(400).json({ 
-          message: "Invalid CNIC. User not found." 
+        return res.status(400).json({
+          message: "Invalid CNIC. User not found.",
         });
       }
 
       // Insert or update intermediate information
       const intermediateQuery =
         "INSERT INTO intermediate (cnic, group_name, degree_year, seat_no, institution_name, board, total_marks, marks_obtained, percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE group_name = VALUES(group_name), degree_year = VALUES(degree_year), seat_no = VALUES(seat_no), institution_name = VALUES(institution_name), board = VALUES(board), total_marks = VALUES(total_marks), marks_obtained = VALUES(marks_obtained), percentage = VALUES(percentage)";
-      
+
       connection.query(
         intermediateQuery,
         [
@@ -59,17 +59,20 @@ const saveAcademicRecord = (req, res) => {
         (intermediateErr, intermediateResult) => {
           if (intermediateErr) {
             connection.release();
-            console.error("Error saving intermediate information: ", intermediateErr);
-            return res.status(500).json({ 
-              message: "Database error!", 
-              error: intermediateErr.message 
+            console.error(
+              "Error saving intermediate information: ",
+              intermediateErr
+            );
+            return res.status(500).json({
+              message: "Database error!",
+              error: intermediateErr.message,
             });
           }
 
           // Insert or update matriculation information
           const matriculationQuery =
             "INSERT INTO matriculation (cnic, group_name, degree_year, seat_no, institution_name, board, total_marks, marks_obtained, percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE group_name = VALUES(group_name), degree_year = VALUES(degree_year), seat_no = VALUES(seat_no), institution_name = VALUES(institution_name), board = VALUES(board), total_marks = VALUES(total_marks), marks_obtained = VALUES(marks_obtained), percentage = VALUES(percentage)";
-          
+
           connection.query(
             matriculationQuery,
             [
@@ -88,16 +91,19 @@ const saveAcademicRecord = (req, res) => {
               connection.release();
 
               if (matriculationErr) {
-                console.error("Error saving matriculation information: ", matriculationErr);
-                return res.status(500).json({ 
-                  message: "Database error!", 
-                  error: matriculationErr.message 
+                console.error(
+                  "Error saving matriculation information: ",
+                  matriculationErr
+                );
+                return res.status(500).json({
+                  message: "Database error!",
+                  error: matriculationErr.message,
                 });
               }
 
               console.log("Academic record saved successfully");
-              res.status(201).json({ 
-                message: "Academic record saved successfully!" 
+              res.status(201).json({
+                message: "Academic record saved successfully!",
               });
             }
           );
@@ -116,9 +122,9 @@ const getAcademicRecord = (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
       console.error("Error getting database connection: ", err);
-      return res.status(500).json({ 
-        message: "Database connection error!", 
-        error: err.message 
+      return res.status(500).json({
+        message: "Database connection error!",
+        error: err.message,
       });
     }
 
@@ -126,43 +132,60 @@ const getAcademicRecord = (req, res) => {
     const intermediateQuery = "SELECT * FROM intermediate WHERE cnic = ?";
     const matriculationQuery = "SELECT * FROM matriculation WHERE cnic = ?";
 
-    connection.query(intermediateQuery, [cnic], (intermediateErr, intermediateResults) => {
-      if (intermediateErr) {
-        connection.release();
-        console.error("Error fetching intermediate information: ", intermediateErr);
-        return res.status(500).json({ 
-          message: "Database error!", 
-          error: intermediateErr.message 
-        });
+    connection.query(
+      intermediateQuery,
+      [cnic],
+      (intermediateErr, intermediateResults) => {
+        if (intermediateErr) {
+          connection.release();
+          console.error(
+            "Error fetching intermediate information: ",
+            intermediateErr
+          );
+          return res.status(500).json({
+            message: "Database error!",
+            error: intermediateErr.message,
+          });
+        }
+
+        connection.query(
+          matriculationQuery,
+          [cnic],
+          (matriculationErr, matriculationResults) => {
+            // Always release the connection back to the pool
+            connection.release();
+
+            if (matriculationErr) {
+              console.error(
+                "Error fetching matriculation information: ",
+                matriculationErr
+              );
+              return res.status(500).json({
+                message: "Database error!",
+                error: matriculationErr.message,
+              });
+            }
+
+            console.log("Intermediate results:", intermediateResults);
+            console.log("Matriculation results:", matriculationResults);
+
+            if (
+              intermediateResults.length > 0 ||
+              matriculationResults.length > 0
+            ) {
+              res.status(200).json({
+                intermediate: intermediateResults[0] || null,
+                matriculation: matriculationResults[0] || null,
+              });
+            } else {
+              res.status(404).json({
+                message: "No academic record found for this user.",
+              });
+            }
+          }
+        );
       }
-
-      connection.query(matriculationQuery, [cnic], (matriculationErr, matriculationResults) => {
-        // Always release the connection back to the pool
-        connection.release();
-
-        if (matriculationErr) {
-          console.error("Error fetching matriculation information: ", matriculationErr);
-          return res.status(500).json({ 
-            message: "Database error!", 
-            error: matriculationErr.message 
-          });
-        }
-
-        console.log("Intermediate results:", intermediateResults);
-        console.log("Matriculation results:", matriculationResults);
-
-        if (intermediateResults.length > 0 || matriculationResults.length > 0) {
-          res.status(200).json({
-            intermediate: intermediateResults[0] || null,
-            matriculation: matriculationResults[0] || null,
-          });
-        } else {
-          res.status(404).json({ 
-            message: "No academic record found for this user." 
-          });
-        }
-      });
-    });
+    );
   });
 };
 
