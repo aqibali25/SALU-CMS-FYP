@@ -23,6 +23,14 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const currentDate = new Date();
+  const startDate = new Date("2025-11-01");
+  const endDate = new Date("2025-11-22");
+
+  endDate.setHours(23, 59, 59, 999);
+
+  const isAdmissionOpen = currentDate >= startDate && currentDate <= endDate;
+
   useEffect(() => {
     const handleResize = () => {
       setScreenWidth(window.innerWidth);
@@ -48,6 +56,10 @@ const Sidebar = () => {
     if (location.pathname === "/admissions") {
       setActiveIndex(0);
     } else if (location.pathname === "/admissions/form") {
+      if (!isAdmissionOpen) {
+        navigate("/admissions");
+        return;
+      }
       setActiveIndex(1);
     } else if (location.pathname === "/admissions/eligibility-criteria") {
       setActiveIndex(2);
@@ -62,7 +74,7 @@ const Sidebar = () => {
     } else if (location.pathname === "/admissions/change-password") {
       setActiveIndex(7);
     }
-  }, [location]);
+  }, [location, isAdmissionOpen, navigate]);
 
   const toggleSidebar = () => {
     if (screenWidth > 880) {

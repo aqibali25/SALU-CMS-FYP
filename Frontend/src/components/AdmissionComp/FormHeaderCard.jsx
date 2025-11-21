@@ -7,7 +7,6 @@ import Cookeies from "js-cookie";
 const FormHeaderCard = () => {
   const { formStatus } = useFormStatus();
   const currentYear = new Date().getFullYear();
-  const cnic = Cookeies.get("cnic");
   const userData = localStorage.getItem("userData");
   const user = userData ? JSON.parse(userData) : null;
 
@@ -25,7 +24,7 @@ const FormHeaderCard = () => {
           <label>Username:</label> {user.FULLNAME || "-----------------"}
         </p>
         <p>
-          <label>CNIC:</label> {cnic || "------------------"}
+          <label>CNIC:</label> {user.CNIC || "------------------"}
         </p>
         <p>
           <label>Email:</label> {user.EMAIL || "-----------"}
@@ -37,9 +36,10 @@ const FormHeaderCard = () => {
       >
         <h6>Program Group</h6>
         <p>
-          Undergraduate Admission {currentYear} (Ghotki-Campus) - Engineering
+          Undergraduate Admission {currentYear + 1} (Ghotki-Campus) -
+          Engineering
         </p>
-        <p>Spring - {currentYear}</p>
+        <p>Spring - {currentYear + 1}</p>
       </div>
       <div
         className="formHeaderInner"
