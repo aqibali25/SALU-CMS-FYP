@@ -37,6 +37,13 @@ const Signup = () => {
     password: false,
     confirmPassword: false,
   });
+  const currentDate = new Date();
+  const startDate = new Date("2025-11-01");
+  const endDate = new Date("2025-11-20");
+
+  endDate.setHours(23, 59, 59, 999);
+
+  const isAdmissionOpen = currentDate >= startDate && currentDate <= endDate;
 
   useEffect(() => {
     document.title = "Signup | SALU Ghotki";
@@ -249,6 +256,14 @@ const Signup = () => {
   // 🟢 Submit Form Data to Backend
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isAdmissionOpen) {
+      toast.error("We are sorry , Admission Date has passed.", {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      return;
+    }
 
     // Mark all fields as touched
     setFieldTouched({

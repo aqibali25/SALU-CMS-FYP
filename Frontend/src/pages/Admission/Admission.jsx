@@ -1,14 +1,21 @@
 import { useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./Admission.css";
 import FormSideBar from "../../components/AdmissionComp/FormSideBar";
 import AdmissionHeader from "../../components/AdmissionComp/otherAdmissionComp/AdmissionHeader";
+import Cookies from "js-cookie";
 
 const Admission = () => {
   const currentPathname = useLocation().pathname;
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
+    const isLoggedIn = Cookies.get("isLoggedIn");
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
   }, []);
 
   return (

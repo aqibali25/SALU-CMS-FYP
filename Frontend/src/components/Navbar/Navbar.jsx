@@ -5,13 +5,21 @@ import NavLinks from "./NavLink";
 import "../../styles/Navbar.css";
 import { Link } from "react-router-dom";
 import Profile from "./Profile";
+import axios from "axios";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   const isLoggedIn = Cookies.get("isLoggedIn"); // Get authentication status from cookies
-
+  useEffect(() => {
+    // Remove the method property from the data object
+    axios
+      .put("http://localhost:3306/api/admission-schedule/update-status")
+      .catch((error) => {
+        console.error("Error updating status:", error);
+      });
+  }, []);
   const navLinksData = [
     { name: "Home", href: "/" },
     { name: "Faculty", href: "/faculty" },

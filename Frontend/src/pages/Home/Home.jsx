@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BackgroundImg from "../Sections/BackgroundImage/BackgroundImg";
 import "./Home.css";
 import Courses from "../Sections/Courses/Courses";
@@ -15,16 +15,16 @@ const Home = () => {
         highlight={"Future"}
         heading2={"Today!"}
         para={"The Ultimate Guide to Universities Worldwide"}
-      ></BackgroundImg>
-      <MissionAndVision></MissionAndVision>
+      />
+      <MissionAndVision />
       <hr className="home-hr" />
-      <EventSection></EventSection>
+      <EventSection />
       <hr className="home-hr" />
-      <ImageSlider></ImageSlider>
+      <ImageSlider />
       <hr className="home-hr" />
-      <Courses></Courses>
+      <Courses />
       <hr className="home-hr" />
-      <AboutSection></AboutSection>
+      <AboutSection />
     </section>
   );
 };

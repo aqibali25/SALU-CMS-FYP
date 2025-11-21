@@ -20,11 +20,13 @@ const usePersonalInfoStore = create((set, get) => ({
     city: "",
     postalAddress: "",
     permanentAddress: "",
+    form_fee_status: "Unpaid",
+    admission_year: "",
   },
   loading: true,
   hasFetched: false,
-  fetchAttempts: 0, // Track fetch attempts
-  maxFetchAttempts: 2, // Maximum allowed attempts
+  fetchAttempts: 0,
+  maxFetchAttempts: 2,
   error: null,
 
   // Static options
@@ -34,9 +36,53 @@ const usePersonalInfoStore = create((set, get) => ({
     bloodGroups: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
   },
 
+  // Get admission year based on user's selected shift
+  getAdmissionYearForShift: async () => {
+    try {
+      const cnic = Cookies.get("cnic");
+      if (!cnic) return "";
+
+      // Fetch user's program selection to get the selected shift
+      const programResponse = await axios.get(
+        `http://localhost:3306/api/getProgramSelection/${cnic}`
+      );
+
+      if (programResponse.data && programResponse.data.shift) {
+        const userShift = programResponse.data.shift;
+
+        // Fetch admission schedules
+        const admissionResponse = await axios.get(
+          "http://localhost:3306/api/admission-schedule"
+        );
+        const admissionSchedules =
+          admissionResponse.data.data || admissionResponse.data;
+
+        // Find the admission schedule that matches the user's shift and has status "Open"
+        const matchingSchedule = admissionSchedules.find(
+          (schedule) =>
+            schedule.Shift === userShift && schedule.status === "Open"
+        );
+
+        if (matchingSchedule && matchingSchedule.admission_year) {
+          return matchingSchedule.admission_year.toString();
+        }
+      }
+
+      return "";
+    } catch (error) {
+      console.error("Error fetching admission year for shift:", error);
+      return "";
+    }
+  },
+
   // Actions
   fetchPersonalInfo: async () => {
-    const { hasFetched, fetchAttempts, maxFetchAttempts } = get();
+    const {
+      hasFetched,
+      fetchAttempts,
+      maxFetchAttempts,
+      getAdmissionYearForShift,
+    } = get();
     const cnic = Cookies.get("cnic");
 
     // Stop if already fetched, no CNIC, or exceeded max attempts
@@ -47,6 +93,9 @@ const usePersonalInfoStore = create((set, get) => ({
 
     try {
       set({ loading: true, error: null, fetchAttempts: fetchAttempts + 1 });
+
+      // Get admission year first
+      const admissionYear = await getAdmissionYearForShift();
 
       const response = await axios.get(
         `http://localhost:3306/api/getPersonalInfo/${cnic}`
@@ -74,6 +123,8 @@ const usePersonalInfoStore = create((set, get) => ({
             city: userData.city || "",
             postalAddress: userData.postal_address || "",
             permanentAddress: userData.permanent_address || "",
+            form_fee_status: userData.form_fee_status || "Unpaid",
+            admission_year: userData.admission_year || admission_year || "",
           },
           hasFetched: true,
           loading: false,
@@ -93,7 +144,15 @@ const usePersonalInfoStore = create((set, get) => ({
       // Handle 404 gracefully (no existing data)
       if (error.response && error.response.status === 404) {
         console.warn("No existing personal information found for this CNIC.");
+
+        // Get admission year even for new users
+        const admissionYear = await getAdmissionYearForShift();
+
         set({
+          formData: {
+            ...get().formData,
+            admission_year: admissionYear,
+          },
           hasFetched: true,
           loading: false,
           error: null,
@@ -139,7 +198,7 @@ const usePersonalInfoStore = create((set, get) => ({
   },
 
   submitForm: async () => {
-    const { formData } = get();
+    const { formData, getAdmissionYearForShift } = get();
     const cnic = Cookies.get("cnic");
 
     // Validation
@@ -161,9 +220,16 @@ const usePersonalInfoStore = create((set, get) => ({
     try {
       set({ loading: true, error: null });
 
+      // Ensure admission_year is set before submitting
+      let finalFormData = { ...formData };
+      if (!finalFormData.admission_year) {
+        const admissionYear = await getAdmissionYearForShift();
+        finalFormData.admission_year = admissionYear;
+      }
+
       const response = await axios.post(
         "http://localhost:3306/api/savePersonalInfo",
-        { ...formData, cnic },
+        { ...finalFormData, cnic },
         {
           headers: { "Content-Type": "application/json" },
           timeout: 7000,
@@ -183,15 +249,12 @@ const usePersonalInfoStore = create((set, get) => ({
       let errorMessage = "Failed to save personal information";
 
       if (error.response) {
-        // Server responded with error status
         errorMessage =
           error.response.data?.message ||
           `Server error: ${error.response.status}`;
       } else if (error.request) {
-        // Request made but no response received
         errorMessage = "No response from server. Please check your connection.";
       } else {
-        // Something else happened
         errorMessage = error.message;
       }
 
@@ -223,6 +286,8 @@ const usePersonalInfoStore = create((set, get) => ({
         city: "",
         postalAddress: "",
         permanentAddress: "",
+        form_fee_status: "Unpaid",
+        admission_year: "",
       },
       error: null,
     });
@@ -230,6 +295,21 @@ const usePersonalInfoStore = create((set, get) => ({
 
   // Clear errors
   clearError: () => set({ error: null }),
+
+  // Method to update admission year (can be called externally if needed)
+  updateAdmissionYear: async () => {
+    const admissionYear = await get().getAdmissionYearForShift();
+    if (admissionYear) {
+      set((state) => ({
+        formData: {
+          ...state.formData,
+          admission_year: admissionYear,
+        },
+      }));
+      return admissionYear;
+    }
+    return "";
+  },
 }));
 
 export default usePersonalInfoStore;

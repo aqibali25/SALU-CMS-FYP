@@ -55,12 +55,6 @@ const FormLayout = () => {
 
   // ✅ Initialize all data and update form statuses - ONLY ONCE
   useEffect(() => {
-    const isLoggedIn = Cookies.get("isLoggedIn");
-    if (!isLoggedIn) {
-      navigate("/login");
-      return;
-    }
-
     // Prevent multiple initializations
     if (hasInitialized.current) return;
     hasInitialized.current = true;

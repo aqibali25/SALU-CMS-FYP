@@ -15,26 +15,28 @@ const ProgramSelectionForm = () => {
     choices,
     loading,
     error,
-    hasFetched, // Add this to check if data is already fetched
+    hasFetched,
+    shiftOptions,
     initializeData,
     updateChoice,
     submitForm,
   } = useProgramSelectionStore();
-
+  console.log(choices);
   // Initialize data when component mounts - only if not already fetched
   useEffect(() => {
     if (!hasFetched) {
       initializeData();
     }
-  }, [initializeData, hasFetched]); // Add hasFetched to dependency array
+  }, [initializeData, hasFetched]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await submitForm();
+
+    const success = await submitForm(choices);
+
     if (success) {
       updateFormStatus("programOfStudy", "Completed");
-      // Navigate with state to show success toast on next page
       navigate("/admissions/form", {
         state: { fromProgramSelection: true },
       });
@@ -75,8 +77,7 @@ const ProgramSelectionForm = () => {
                 required: true,
               },
               { key: "firstChoice", label: "First Choice", required: true },
-              { key: "secondChoice", label: "Second Choice", required: false },
-              { key: "thirdChoice", label: "Third Choice", required: false },
+              { key: "secondChoice", label: "Second Choice", required: true },
             ].map(({ key, label, required }) => (
               <div key={key} className="inputContainer">
                 <label htmlFor={key}>
@@ -105,6 +106,28 @@ const ProgramSelectionForm = () => {
                 </select>
               </div>
             ))}
+
+            {/* Shift dropdown */}
+            <div className="inputContainer">
+              <label htmlFor="shift">
+                <span className="required">*</span>Shift:
+              </label>
+              <select
+                id="shift"
+                value={choices.shift}
+                onChange={(e) => updateChoice("shift", e.target.value)}
+                required={true}
+              >
+                <option value="" disabled>
+                  Select a Shift
+                </option>
+                {shiftOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         )}
         <div className="buttonContainer d-flex justify-content-end mt-4 float-end">

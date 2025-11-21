@@ -21,6 +21,7 @@ app.use("/api", require("./routes/fatherGuardianInfo"));
 app.use("/api", require("./routes/academicRecord"));
 app.use("/api", require("./routes/personalInfo"));
 app.use("/api", require("./routes/documents"));
+app.use("/api", require("./routes/admissionSchedule"));
 
 // Start the Server
 app.listen(PORT, () => {

@@ -33,6 +33,8 @@ const ProfileDropdown = () => {
   }, [menuActive]);
 
   const handleLogout = () => {
+    localStorage.removeItem("userData");
+    localStorage.removeItem("userCredentials");
     Cookies.remove("isLoggedIn");
     Cookies.remove("cnic");
     navigate("/SALU-CMS-FYP/login");

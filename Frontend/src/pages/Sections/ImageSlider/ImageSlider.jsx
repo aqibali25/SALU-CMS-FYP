@@ -14,7 +14,7 @@ const images = [Image1, Image2, Image3, Image4, Image5];
 
 const ImageSlider = () => {
   return (
-    <sectoion className="imageSlider mb-5">
+    <section className="imageSlider mb-5">
       <SectionTitle label={"Tranding @SALU GC"}></SectionTitle>
       <div
         id="carouselExampleAutoplaying"
@@ -62,7 +62,7 @@ const ImageSlider = () => {
           <span className="visually-hidden">Next</span>
         </button>
       </div>
-    </sectoion>
+    </section>
   );
 };
 

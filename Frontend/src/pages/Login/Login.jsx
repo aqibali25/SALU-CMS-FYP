@@ -119,7 +119,6 @@ const Login = () => {
       cnic: true,
       password: true,
     });
-
     // Show errors for all fields on submit
     Object.keys(loginFormData).forEach((key) => {
       showFieldError(key, loginFormData[key]);
@@ -149,14 +148,25 @@ const Login = () => {
       position: "top-center",
     });
 
-    // Test credentials
-    if (
-      loginFormData.cnic === "45102-2473066-7" &&
-      loginFormData.password === "123aqibalikalwar1@A"
-    ) {
-      try {
+    try {
+      const response = await fetch("http://localhost:3306/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginFormData),
+      });
+
+      if (response.ok) {
         Cookies.set("isLoggedIn", "true", { expires: 1 });
         Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
+        const loginCredentials = {
+          cnic: loginFormData.cnic,
+        };
+        localStorage.setItem(
+          "userCredentials",
+          JSON.stringify(loginCredentials)
+        );
 
         // Update loading toast to success
         toast.update(loadingToast, {
@@ -168,68 +178,14 @@ const Login = () => {
 
         // Add a small delay to show the success message then refresh and redirect
         setTimeout(() => {
-          window.location.href = "/admissions";
+          window.location.href = "/admission.salu-gc/admissions";
         }, 1500);
-      } catch (error) {
-        console.error("Error setting cookies:", error);
-        toast.update(loadingToast, {
-          render: "An error occurred during login.",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setIsLoading(false);
-      }
-    } else {
-      try {
-        const response = await fetch("http://localhost:3306/api/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(loginFormData),
-        });
-
-        if (response.ok) {
-          Cookies.set("isLoggedIn", "true", { expires: 1 });
-          Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
-
-          // Update loading toast to success
-          toast.update(loadingToast, {
-            render: "Login successful! Redirecting...",
-            type: "success",
-            isLoading: false,
-            autoClose: 2000,
-          });
-
-          // Add a small delay to show the success message then refresh and redirect
-          setTimeout(() => {
-            window.location.href = "/admission.salu-gc/admissions";
-          }, 1500);
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          const errorMessage = errorData.message || "Invalid credentials";
-
-          toast.update(loadingToast, {
-            render: `Login failed: ${errorMessage}`,
-            type: "error",
-            isLoading: false,
-            autoClose: 4000,
-          });
-
-          setLoginFormData({ cnic: "", password: "" });
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error("Error logging in:", error);
-
-        let errorMessage = "An error occurred. Please try again.";
-        if (error.name === "TypeError" && error.message.includes("fetch")) {
-          errorMessage = "Network error. Please check your connection.";
-        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || "Invalid credentials";
 
         toast.update(loadingToast, {
-          render: `${errorMessage}`,
+          render: `Login failed: ${errorMessage}`,
           type: "error",
           isLoading: false,
           autoClose: 4000,
@@ -237,6 +193,22 @@ const Login = () => {
 
         setIsLoading(false);
       }
+    } catch (error) {
+      console.error("Error logging in:", error);
+
+      let errorMessage = "An error occurred. Please try again.";
+      if (error.name === "TypeError" && error.message.includes("fetch")) {
+        errorMessage = "Network error. Please check your connection.";
+      }
+
+      toast.update(loadingToast, {
+        render: `${errorMessage}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+      });
+
+      setIsLoading(false);
     }
   };
 

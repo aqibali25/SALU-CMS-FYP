@@ -9,14 +9,15 @@ const useProgramSelectionStore = create((set, get) => ({
     appliedDepartment: "",
     firstChoice: "",
     secondChoice: "",
-    thirdChoice: "",
+    shift: "",
   },
   loading: true,
   cnic: Cookies.get("cnic"),
   hasFetched: false,
-  fetchAttempts: 0, // Track fetch attempts
-  maxFetchAttempts: 2, // Maximum allowed attempts
+  fetchAttempts: 0,
+  maxFetchAttempts: 2,
   error: null,
+  shiftOptions: [],
 
   // Fetch available departments
   fetchProgramOptions: async () => {
@@ -44,9 +45,41 @@ const useProgramSelectionStore = create((set, get) => ({
     }
   },
 
+  // Fetch shift options from admission schedule with status "Open"
+  fetchShiftOptions: async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3306/api/admission-schedule"
+      );
+      const admissionSchedules = response.data.data || response.data;
+
+      // Filter schedules with status "Open" and get unique shifts
+      const openShifts = admissionSchedules
+        .filter((schedule) => schedule.status === "Open")
+        .map((schedule) => schedule.Shift)
+        .filter((shift) => shift && shift.trim() !== "")
+        .filter((shift, index, array) => array.indexOf(shift) === index)
+        .map((shift) => ({
+          value: shift, // Keep original case from database
+          label: shift.charAt(0).toUpperCase() + shift.slice(1).toLowerCase(),
+        }));
+
+      set({ shiftOptions: openShifts });
+      return openShifts;
+    } catch (error) {
+      console.error("Error fetching shift options:", error);
+      const defaultShifts = [
+        { value: "Morning", label: "Morning" },
+        { value: "Evening", label: "Evening" },
+      ];
+      set({ shiftOptions: defaultShifts });
+      return defaultShifts;
+    }
+  },
+
   // Fetch saved program selection (if any)
   fetchUserProgramChoices: async () => {
-    const { programOptions, cnic, fetchAttempts } = get();
+    const { programOptions, cnic, fetchAttempts, shiftOptions } = get();
     if (programOptions.length === 0) return false;
 
     try {
@@ -56,6 +89,17 @@ const useProgramSelectionStore = create((set, get) => ({
       const programChoices = response.data;
 
       if (programChoices) {
+        // Get the saved shift from database
+        const savedShift = programChoices.shift || "";
+
+        // Check if saved shift exists in current shift options
+        const isValidShift = shiftOptions.some(
+          (option) => option.value === savedShift
+        );
+
+        // Set the shift to the exact value from database, or empty string if not valid
+        const shiftToSet = isValidShift ? savedShift : "";
+
         set({
           choices: {
             appliedDepartment: programOptions.some(
@@ -74,30 +118,24 @@ const useProgramSelectionStore = create((set, get) => ({
             )
               ? (programChoices.second_choice || "").trim()
               : "",
-            thirdChoice: programOptions.some(
-              (opt) => opt.value === (programChoices.third_choice || "").trim()
-            )
-              ? (programChoices.third_choice || "").trim()
-              : "",
+            shift: shiftToSet,
           },
           hasFetched: true,
           loading: false,
           error: null,
         });
 
-        // Only show success toast on first successful fetch
         if (fetchAttempts === 0) {
           toast.success("Program selection loaded successfully!");
         }
-        return true; // Data was successfully fetched
+        return true;
       }
-      return false; // No program choices data
+      return false;
     } catch (error) {
-      // ✅ Handle 404 gracefully (no existing data)
       if (error.response && error.response.status === 404) {
         console.warn("No existing program data found for this CNIC.");
         set({ hasFetched: true, loading: false, error: null });
-        return false; // No data found
+        return false;
       }
 
       const errorMessage =
@@ -107,25 +145,24 @@ const useProgramSelectionStore = create((set, get) => ({
       console.error("Error fetching user's program choices:", error);
       set({ hasFetched: true, loading: false, error: errorMessage });
 
-      // Only show error toast on last attempt
       if (get().fetchAttempts >= get().maxFetchAttempts) {
         toast.error(`Error: ${errorMessage}`);
       }
-      return false; // Error occurred
+      return false;
     }
   },
 
-  // Initialize all data (programs + saved choices if any)
+  // Initialize all data (programs + shifts + saved choices if any)
   initializeData: async () => {
     const {
       hasFetched,
       fetchAttempts,
       maxFetchAttempts,
       fetchProgramOptions,
+      fetchShiftOptions,
       fetchUserProgramChoices,
     } = get();
 
-    // Stop if already fetched or exceeded max attempts
     if (hasFetched || fetchAttempts >= maxFetchAttempts) {
       set({ loading: false });
       return { dataFetched: false, hasExistingData: false };
@@ -133,6 +170,9 @@ const useProgramSelectionStore = create((set, get) => ({
 
     try {
       set({ fetchAttempts: fetchAttempts + 1 });
+
+      // Fetch shift options FIRST, then program options
+      const shifts = await fetchShiftOptions();
       const options = await fetchProgramOptions();
 
       if (options.length > 0) {
@@ -148,7 +188,7 @@ const useProgramSelectionStore = create((set, get) => ({
     }
   },
 
-  // Reset fetch state (useful if you need to refetch)
+  // Reset fetch state
   resetFetchState: () =>
     set({
       hasFetched: false,
@@ -161,21 +201,38 @@ const useProgramSelectionStore = create((set, get) => ({
     }));
   },
 
-  submitForm: async () => {
-    const { cnic, choices } = get();
+  submitForm: async (modifiedChoices = null) => {
+    const { cnic, choices, shiftOptions } = get();
 
-    // Validation
-    if (!choices.appliedDepartment || !choices.firstChoice) {
-      toast.error("Please select at least Applied Department and First Choice");
+    const choicesToSubmit = modifiedChoices || choices;
+
+    // Check if selected shift is valid
+    const isValidShift = shiftOptions.some(
+      (option) => option.value === choicesToSubmit.shift
+    );
+
+    if (
+      !choicesToSubmit.appliedDepartment ||
+      !choicesToSubmit.firstChoice ||
+      !choicesToSubmit.secondChoice ||
+      !choicesToSubmit.shift ||
+      !isValidShift
+    ) {
+      toast.error("Please select all required fields with valid options");
       return false;
     }
 
     try {
       set({ loading: true, error: null });
 
+      const dataToSend = {
+        ...choicesToSubmit,
+        cnic,
+      };
+
       await axios.post(
         "http://localhost:3306/api/saveProgramSelection",
-        { ...choices, cnic },
+        dataToSend,
         {
           headers: { "Content-Type": "application/json" },
           timeout: 7000,
@@ -183,6 +240,7 @@ const useProgramSelectionStore = create((set, get) => ({
       );
 
       set({ loading: false });
+      toast.success("Program selection saved successfully!");
       return true;
     } catch (error) {
       let errorMessage = "Failed to save program selection";
@@ -207,30 +265,5 @@ const useProgramSelectionStore = create((set, get) => ({
   // Clear errors
   clearError: () => set({ error: null }),
 }));
-
-// ✅ Custom initialization hook with form status update - ONLY when data exists
-export const useInitializeProgramSelection = () => {
-  const initializeData = useProgramSelectionStore(
-    (state) => state.initializeData
-  );
-  const hasFetched = useProgramSelectionStore((state) => state.hasFetched);
-  const { updateFormStatus } = useFormStatus();
-
-  useEffect(() => {
-    // Only initialize if not already fetched
-    if (!hasFetched) {
-      const initialize = async () => {
-        const { dataFetched, hasExistingData } = await initializeData();
-        console.log(dataFetched + hasExistingData);
-
-        // Only update status to "Completed" if we actually fetched existing data
-        if (dataFetched && hasExistingData) {
-          updateFormStatus("programOfStudy", "Completed");
-        }
-      };
-      initialize();
-    }
-  }, [initializeData, updateFormStatus, hasFetched]);
-};
 
 export default useProgramSelectionStore;

@@ -16,12 +16,22 @@ const savePersonalInfo = (req, res) => {
     city,
     postalAddress,
     permanentAddress,
+    form_fee_status,
+    admission_year,
   } = req.body;
 
   console.log("Save Personal Info Request:", req.body);
 
   // Validate required fields
-  if (!cnic || !firstName || !lastName || !gender || !dob || !religion) {
+  if (
+    !cnic ||
+    !firstName ||
+    !lastName ||
+    !gender ||
+    !dob ||
+    !religion ||
+    !admission_year
+  ) {
     return res.status(400).json({ message: "Required fields are missing." });
   }
 
@@ -29,9 +39,9 @@ const savePersonalInfo = (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
       console.error("Error getting database connection: ", err);
-      return res.status(500).json({ 
-        message: "Database connection error!", 
-        error: err.message 
+      return res.status(500).json({
+        message: "Database connection error!",
+        error: err.message,
       });
     }
 
@@ -41,24 +51,24 @@ const savePersonalInfo = (req, res) => {
       if (checkErr) {
         connection.release();
         console.error("Error validating CNIC:", checkErr);
-        return res.status(500).json({ 
-          message: "Database error!", 
-          error: checkErr.message 
+        return res.status(500).json({
+          message: "Database error!",
+          error: checkErr.message,
         });
       }
 
       if (checkResults.length === 0) {
         connection.release();
-        return res.status(400).json({ 
-          message: "Invalid CNIC. User not found." 
+        return res.status(400).json({
+          message: "Invalid CNIC. User not found.",
         });
       }
 
       // Insert or update personal information in the database
       const insertOrUpdateQuery = `
         INSERT INTO personal_info (cnic, first_name, last_name, gender, dob, religion, disability, 
-        disability_description, native_language, blood_group, province, city, postal_address, permanent_address) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+        disability_description, native_language, blood_group, province, city, postal_address, permanent_address, form_fee_status, admission_year) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
         ON DUPLICATE KEY UPDATE 
         first_name = VALUES(first_name), 
         last_name = VALUES(last_name), 
@@ -72,7 +82,9 @@ const savePersonalInfo = (req, res) => {
         province = VALUES(province), 
         city = VALUES(city), 
         postal_address = VALUES(postal_address), 
-        permanent_address = VALUES(permanent_address)`;
+        permanent_address = VALUES(permanent_address), 
+        form_fee_status = VALUES(form_fee_status), 
+        admission_year = VALUES(admission_year)`;
 
       connection.query(
         insertOrUpdateQuery,
@@ -91,6 +103,8 @@ const savePersonalInfo = (req, res) => {
           city,
           postalAddress,
           permanentAddress,
+          form_fee_status,
+          admission_year,
         ],
         (insertErr, result) => {
           // Always release the connection back to the pool
@@ -98,15 +112,15 @@ const savePersonalInfo = (req, res) => {
 
           if (insertErr) {
             console.error("Error saving personal information:", insertErr);
-            return res.status(500).json({ 
-              message: "Database error!", 
-              error: insertErr.message 
+            return res.status(500).json({
+              message: "Database error!",
+              error: insertErr.message,
             });
           }
-          
+
           console.log("Personal info saved successfully, result:", result);
-          res.status(201).json({ 
-            message: "Personal information saved successfully!" 
+          res.status(201).json({
+            message: "Personal information saved successfully!",
           });
         }
       );
@@ -127,9 +141,9 @@ const getPersonalInfo = (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
       console.error("Error getting database connection: ", err);
-      return res.status(500).json({ 
-        message: "Database connection error!", 
-        error: err.message 
+      return res.status(500).json({
+        message: "Database connection error!",
+        error: err.message,
       });
     }
 
@@ -141,19 +155,19 @@ const getPersonalInfo = (req, res) => {
 
       if (queryErr) {
         console.error("Error fetching personal information:", queryErr);
-        return res.status(500).json({ 
-          message: "Database error!", 
-          error: queryErr.message 
+        return res.status(500).json({
+          message: "Database error!",
+          error: queryErr.message,
         });
       }
-      
+
       console.log("Personal info results:", results);
-      
+
       if (results.length > 0) {
         res.status(200).json(results[0]);
       } else {
-        res.status(404).json({ 
-          message: "No personal information found for this user." 
+        res.status(404).json({
+          message: "No personal information found for this user.",
         });
       }
     });

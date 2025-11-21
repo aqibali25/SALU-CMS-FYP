@@ -21,13 +21,13 @@ const FormHeaderCard = () => {
       >
         <h6>Personal Information</h6>
         <p>
-          <label>Username:</label> {user.FULLNAME || "-----------------"}
+          <label>Username:</label> {user?.FULLNAME || "-----------------"}
         </p>
         <p>
-          <label>CNIC:</label> {user.CNIC || "------------------"}
+          <label>CNIC:</label> {user?.CNIC || "------------------"}
         </p>
         <p>
-          <label>Email:</label> {user.EMAIL || "-----------"}
+          <label>Email:</label> {user?.EMAIL || "-----------"}
         </p>
       </div>
       <div
