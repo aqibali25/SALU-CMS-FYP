@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-   port: process.env.DB_PORT,
+  port: process.env.DB_PORT,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -16,7 +16,7 @@ const pool = mysql.createPool({
   timeout: 60000, // 60 seconds
   reconnect: true,
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+  keepAliveInitialDelay: 0,
 });
 
 // Get a promise-based version of the pool
@@ -33,16 +33,16 @@ pool.getConnection((err, connection) => {
 });
 
 // Handle pool events
-pool.on('acquire', (connection) => {
-  console.log('Connection %d acquired', connection.threadId);
+pool.on("acquire", (connection) => {
+  console.log("Connection %d acquired", connection.threadId);
 });
 
-pool.on('release', (connection) => {
-  console.log('Connection %d released', connection.threadId);
+pool.on("release", (connection) => {
+  console.log("Connection %d released", connection.threadId);
 });
 
-pool.on('error', (err) => {
-  console.error('Pool error:', err);
+pool.on("error", (err) => {
+  console.error("Pool error:", err);
 });
 
 // Export both the pool and promise pool

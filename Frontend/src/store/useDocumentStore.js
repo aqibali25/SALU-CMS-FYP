@@ -66,7 +66,7 @@ const useDocumentStore = create((set, get) => ({
         });
 
         // Only show success toast on first successful fetch
-        if (fetchAttempts === 0) {
+        if (fetchAttempts === 0 && newDocs.length > 0) {
           toast.success("Uploaded documents loaded successfully!");
         }
         return true;
