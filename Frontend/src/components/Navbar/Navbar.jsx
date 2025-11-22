@@ -11,7 +11,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-  const isLoggedIn = Cookies.get("isLoggedIn"); // Get authentication status from cookies
+  const isLoggedIn = Cookies.get("LoggedIn"); // Get authentication status from cookies
   useEffect(() => {
     // Remove the method property from the data object
     axios
