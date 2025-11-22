@@ -11,12 +11,12 @@ const Admission = () => {
 
   useEffect(() => {
     document.title = "Admission | SALU Ghotki";
-    const isLoggedIn = Cookies.get("isLoggedIn");
+    const isLoggedIn = Cookies.get("LoggedIn");
     if (!isLoggedIn) {
       navigate("/login");
       return;
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <section className="admissionSection">

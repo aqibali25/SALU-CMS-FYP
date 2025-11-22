@@ -76,7 +76,7 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    Cookies.remove("isLoggedIn");
+    Cookies.remove("LoggedIn");
     localStorage.removeItem("userData");
     localStorage.removeItem("userCredentials");
     Cookies.remove("cnic");

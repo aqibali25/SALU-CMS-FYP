@@ -33,7 +33,7 @@ const Login = () => {
     document.title = "Login | SALU Ghotki";
 
     // Check if the user is logged in using cookies
-    const isLoggedIn = Cookies.get("isLoggedIn");
+    const isLoggedIn = Cookies.get("LoggedIn");
     if (isLoggedIn === "true") {
       navigate("/admissions");
     }
@@ -158,7 +158,7 @@ const Login = () => {
       });
 
       if (response.ok) {
-        Cookies.set("isLoggedIn", "true", { expires: 1 });
+        Cookies.set("LoggedIn", "true", { expires: 1 });
         Cookies.set("cnic", loginFormData.cnic, { expires: 1 });
         const loginCredentials = {
           cnic: loginFormData.cnic,

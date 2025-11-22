@@ -4,11 +4,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/Profile.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ProfileDropdown = () => {
   const [menuActive, setMenuActive] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuActive(!menuActive);
@@ -35,9 +36,9 @@ const ProfileDropdown = () => {
   const handleLogout = () => {
     localStorage.removeItem("userData");
     localStorage.removeItem("userCredentials");
-    Cookies.remove("isLoggedIn");
+    Cookies.remove("LoggedIn");
     Cookies.remove("cnic");
-    navigate("/SALU-CMS-FYP/login");
+    navigate("/login");
   };
 
   return (

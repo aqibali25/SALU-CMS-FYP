@@ -12,10 +12,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { SignupContext } from "../../contexts/SignupContext";
 import Cookies from "js-cookie";
+import useAdmissionSchedule, {
+  getAdmissionSchedules,
+} from "../../store/useAdmissionScehedule.js";
 
 const Signup = () => {
   const navigate = useNavigate();
   const { updateSignupData } = useContext(SignupContext);
+  const { fetchAdmissionSchedules } = useAdmissionSchedule();
 
   const [signupFormData, setSignupFormData] = useState({
     cnic: "",
@@ -30,6 +34,8 @@ const Signup = () => {
   const [isPasswordStrong, setIsPasswordStrong] = useState(true);
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdmissionLoading, setIsAdmissionLoading] = useState(true);
+  const [isAdmissionOpen, setIsAdmissionOpen] = useState(false);
   const [fieldTouched, setFieldTouched] = useState({
     fullName: false,
     cnic: false,
@@ -37,17 +43,44 @@ const Signup = () => {
     password: false,
     confirmPassword: false,
   });
-  const currentDate = new Date();
-  const startDate = new Date("2025-11-01");
-  const endDate = new Date("2025-11-20");
 
-  endDate.setHours(23, 59, 59, 999);
+  // Single useEffect for data fetching
+  useEffect(() => {
+    const loadAdmissionData = async () => {
+      try {
+        setIsAdmissionLoading(true);
+        await fetchAdmissionSchedules();
+      } catch (error) {
+        console.error("Error loading admission data:", error);
+      } finally {
+        setIsAdmissionLoading(false);
+      }
+    };
 
-  const isAdmissionOpen = currentDate >= startDate && currentDate <= endDate;
+    loadAdmissionData();
+  }, [fetchAdmissionSchedules]);
+
+  // Get open admission schedules and check if admission is open
+  useEffect(() => {
+    const openAdmissionSchedules = getAdmissionSchedules()?.filter(
+      (item) => item.status === "Open"
+    );
+
+    // Set isAdmissionOpen to true if there are any records with status "Open"
+    const hasOpenAdmissions =
+      openAdmissionSchedules && openAdmissionSchedules.length > 0;
+    setIsAdmissionOpen(hasOpenAdmissions);
+
+    // Debug log
+    if (openAdmissionSchedules && openAdmissionSchedules.length > 0) {
+      console.log("Open Admission Schedules:", openAdmissionSchedules);
+      console.log("Is Admission Open:", hasOpenAdmissions);
+    }
+  }, [isAdmissionLoading]); // Run when loading state changes
 
   useEffect(() => {
     document.title = "Signup | SALU Ghotki";
-    const isLoggedIn = Cookies.get("isLoggedIn");
+    const isLoggedIn = Cookies.get("LoggedIn");
     if (isLoggedIn === "true") {
       navigate("/admissions");
     }
@@ -258,7 +291,7 @@ const Signup = () => {
     e.preventDefault();
 
     if (!isAdmissionOpen) {
-      toast.error("We are sorry , Admission Date has passed.", {
+      toast.error("We are sorry, Admission Date has passed.", {
         position: "top-center",
         autoClose: 3000,
       });
@@ -319,7 +352,7 @@ const Signup = () => {
       saveLoginCredentials(signupFormData.cnic, signupFormData.password);
 
       if (response.status === 200 || response.status === 201) {
-        Cookies.set("isLoggedIn", "true", { expires: 1 });
+        Cookies.set("LoggedIn", "true", { expires: 1 });
         Cookies.set("cnic", signupFormData.cnic, { expires: 1 });
 
         // Update loading toast to success
@@ -377,6 +410,33 @@ const Signup = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
+  // Show loading state while checking admission status
+  if (isAdmissionLoading) {
+    return (
+      <div
+        className="login-container"
+        style={{ backgroundImage: `url(${BackgroundImage})` }}
+      >
+        <LoginMarquee />
+        <div className="login-form-overlay mt-5">
+          <div className="login-form-content text-center">
+            <div className="logo-container mb-3">
+              <img
+                src={Logo}
+                alt="University Logo"
+                className="university-logo"
+              />
+            </div>
+            <h2 className="text-gray">Checking Admission Status...</h2>
+            <div className="spinner-border text-warning mt-3" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Toast Container */}
@@ -415,6 +475,17 @@ const Signup = () => {
               Fill the form below to create an account.
             </p>
 
+            {/* Admission Status Alert */}
+            {!isAdmissionOpen && (
+              <div className="alert alert-warning text-start small mb-4">
+                <strong>⚠️ Admission Closed:</strong>
+                <p className="mb-0 mt-2">
+                  We are sorry, admission dates have passed. Registration is
+                  currently not available.
+                </p>
+              </div>
+            )}
+
             {/* Login Info Box */}
             <div className="alert alert-info text-start small mb-4">
               <strong>🔐 Login Information:</strong>
@@ -447,7 +518,7 @@ const Signup = () => {
                   onBlur={handleInputBlur}
                   autoComplete="name"
                   required
-                  disabled={isLoading}
+                  disabled={isLoading || !isAdmissionOpen}
                   style={{
                     border:
                       fieldTouched.fullName && !signupFormData.fullName.trim()
@@ -480,7 +551,7 @@ const Signup = () => {
                       fieldTouched.cnic && !isCnicValid ? "#ffe6e6" : "",
                   }}
                   required
-                  disabled={isLoading}
+                  disabled={isLoading || !isAdmissionOpen}
                 />
               </div>
 
@@ -504,7 +575,7 @@ const Signup = () => {
                       fieldTouched.email && !isEmailValid ? "#ffe6e6" : "",
                   }}
                   required
-                  disabled={isLoading}
+                  disabled={isLoading || !isAdmissionOpen}
                 />
               </div>
 
@@ -530,7 +601,7 @@ const Signup = () => {
                         : "",
                   }}
                   required
-                  disabled={isLoading}
+                  disabled={isLoading || !isAdmissionOpen}
                 />
                 <FontAwesomeIcon
                   className="text-white"
@@ -569,7 +640,7 @@ const Signup = () => {
                         : "",
                   }}
                   required
-                  disabled={isLoading}
+                  disabled={isLoading || !isAdmissionOpen}
                 />
                 <FontAwesomeIcon
                   className="text-white"
@@ -604,7 +675,7 @@ const Signup = () => {
                 <button
                   type="submit"
                   className="button buttonFilled text-white w-100"
-                  disabled={isLoading}
+                  disabled={isLoading || !isAdmissionOpen}
                 >
                   {isLoading ? (
                     <>
