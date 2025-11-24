@@ -92,3 +92,22 @@
     max-height: 130svh;
   }
 }
+@media (max-width: 375px) {
+  .downloadBox {
+    flex-direction: column !important;
+    text-align: center !important;
+    justify-content: center !important; /* override bootstrap justify-content-between */
+  }
+
+  .downloadBox .buttonContainer {
+    width: 100% !important;
+    justify-content: center !important;
+    margin-top: 10px !important;
+  }
+
+  /* Fix inner container alignment too */
+  .downloadBox > div {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}

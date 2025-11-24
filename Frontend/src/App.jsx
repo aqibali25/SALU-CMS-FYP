@@ -40,6 +40,7 @@ import FeeStructure from "./components/AdmissionComp/otherAdmissionComp/FeeStruc
 import Prospectus from "./components/AdmissionComp/otherAdmissionComp/Prospectus.jsx";
 import SamplePapers from "./components/AdmissionComp/otherAdmissionComp/SamplePapers.jsx";
 import ChangePassword from "./components/AdmissionComp/otherAdmissionComp/ChangePassword.jsx";
+import CandidateStatus from "./components/AdmissionComp/otherAdmissionComp/CandidateStatus.jsx";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -72,6 +73,7 @@ const App = () => {
           <Route path="/faculty" element={<Faculty />} />
           <Route path="/admissions" element={<Admission />}>
             <Route index element={<AdmissionGuide />} />
+            <Route path="candidate-status" element={<CandidateStatus />} />
             <Route path="form" element={<FormLayout />}>
               <Route index element={<FormStatusCards />} />
               <Route

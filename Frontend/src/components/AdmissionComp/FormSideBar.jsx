@@ -11,6 +11,7 @@ import {
   faFileAlt,
   faCog,
   faSignOutAlt,
+  faUserCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../../styles/FormSideBar.css";
@@ -104,6 +105,15 @@ const Sidebar = () => {
           <FontAwesomeIcon icon={faInfoCircle} size="lg" />
           {!isCollapsed && <span>Instructions</span>}
         </Link>
+        <Link
+          to="/admissions/candidate-status"
+          className={`menu-item ${activeIndex === 8 ? "active" : ""}`}
+          onClick={() => handleMenuItemClick(8)}
+        >
+          <FontAwesomeIcon icon={faUserCheck} size="lg" />
+          {!isCollapsed && <span>Candidate Status</span>}
+        </Link>
+
         <Link
           to="/admissions/form"
           className={`menu-item ${activeIndex === 1 ? "active" : ""}`}
