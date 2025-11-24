@@ -105,14 +105,6 @@ const Sidebar = () => {
           <FontAwesomeIcon icon={faInfoCircle} size="lg" />
           {!isCollapsed && <span>Instructions</span>}
         </Link>
-        <Link
-          to="/admissions/candidate-status"
-          className={`menu-item ${activeIndex === 8 ? "active" : ""}`}
-          onClick={() => handleMenuItemClick(8)}
-        >
-          <FontAwesomeIcon icon={faUserCheck} size="lg" />
-          {!isCollapsed && <span>Candidate Status</span>}
-        </Link>
 
         <Link
           to="/admissions/form"
@@ -121,6 +113,14 @@ const Sidebar = () => {
         >
           <FontAwesomeIcon icon={faFileSignature} size="lg" />
           {!isCollapsed && <span>Application Form</span>}
+        </Link>
+        <Link
+          to="/admissions/candidate-status"
+          className={`menu-item ${activeIndex === 8 ? "active" : ""}`}
+          onClick={() => handleMenuItemClick(8)}
+        >
+          <FontAwesomeIcon icon={faUserCheck} size="lg" />
+          {!isCollapsed && <span>Candidate Status</span>}
         </Link>
         <Link
           to="/admissions/eligibility-criteria"
