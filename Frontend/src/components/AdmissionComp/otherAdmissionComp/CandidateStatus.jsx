@@ -1,18 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { FaCloudDownloadAlt, FaCloudUploadAlt, FaEye } from "react-icons/fa";
+import {
+  FaCloudDownloadAlt,
+  FaCloudUploadAlt,
+  FaEye,
+  FaTrash,
+} from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useFormStatus } from "../../../contexts/AdmissionFormContext";
-import FormPDFLayout from "./FormPDFLayout";
-import { generatePDF } from "../../../utils/pdfGenerator";
 import "../../../styles/FormSideBar.css";
+import Cookies from "js-cookie";
+import axios from "axios";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
+// Import your components
+import FormPDFLayout from "./FormPDFLayout";
+import ChallanLayout from "./ChallanLayout";
+import useAllData from "../../../store/useAllData";
 
 const CandidateStatus = () => {
   const [uploadedChallan, setUploadedChallan] = useState(null);
   const [alreadyUploaded, setAlreadyUploaded] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingForm, setIsGeneratingForm] = useState(false);
+  const [isGeneratingChallan, setIsGeneratingChallan] = useState(false);
   const { formStatus } = useFormStatus();
+  const cnic = Cookies.get("cnic");
+
+  // Use the useAllData hook
+  const {
+    data: allData,
+    loading: dataLoading,
+    error: dataError,
+    getAllData,
+  } = useAllData();
+
+  // ===========================================
+  // 🔥 Fetch All Data on component mount - ONLY ONCE
+  // ===========================================
+  useEffect(() => {
+    console.log("🚀 Component mounted, fetching data...");
+    if (cnic && !dataLoading && !allData) {
+      console.log("📡 Making API call...");
+      getAllData(cnic);
+    }
+  }, [cnic]); // Remove getAllData from dependencies
 
   // ===========================================
   // 🔥 Fetch Challan from DB on component load
@@ -20,24 +54,57 @@ const CandidateStatus = () => {
   useEffect(() => {
     const fetchChallan = async () => {
       try {
-        // const res = await fetch("/api/get-challan");
-        // const data = await res.json();
+        if (!cnic) {
+          console.log("CNIC not found in cookies");
+          return;
+        }
 
-        const data = {
-          challan: null, // change to file name string to simulate DB
-        };
+        setIsLoading(true);
+        const response = await axios.get(
+          `http://localhost:3306/api/getUploadedDocuments/${cnic}`
+        );
 
-        if (data.challan) {
-          setUploadedChallan(data.challan);
+        console.log("Fetch challan response:", response.data);
+
+        // Handle different response structures
+        let documents = [];
+
+        if (Array.isArray(response.data)) {
+          documents = response.data;
+        } else if (response.data && Array.isArray(response.data.documents)) {
+          documents = response.data.documents;
+        } else if (response.data && Array.isArray(response.data.data)) {
+          documents = response.data.data;
+        }
+
+        // Find the fee challan document
+        const challanDoc = documents.find(
+          (doc) =>
+            doc.docType === "feeChallan" ||
+            doc.docType === "challan" ||
+            doc.docName?.toLowerCase().includes("challan") ||
+            doc.docName?.toLowerCase().includes("fee") ||
+            doc.fileName?.toLowerCase().includes("challan")
+        );
+
+        if (challanDoc) {
+          setUploadedChallan(challanDoc);
           setAlreadyUploaded(true);
         }
       } catch (error) {
         console.log("Error fetching challan", error);
+        if (error.response?.status !== 404) {
+          toast.error("Error loading challan data!");
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchChallan();
-  }, []);
+    if (cnic) {
+      fetchChallan();
+    }
+  }, [cnic]);
 
   // ==================================================
   // 🔥 Upload Challan (Select File)
@@ -51,7 +118,32 @@ const CandidateStatus = () => {
       return;
     }
 
+    // File validation
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "application/pdf",
+    ];
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Invalid file type. Please upload JPEG, PNG, or PDF files.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > maxSize) {
+      toast.error(
+        "File size too large. Please upload files smaller than 10MB."
+      );
+      e.target.value = "";
+      return;
+    }
+
     setUploadedChallan(file);
+    toast.info("📁 File selected. Click 'Upload Challan' to submit.");
   };
 
   // ==================================================
@@ -63,185 +155,344 @@ const CandidateStatus = () => {
       return;
     }
 
+    if (!cnic) {
+      toast.error("User authentication failed. Please login again.");
+      return;
+    }
+
     try {
       setIsUploading(true);
 
       const formData = new FormData();
-      formData.append("challan", uploadedChallan);
+      formData.append("document", uploadedChallan);
+      formData.append("cnic", cnic);
+      formData.append("docType", "feeChallan");
+      formData.append("docName", "Paid Fee Challan");
 
-      // REAL API CALL
-      // const res = await fetch("/api/upload-challan", {
-      //   method: "POST",
-      //   body: formData,
-      // });
+      const response = await axios.post(
+        `http://localhost:3306/api/uploadDocument`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          timeout: 30000,
+        }
+      );
 
-      // const data = await res.json();
-
-      // if (!data.success) {
-      //   toast.error("Failed to upload!");
-      //   return;
-      // }
-
-      setAlreadyUploaded(true);
-      toast.success("✅ Challan uploaded to database!");
+      if (
+        response.data.message &&
+        response.data.message.includes("successfully")
+      ) {
+        setAlreadyUploaded(true);
+        const uploadedData = {
+          ...response.data.document,
+          documentId: response.data.documentId || response.data.document?.id,
+        };
+        setUploadedChallan(uploadedData);
+        toast.success("Challan uploaded to database successfully!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        const errorMessage = response.data.message || "Unknown error occurred";
+        toast.error(`Failed to upload challan: ${errorMessage}`);
+      }
     } catch (error) {
-      toast.error("Error uploading challan!");
+      console.error("Upload error:", error);
+      toast.error("Error uploading challan! Please try again.");
     } finally {
       setIsUploading(false);
     }
   };
 
   // ===========================================
-  // 🔥 Preview PDF
+  // 🔥 Delete Uploaded Challan with Confirmation
   // ===========================================
-  const previewFile = () => {
+  const handleDeleteChallan = async () => {
+    if (!uploadedChallan?.documentId && !uploadedChallan?.id) {
+      toast.error("No challan to delete!");
+      return;
+    }
+
+    toast.info(
+      <div>
+        <p>Are you sure you want to delete this challan?</p>
+        <div className="d-flex gap-2 justify-content-center mt-2">
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={async () => {
+              toast.dismiss();
+              await performDelete();
+            }}
+          >
+            Yes, Delete
+          </button>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => toast.dismiss()}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+      }
+    );
+  };
+
+  const performDelete = async () => {
+    try {
+      const documentId = uploadedChallan.documentId || uploadedChallan.id;
+      const response = await axios.delete(
+        `http://localhost:3306/api/deleteDocument/${documentId}`
+      );
+
+      if (
+        response.data.message &&
+        response.data.message.includes("successfully")
+      ) {
+        setUploadedChallan(null);
+        setAlreadyUploaded(false);
+        toast.success("Challan deleted successfully!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        const errorMessage = response.data.message || "Unknown error";
+        toast.error(`Failed to delete challan: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Error deleting challan!");
+    }
+  };
+
+  // ===========================================
+  // 🔥 Preview Uploaded Challan
+  // ===========================================
+  const previewFile = async () => {
     if (!uploadedChallan) return;
 
-    const fileURL = URL.createObjectURL(uploadedChallan);
-    window.open(fileURL, "_blank");
-  };
-
-  // ===========================================
-  // 🔥 Check if form is complete
-  // ===========================================
-  const isFormComplete = () => {
-    return formStatus.percentage === 100;
-  };
-
-  // ===========================================
-  // 🔥 Handle Download/Preview with Form Check
-  // ===========================================
-  const handleDownloadOrPreview = (action, type) => {
-    if (!isFormComplete()) {
-      toast.error(
-        `❌ Please complete your admission form (100%) to ${action} the ${type}!`
-      );
-      return false;
-    }
-    return true;
-  };
-
-  // ===========================================
-  // 🔥 Generate Form PDF
-  // ===========================================
-  const generateFormPDF = async () => {
-    if (!handleDownloadOrPreview("download", "form")) return;
-
     try {
-      setIsGenerating(true);
-      toast.info("🔄 Generating Admission Form...");
+      if (uploadedChallan instanceof File) {
+        const fileURL = URL.createObjectURL(uploadedChallan);
+        window.open(fileURL, "_blank");
+        return;
+      }
 
-      // Wait a moment for the toast to show
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      await generatePDF("admission-form-layout", "admission-form.pdf");
-      toast.success("✅ Admission Form downloaded successfully!");
-    } catch (error) {
-      console.error("Error generating form PDF:", error);
-      toast.error("❌ Error generating admission form!");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  // ===========================================
-  // 🔥 Generate Challan PDF
-  // ===========================================
-  const generateChallanPDF = async () => {
-    if (!handleDownloadOrPreview("download", "challan")) return;
-
-    try {
-      setIsGenerating(true);
-      toast.info("🔄 Generating Fee Challan...");
-
-      // Wait a moment for the toast to show
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      await generatePDF("challan-layout", "fee-challan.pdf");
-      toast.success("✅ Challan downloaded successfully!");
-    } catch (error) {
-      console.error("Error generating challan PDF:", error);
-      toast.error("❌ Error generating challan!");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  // ===========================================
-  // 🔥 Preview Generated Form
-  // ===========================================
-  const previewGeneratedForm = async () => {
-    if (!handleDownloadOrPreview("preview", "form")) return;
-
-    try {
-      setIsGenerating(true);
-      toast.info("🔄 Loading Admission Form Preview...");
-
-      await generateFormPreview();
-    } catch (error) {
-      console.error("Error previewing form:", error);
-      toast.error("❌ Error loading form preview!");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  // ===========================================
-  // 🔥 Preview Generated Challan
-  // ===========================================
-  const previewGeneratedChallan = async () => {
-    if (!handleDownloadOrPreview("preview", "challan")) return;
-
-    try {
-      setIsGenerating(true);
-      toast.info("🔄 Loading Challan Preview...");
-
-      await generateChallanPreview();
+      if (uploadedChallan.documentId || uploadedChallan.id) {
+        const documentId = uploadedChallan.documentId || uploadedChallan.id;
+        const response = await axios.get(
+          `http://localhost:3306/api/viewDocument/${documentId}`,
+          { responseType: "blob" }
+        );
+        const blobUrl = URL.createObjectURL(response.data);
+        window.open(blobUrl, "_blank");
+      }
     } catch (error) {
       console.error("Error previewing challan:", error);
-      toast.error("❌ Error loading challan preview!");
+      toast.error("Error previewing challan!");
+    }
+  };
+
+  // ===========================================
+  // 🔥 Download Uploaded Challan File
+  // ===========================================
+  const downloadFile = async () => {
+    if (!uploadedChallan) return;
+
+    try {
+      if (uploadedChallan instanceof File) {
+        const fileURL = URL.createObjectURL(uploadedChallan);
+        const link = document.createElement("a");
+        link.href = fileURL;
+        link.download = uploadedChallan.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return;
+      }
+
+      if (uploadedChallan.documentId || uploadedChallan.id) {
+        const documentId = uploadedChallan.documentId || uploadedChallan.id;
+        const response = await axios.get(
+          `http://localhost:3306/api/downloadDocument/${documentId}`,
+          { responseType: "blob" }
+        );
+        const blobUrl = URL.createObjectURL(response.data);
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download =
+          uploadedChallan.fileName || uploadedChallan.docName || "challan.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error("Error downloading challan:", error);
+      toast.error("Error downloading challan!");
+    }
+  };
+
+  // ===========================================
+  // 🔥 Download Form as PDF
+  // ===========================================
+  const handleDownloadForm = async () => {
+    if (!allData) {
+      toast.error("Please wait for data to load");
+      return;
+    }
+
+    try {
+      setIsGeneratingForm(true);
+      toast.info("Generating PDF form...");
+
+      // Create a temporary container for the form
+      const formContainer = document.createElement("div");
+      formContainer.style.position = "absolute";
+      formContainer.style.left = "-9999px";
+      formContainer.style.top = "0";
+      formContainer.style.width = "210mm";
+      formContainer.style.padding = "20px";
+      formContainer.style.background = "white";
+      document.body.appendChild(formContainer);
+
+      // Render the FormPDFLayout component with data into the container
+      const { createRoot } = await import("react-dom/client");
+      const root = createRoot(formContainer);
+      root.render(<FormPDFLayout data={allData} />);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const canvas = await html2canvas(formContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: formContainer.scrollWidth,
+        height: formContainer.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdfWidth = 210;
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      const pdf = new jsPDF("p", "mm", "a4");
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Admission-Form-${cnic || "unknown"}.pdf`);
+
+      document.body.removeChild(formContainer);
+      toast.success("Form downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating form PDF:", error);
+      toast.error("Error generating form PDF!");
     } finally {
-      setIsGenerating(false);
+      setIsGeneratingForm(false);
     }
   };
 
   // ===========================================
-  // 🔥 Generate Form Preview (opens in new tab)
+  // 🔥 Download Challan as PDF
   // ===========================================
-  const generateFormPreview = async () => {
-    const element = document.getElementById("admission-form-layout");
-    if (!element) return;
+  const handleDownloadChallan = async () => {
+    if (!allData) {
+      toast.error("Please wait for data to load");
+      return;
+    }
 
     try {
-      const { generatePDFPreview } = await import(
-        "../../../utils/pdfGenerator"
-      );
-      await generatePDFPreview("admission-form-layout");
+      setIsGeneratingChallan(true);
+      toast.info("Generating challan PDF...");
+
+      const challanContainer = document.createElement("div");
+      challanContainer.style.position = "absolute";
+      challanContainer.style.left = "-9999px";
+      challanContainer.style.top = "0";
+      challanContainer.style.width = "170mm";
+      challanContainer.style.padding = "20px";
+      challanContainer.style.background = "white";
+      document.body.appendChild(challanContainer);
+
+      const { createRoot } = await import("react-dom/client");
+      const root = createRoot(challanContainer);
+      root.render(<ChallanLayout data={allData} />);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const canvas = await html2canvas(challanContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: challanContainer.scrollWidth,
+        height: challanContainer.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdfWidth = 210;
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      const pdf = new jsPDF("p", "mm", "a4");
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Fee-Challan-${cnic || "unknown"}.pdf`);
+
+      document.body.removeChild(challanContainer);
+      toast.success("Challan downloaded successfully!");
     } catch (error) {
-      console.error("Error generating preview:", error);
-      // Fallback: Show the form in a modal or new window
-      window.open("#form-preview", "_blank");
+      console.error("Error generating challan PDF:", error);
+      toast.error("Error generating challan PDF!");
+    } finally {
+      setIsGeneratingChallan(false);
     }
   };
 
-  // ===========================================
-  // 🔥 Generate Challan Preview (opens in new tab)
-  // ===========================================
-  const generateChallanPreview = async () => {
-    const element = document.getElementById("challan-layout");
-    if (!element) return;
-
-    try {
-      const { generatePDFPreview } = await import(
-        "../../../utils/pdfGenerator"
-      );
-      await generatePDFPreview("challan-layout");
-    } catch (error) {
-      console.error("Error generating preview:", error);
-      // Fallback: Show the challan in a modal or new window
-      window.open("#challan-preview", "_blank");
-    }
+  // Helper functions for file display
+  const getFileName = () => {
+    if (!uploadedChallan) return "";
+    if (uploadedChallan instanceof File) return uploadedChallan.name;
+    return uploadedChallan.fileName || uploadedChallan.docName || "challan.pdf";
   };
+
+  const getFileSize = () => {
+    if (!uploadedChallan) return "0 KB";
+    if (uploadedChallan instanceof File)
+      return `${(uploadedChallan.size / 1024).toFixed(1)} KB`;
+    return uploadedChallan.fileSize || "N/A";
+  };
+
+  const getUploadDate = () => {
+    if (!uploadedChallan || uploadedChallan instanceof File) return "";
+    return uploadedChallan.uploadDate || uploadedChallan.createdAt || "";
+  };
+
+  // Show loading state while data is being fetched
+  if (dataLoading) {
+    return (
+      <div className="formConitainer col-md-12 p-4">
+        <div className="text-center py-4">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2">Loading candidate data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if data fetching fails
+  if (dataError) {
+    return (
+      <div className="formConitainer col-md-12 p-4">
+        <ToastContainer />
+        <div className="alert alert-danger" role="alert">
+          Error loading candidate data: {dataError}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="formConitainer col-md-12 p-4">
@@ -252,88 +503,8 @@ const CandidateStatus = () => {
 
       <hr />
 
-      {/* Hidden Form Layout for PDF Generation */}
-      <div style={{ display: "none" }}>
-        <div id="admission-form-layout">
-          <FormPDFLayout />
-        </div>
-
-        {/* Challan Layout - You'll need to create this similar to FormPDFLayout */}
-        <div id="challan-layout">
-          {/* Add your challan layout component here */}
-          <div className="challan-container border border-dark mx-auto mt-4 p-4">
-            <div className="text-center">
-              <h4>SHAH ABDUL LATIF UNIVERSITY, KHAIRPUR</h4>
-              <h5>FEE CHALLAN</h5>
-            </div>
-            <div className="row">
-              <div className="col-6">
-                <p>
-                  <strong>Challan No:</strong> CH{Date.now()}
-                </p>
-                <p>
-                  <strong>Date:</strong> {new Date().toLocaleDateString()}
-                </p>
-              </div>
-              <div className="col-6 text-end">
-                <p>
-                  <strong>Student Name:</strong> Muhammad Sheeraz
-                </p>
-                <p>
-                  <strong>Father's Name:</strong> Sardar Ali
-                </p>
-              </div>
-            </div>
-            <table className="table table-bordered">
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>Fee Type</strong>
-                  </td>
-                  <td>
-                    <strong>Amount</strong>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Admission Form Fee</td>
-                  <td>Rs. 2,500</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Total</strong>
-                  </td>
-                  <td>
-                    <strong>Rs. 2,500</strong>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="mt-4">
-              <p>
-                <strong>Amount in Words:</strong> Two Thousand Five Hundred
-                Rupees Only
-              </p>
-            </div>
-            <div className="row mt-5">
-              <div className="col-4 text-center">
-                <p>________________</p>
-                <p>Student Signature</p>
-              </div>
-              <div className="col-4 text-center">
-                <p>________________</p>
-                <p>Bank Officer</p>
-              </div>
-              <div className="col-4 text-center">
-                <p>________________</p>
-                <p>University Stamp</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <form className="formContainer position-relative">
-        {/* ---------------------- GENERATE & DOWNLOAD CHALLAN ---------------------- */}
+        {/* Download Challan Card */}
         <div
           className="downloadBox d-flex align-items-center justify-content-between p-3 flex-wrap"
           style={{
@@ -356,34 +527,23 @@ const CandidateStatus = () => {
               <FaCloudDownloadAlt size={20} />
             </div>
             <div>
-              <h6 className="mb-0 fw-bold">Generate & Download Challan</h6>
-              <small>Generate fee challan for admission form payment.</small>
+              <h6 className="mb-0 fw-bold">Download Challan</h6>
+              <small>Download fee challan for admission form payment.</small>
             </div>
           </div>
-
-          {/* Buttons */}
-          <div className="buttonContainer d-flex gap-2">
+          <div className="buttonContainer">
             <button
               className="button buttonFilled btn-sm"
-              onClick={generateChallanPDF}
+              onClick={handleDownloadChallan}
               type="button"
-              disabled={isGenerating}
+              disabled={isGeneratingChallan || !allData}
             >
-              {isGenerating ? "Generating..." : "Download"}
-            </button>
-
-            <button
-              className="button buttonNotFilled btn-sm"
-              onClick={previewGeneratedChallan}
-              type="button"
-              disabled={isGenerating}
-            >
-              {isGenerating ? "Loading..." : "Preview"}
+              {isGeneratingChallan ? "Generating..." : "Download"}
             </button>
           </div>
         </div>
 
-        {/* ---------------------- GENERATE & DOWNLOAD FORM ---------------------- */}
+        {/* Download Form Card */}
         <div
           className="downloadBox d-flex align-items-center justify-content-between p-3 mb-4 flex-wrap"
           style={{
@@ -406,40 +566,29 @@ const CandidateStatus = () => {
               <FaCloudDownloadAlt size={20} />
             </div>
             <div>
-              <h6 className="mb-0 fw-bold">Generate & Download Form</h6>
-              <small>Generate your complete Admission Form.</small>
+              <h6 className="mb-0 fw-bold">Download Form</h6>
+              <small>Download your complete Admission Form.</small>
             </div>
           </div>
-
-          {/* Buttons */}
-          <div className="buttonContainer d-flex gap-2">
+          <div className="buttonContainer">
             <button
               className="button buttonFilled btn-sm"
-              onClick={generateFormPDF}
+              onClick={handleDownloadForm}
               type="button"
-              disabled={isGenerating}
+              disabled={isGeneratingForm || !allData}
             >
-              {isGenerating ? "Generating..." : "Download"}
-            </button>
-
-            <button
-              className="button buttonNotFilled btn-sm"
-              onClick={previewGeneratedForm}
-              type="button"
-              disabled={isGenerating}
-            >
-              {isGenerating ? "Loading..." : "Preview"}
+              {isGeneratingForm ? "Generating..." : "Download"}
             </button>
           </div>
         </div>
 
-        {/* ---------------------- FILE PREVIEW CARD ---------------------- */}
+        {/* Uploaded Challan Card */}
         {uploadedChallan && (
           <div
             className="mx-auto mb-4"
             style={{
               width: "100%",
-              maxWidth: "380px",
+              maxWidth: "fit-content",
               background: "#fff",
               border: "1px solid #e0e0e0",
               borderRadius: "12px",
@@ -447,8 +596,8 @@ const CandidateStatus = () => {
               boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
             }}
           >
-            <div className="d-flex align-items-center justify-content-between flex-wrap">
-              <div className="d-flex align-items-center mb-2">
+            <div className="d-flex align-items-center flex-column justify-content-between flex-wrap">
+              <div className="d-flex align-items-center mb-2 flex-grow-1">
                 <div
                   style={{
                     width: "40px",
@@ -460,32 +609,56 @@ const CandidateStatus = () => {
                     alignItems: "center",
                     justifyContent: "center",
                     fontWeight: "bold",
+                    flexShrink: 0,
                   }}
                 >
                   PDF
                 </div>
-
-                <div className="ms-3">
-                  <p className="mb-0 fw-bold">{uploadedChallan.name}</p>
+                <div className="ms-3 flex-grow-1">
+                  <p className="mb-0 fw-bold">{getFileName()}</p>
                   <small>
-                    {(uploadedChallan.size / 1024).toFixed(1)} KB — Ready to
-                    Upload
+                    {getFileSize()} • {getUploadDate()}
+                  </small>
+                  <br />
+                  <small
+                    className={
+                      alreadyUploaded ? "text-success" : "text-warning"
+                    }
+                  >
+                    {alreadyUploaded ? "" : "Ready to Upload"}
                   </small>
                 </div>
               </div>
-
-              <FaEye
-                size={20}
-                onClick={previewFile}
-                style={{ cursor: "pointer" }}
-              />
+              <div className="d-flex gap-2 ms-3">
+                <FaEye
+                  size={22}
+                  onClick={previewFile}
+                  style={{ cursor: "pointer", color: "#007bff" }}
+                  title="Preview Challan"
+                />
+                {alreadyUploaded && (
+                  <>
+                    <FaCloudDownloadAlt
+                      size={22}
+                      onClick={downloadFile}
+                      style={{ cursor: "pointer", color: "#28a745" }}
+                      title="Download Challan"
+                    />
+                    <FaTrash
+                      size={20}
+                      onClick={handleDeleteChallan}
+                      style={{ cursor: "pointer", color: "#dc3545" }}
+                      title="Delete Challan"
+                    />
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}
 
-        {/* ---------------------- UPLOAD SECTION ---------------------- */}
+        {/* Upload Section */}
         <h5 className="text-center mb-3 fw-bold">Upload Your Paid Challan</h5>
-
         <div
           className="mx-auto text-center p-4"
           style={{
@@ -497,31 +670,43 @@ const CandidateStatus = () => {
           }}
         >
           <FaCloudUploadAlt size={35} className="mb-2" />
-
           <p className="mb-1 fw-semibold">
             Choose a file or drag & drop it here.
           </p>
-          <small className="text-muted">JPEG, PNG, and PDF formats.</small>
-
+          <small className="text-muted">
+            JPEG, PNG, and PDF formats (Max 10MB).
+          </small>
           <div className="mt-3">
-            <label className="btn btn-light border px-4">
-              Browse File
+            <label
+              className={`btn ${
+                alreadyUploaded ? "btn-secondary" : "btn-light border"
+              } px-4`}
+            >
+              {isLoading ? "Loading..." : "Browse File"}
               <input
                 type="file"
                 hidden
                 accept="application/pdf,image/png,image/jpeg"
-                disabled={alreadyUploaded}
+                disabled={alreadyUploaded || isLoading}
                 onChange={handleFileUpload}
               />
             </label>
           </div>
+          {alreadyUploaded && (
+            <div className="mt-2">
+              <small className="text-success">
+                Challan already uploaded. You can delete and re-upload if
+                needed.
+              </small>
+            </div>
+          )}
         </div>
 
-        {/* 🔥 FINAL UPLOAD BUTTON */}
+        {/* Final Upload Button */}
         {uploadedChallan && !alreadyUploaded && (
           <div className="buttonContainer w-100 d-flex justify-content-end mt-3">
             <button
-              type="submit"
+              type="button"
               className="button buttonFilled"
               onClick={handleFinalUpload}
               disabled={isUploading}

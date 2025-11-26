@@ -1,8 +1,7 @@
 import React from "react";
-import ChallanLayout from "./ChallanLayout";
 
 const Prospectus = () => {
-  return <ChallanLayout />;
+  return <div>Prospectus</div>;
 };
 
 export default Prospectus;

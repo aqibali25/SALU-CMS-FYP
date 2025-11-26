@@ -1,8 +1,7 @@
 import React from "react";
-import FormPDFLayout from "./FormPDFLayout";
 
 const SamplePapers = () => {
-  return <FormPDFLayout></FormPDFLayout>;
+  return <div>SamplePapers</div>;
 };
 
 export default SamplePapers;
