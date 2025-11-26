@@ -22,6 +22,7 @@ app.use("/api", require("./routes/academicRecord"));
 app.use("/api", require("./routes/personalInfo"));
 app.use("/api", require("./routes/documents"));
 app.use("/api", require("./routes/admissionSchedule"));
+app.use("/api", require("./routes/allData"));
 
 // Start the Server
 app.listen(PORT, () => {
