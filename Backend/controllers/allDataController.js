@@ -23,7 +23,7 @@ const getAllData = async (req, res) => {
       params = [cnic];
     }
 
-    // 🎯 Queries
+    // Queries
     const queries = {
       signup: `SELECT EMAIL FROM sign_up ${cnic ? "WHERE CNIC = ?" : ""}`,
       personal_info: `SELECT * FROM personal_info ${condition}`,
@@ -35,7 +35,7 @@ const getAllData = async (req, res) => {
       admission_schedule: `SELECT * FROM admission_schedule`
     };
 
-    // 🎯 Execute all queries
+    // Execute all queries
     const results = {
       sign_up: await runQuery(queries.signup, params),
       personal_info: await runQuery(queries.personal_info, params),
