@@ -85,10 +85,6 @@ const useAcademicRecordStore = create((set, get) => ({
           error: null,
         });
 
-        // Only show success toast on first successful fetch
-        if (fetchAttempts === 0) {
-          toast.success("Academic records loaded successfully!");
-        }
         return true;
       }
 

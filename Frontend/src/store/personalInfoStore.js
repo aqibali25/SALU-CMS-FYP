@@ -131,10 +131,6 @@ const usePersonalInfoStore = create((set, get) => ({
           error: null,
         });
 
-        // Only show success toast on first successful fetch
-        if (fetchAttempts === 0) {
-          toast.success("Personal information loaded successfully!");
-        }
         return true;
       }
 

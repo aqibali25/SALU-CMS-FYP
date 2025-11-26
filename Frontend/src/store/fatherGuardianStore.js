@@ -66,10 +66,6 @@ const useFatherGuardianStore = create((set, get) => ({
           error: null,
         });
 
-        // Only show success toast on first successful fetch
-        if (fetchAttempts === 0) {
-          toast.success("Father & Guardian information loaded successfully!");
-        }
         return true;
       }
 

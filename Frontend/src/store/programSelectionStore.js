@@ -125,9 +125,6 @@ const useProgramSelectionStore = create((set, get) => ({
           error: null,
         });
 
-        if (fetchAttempts === 0) {
-          toast.success("Program selection loaded successfully!");
-        }
         return true;
       }
       return false;

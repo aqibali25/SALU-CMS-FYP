@@ -2,12 +2,17 @@ import React, { useState, useEffect } from "react";
 import { FaCloudDownloadAlt, FaCloudUploadAlt, FaEye } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useFormStatus } from "../../../contexts/AdmissionFormContext";
+import FormPDFLayout from "./FormPDFLayout";
+import { generatePDF } from "../../../utils/pdfGenerator";
 import "../../../styles/FormSideBar.css";
 
 const CandidateStatus = () => {
   const [uploadedChallan, setUploadedChallan] = useState(null);
   const [alreadyUploaded, setAlreadyUploaded] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { formStatus } = useFormStatus();
 
   // ===========================================
   // 🔥 Fetch Challan from DB on component load
@@ -96,11 +101,146 @@ const CandidateStatus = () => {
     window.open(fileURL, "_blank");
   };
 
-  const downloadFile = (fileName) => {
-    const link = document.createElement("a");
-    link.href = "/sample/" + fileName;
-    link.download = fileName;
-    link.click();
+  // ===========================================
+  // 🔥 Check if form is complete
+  // ===========================================
+  const isFormComplete = () => {
+    return formStatus.percentage === 100;
+  };
+
+  // ===========================================
+  // 🔥 Handle Download/Preview with Form Check
+  // ===========================================
+  const handleDownloadOrPreview = (action, type) => {
+    if (!isFormComplete()) {
+      toast.error(
+        `❌ Please complete your admission form (100%) to ${action} the ${type}!`
+      );
+      return false;
+    }
+    return true;
+  };
+
+  // ===========================================
+  // 🔥 Generate Form PDF
+  // ===========================================
+  const generateFormPDF = async () => {
+    if (!handleDownloadOrPreview("download", "form")) return;
+
+    try {
+      setIsGenerating(true);
+      toast.info("🔄 Generating Admission Form...");
+
+      // Wait a moment for the toast to show
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      await generatePDF("admission-form-layout", "admission-form.pdf");
+      toast.success("✅ Admission Form downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating form PDF:", error);
+      toast.error("❌ Error generating admission form!");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // ===========================================
+  // 🔥 Generate Challan PDF
+  // ===========================================
+  const generateChallanPDF = async () => {
+    if (!handleDownloadOrPreview("download", "challan")) return;
+
+    try {
+      setIsGenerating(true);
+      toast.info("🔄 Generating Fee Challan...");
+
+      // Wait a moment for the toast to show
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      await generatePDF("challan-layout", "fee-challan.pdf");
+      toast.success("✅ Challan downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating challan PDF:", error);
+      toast.error("❌ Error generating challan!");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // ===========================================
+  // 🔥 Preview Generated Form
+  // ===========================================
+  const previewGeneratedForm = async () => {
+    if (!handleDownloadOrPreview("preview", "form")) return;
+
+    try {
+      setIsGenerating(true);
+      toast.info("🔄 Loading Admission Form Preview...");
+
+      await generateFormPreview();
+    } catch (error) {
+      console.error("Error previewing form:", error);
+      toast.error("❌ Error loading form preview!");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // ===========================================
+  // 🔥 Preview Generated Challan
+  // ===========================================
+  const previewGeneratedChallan = async () => {
+    if (!handleDownloadOrPreview("preview", "challan")) return;
+
+    try {
+      setIsGenerating(true);
+      toast.info("🔄 Loading Challan Preview...");
+
+      await generateChallanPreview();
+    } catch (error) {
+      console.error("Error previewing challan:", error);
+      toast.error("❌ Error loading challan preview!");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // ===========================================
+  // 🔥 Generate Form Preview (opens in new tab)
+  // ===========================================
+  const generateFormPreview = async () => {
+    const element = document.getElementById("admission-form-layout");
+    if (!element) return;
+
+    try {
+      const { generatePDFPreview } = await import(
+        "../../../utils/pdfGenerator"
+      );
+      await generatePDFPreview("admission-form-layout");
+    } catch (error) {
+      console.error("Error generating preview:", error);
+      // Fallback: Show the form in a modal or new window
+      window.open("#form-preview", "_blank");
+    }
+  };
+
+  // ===========================================
+  // 🔥 Generate Challan Preview (opens in new tab)
+  // ===========================================
+  const generateChallanPreview = async () => {
+    const element = document.getElementById("challan-layout");
+    if (!element) return;
+
+    try {
+      const { generatePDFPreview } = await import(
+        "../../../utils/pdfGenerator"
+      );
+      await generatePDFPreview("challan-layout");
+    } catch (error) {
+      console.error("Error generating preview:", error);
+      // Fallback: Show the challan in a modal or new window
+      window.open("#challan-preview", "_blank");
+    }
   };
 
   return (
@@ -109,10 +249,91 @@ const CandidateStatus = () => {
       <h2 className="mb-1" style={{ color: "#e9c545" }}>
         Candidate Status
       </h2>
+
       <hr />
 
+      {/* Hidden Form Layout for PDF Generation */}
+      <div style={{ display: "none" }}>
+        <div id="admission-form-layout">
+          <FormPDFLayout />
+        </div>
+
+        {/* Challan Layout - You'll need to create this similar to FormPDFLayout */}
+        <div id="challan-layout">
+          {/* Add your challan layout component here */}
+          <div className="challan-container border border-dark mx-auto mt-4 p-4">
+            <div className="text-center">
+              <h4>SHAH ABDUL LATIF UNIVERSITY, KHAIRPUR</h4>
+              <h5>FEE CHALLAN</h5>
+            </div>
+            <div className="row">
+              <div className="col-6">
+                <p>
+                  <strong>Challan No:</strong> CH{Date.now()}
+                </p>
+                <p>
+                  <strong>Date:</strong> {new Date().toLocaleDateString()}
+                </p>
+              </div>
+              <div className="col-6 text-end">
+                <p>
+                  <strong>Student Name:</strong> Muhammad Sheeraz
+                </p>
+                <p>
+                  <strong>Father's Name:</strong> Sardar Ali
+                </p>
+              </div>
+            </div>
+            <table className="table table-bordered">
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Fee Type</strong>
+                  </td>
+                  <td>
+                    <strong>Amount</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Admission Form Fee</td>
+                  <td>Rs. 2,500</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Total</strong>
+                  </td>
+                  <td>
+                    <strong>Rs. 2,500</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className="mt-4">
+              <p>
+                <strong>Amount in Words:</strong> Two Thousand Five Hundred
+                Rupees Only
+              </p>
+            </div>
+            <div className="row mt-5">
+              <div className="col-4 text-center">
+                <p>________________</p>
+                <p>Student Signature</p>
+              </div>
+              <div className="col-4 text-center">
+                <p>________________</p>
+                <p>Bank Officer</p>
+              </div>
+              <div className="col-4 text-center">
+                <p>________________</p>
+                <p>University Stamp</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <form className="formContainer position-relative">
-        {/* ---------------------- DOWNLOAD CHALLAN ---------------------- */}
+        {/* ---------------------- GENERATE & DOWNLOAD CHALLAN ---------------------- */}
         <div
           className="downloadBox d-flex align-items-center justify-content-between p-3 flex-wrap"
           style={{
@@ -135,8 +356,8 @@ const CandidateStatus = () => {
               <FaCloudDownloadAlt size={20} />
             </div>
             <div>
-              <h6 className="mb-0 fw-bold">Download Challan</h6>
-              <small>Download and upload the Challan After Pay.</small>
+              <h6 className="mb-0 fw-bold">Generate & Download Challan</h6>
+              <small>Generate fee challan for admission form payment.</small>
             </div>
           </div>
 
@@ -144,23 +365,25 @@ const CandidateStatus = () => {
           <div className="buttonContainer d-flex gap-2">
             <button
               className="button buttonFilled btn-sm"
-              onClick={() => downloadFile("challan.pdf")}
+              onClick={generateChallanPDF}
               type="button"
+              disabled={isGenerating}
             >
-              Download
+              {isGenerating ? "Generating..." : "Download"}
             </button>
 
             <button
               className="button buttonNotFilled btn-sm"
-              onClick={() => window.open("/sample/challan.pdf")}
+              onClick={previewGeneratedChallan}
               type="button"
+              disabled={isGenerating}
             >
-              Preview
+              {isGenerating ? "Loading..." : "Preview"}
             </button>
           </div>
         </div>
 
-        {/* ---------------------- DOWNLOAD FORM ---------------------- */}
+        {/* ---------------------- GENERATE & DOWNLOAD FORM ---------------------- */}
         <div
           className="downloadBox d-flex align-items-center justify-content-between p-3 mb-4 flex-wrap"
           style={{
@@ -183,8 +406,8 @@ const CandidateStatus = () => {
               <FaCloudDownloadAlt size={20} />
             </div>
             <div>
-              <h6 className="mb-0 fw-bold">Download Form</h6>
-              <small>Download your Admission Form.</small>
+              <h6 className="mb-0 fw-bold">Generate & Download Form</h6>
+              <small>Generate your complete Admission Form.</small>
             </div>
           </div>
 
@@ -192,18 +415,20 @@ const CandidateStatus = () => {
           <div className="buttonContainer d-flex gap-2">
             <button
               className="button buttonFilled btn-sm"
-              onClick={() => downloadFile("admission-form.pdf")}
+              onClick={generateFormPDF}
               type="button"
+              disabled={isGenerating}
             >
-              Download
+              {isGenerating ? "Generating..." : "Download"}
             </button>
 
             <button
               className="button buttonNotFilled btn-sm"
-              onClick={() => window.open("/sample/admission-form.pdf")}
+              onClick={previewGeneratedForm}
               type="button"
+              disabled={isGenerating}
             >
-              Preview
+              {isGenerating ? "Loading..." : "Preview"}
             </button>
           </div>
         </div>

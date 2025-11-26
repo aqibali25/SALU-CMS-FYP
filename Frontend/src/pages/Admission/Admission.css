@@ -144,3 +144,76 @@ button.btn-warning:hover {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
 }
+.form-container {
+  width: 850px;
+  background: white;
+}
+
+.photo-box {
+  width: 90px;
+  height: 90px;
+  border: 2px solid black;
+  margin: auto;
+}
+
+.qr-box {
+  width: 80px;
+  height: 80px;
+  border: 1px solid black;
+  float: right;
+}
+
+.section-title {
+  background: #000;
+  color: white;
+  padding: 5px 10px;
+  font-weight: bold;
+  margin-top: 5px;
+  border: 1px solid black;
+}
+
+.table th,
+.table td {
+  border: 1px solid #000 !important;
+}
+
+.passport-photo {
+  width: 120px;
+  height: 140px;
+  border: 1px solid black;
+  margin: auto;
+}
+.challan-container {
+  margin-top: 20px;
+  max-width: 1300px;
+}
+
+.challan-column {
+  border: 1px solid black;
+  padding: 0;
+}
+
+.challan-table td {
+  border: 1px solid black !important;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.logo-box {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px solid black;
+  margin: auto;
+}
+
+.qr-box {
+  width: 55px;
+  height: 55px;
+  border: 1px solid black;
+  float: right;
+}
+
+.table {
+  margin-bottom: 0;
+}

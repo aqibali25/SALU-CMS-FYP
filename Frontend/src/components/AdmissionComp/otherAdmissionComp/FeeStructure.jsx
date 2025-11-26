@@ -1,7 +1,8 @@
 import React from "react";
+import SlipLayout from "./SlipLayout";
 
 const FeeStructure = () => {
-  return <div>FeeStructure</div>;
+  return <SlipLayout />;
 };
 
 export default FeeStructure;
