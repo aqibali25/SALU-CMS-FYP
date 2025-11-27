@@ -13,6 +13,7 @@ const usePersonalInfoStore = create((set, get) => ({
     gender: "",
     dob: "",
     cnic: Cookies.get("cnic") || "",
+    phoneNumber: "",
     religion: "",
     nativeLanguage: "",
     bloodGroup: "",
@@ -118,6 +119,7 @@ const usePersonalInfoStore = create((set, get) => ({
             gender: userData.gender || "",
             dob: formattedDOB,
             cnic: cnic,
+            phoneNumber: userData.phone_no || "", // Add this line
             religion: userData.religion || "",
             nativeLanguage: userData.native_language || "",
             bloodGroup: userData.blood_group || "",
@@ -139,10 +141,8 @@ const usePersonalInfoStore = create((set, get) => ({
           loading: false,
           error: null,
         });
-
         return true;
       }
-
       set({ loading: false });
       return false;
     } catch (error) {
@@ -255,6 +255,7 @@ const usePersonalInfoStore = create((set, get) => ({
         email: finalFormData.email,
         gender: finalFormData.gender,
         dob: finalFormData.dob,
+        phone_no: finalFormData.phoneNumber, // Add this line
         religion: finalFormData.religion,
         native_language: finalFormData.nativeLanguage,
         blood_group: finalFormData.bloodGroup,
@@ -324,7 +325,6 @@ const usePersonalInfoStore = create((set, get) => ({
     }
   },
 
-  // Reset form data
   resetForm: () => {
     set({
       formData: {
@@ -335,6 +335,7 @@ const usePersonalInfoStore = create((set, get) => ({
         gender: "",
         dob: "",
         cnic: Cookies.get("cnic") || "",
+        phoneNumber: "", // Add this line
         religion: "",
         nativeLanguage: "",
         bloodGroup: "",

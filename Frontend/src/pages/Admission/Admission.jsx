@@ -78,12 +78,6 @@ const Admission = () => {
           fetchFatherGuardianInfo(),
           initializeAcademicRecord(),
         ]);
-        console.log(
-          "programOfStudy",
-          programSuccess,
-          "personal_info",
-          personalSuccess
-        );
 
         // Update form statuses based on data fetch results
         if (programSuccess.dataFetched && programSuccess.hasExistingData) {

@@ -29,8 +29,6 @@ const useAllData = () => {
           `http://localhost:3306/api/all-data/${userCnic}`
         );
 
-        console.log("📦 API Response:", response.data);
-
         if (response.data && response.data.success !== false) {
           setData(response.data);
         } else {

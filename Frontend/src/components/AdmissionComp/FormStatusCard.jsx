@@ -47,8 +47,6 @@ const FormStatusCard = ({ title, icon, status, bgColor, url }) => {
       openAdmissionSchedules.length > 0 &&
       !hasLogged.current
     ) {
-      console.log("Open Admission Schedules:", openAdmissionSchedules);
-      console.log("Is Admission Open:", hasOpenAdmissions);
       hasLogged.current = true;
     }
   }, [isLoading]); // Run when loading state changes

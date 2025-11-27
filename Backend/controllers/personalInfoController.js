@@ -204,7 +204,36 @@ const getPersonalInfo = (req, res) => {
       }
 
       if (results.length > 0) {
-        res.status(200).json(results[0]);
+        const userData = results[0];
+
+        // Format the date to YYYY-MM-DD without timezone issues
+        if (userData.dob) {
+          // Create date object from the database string
+          const date = new Date(userData.dob);
+
+          // Debug logging
+          console.log("Date debugging:", {
+            rawFromDB: userData.dob,
+            dateObject: date,
+            toISOString: date.toISOString(),
+            toUTCString: date.toUTCString(),
+            localYear: date.getFullYear(),
+            localMonth: date.getMonth(),
+            localDate: date.getDate(),
+            utcYear: date.getUTCFullYear(),
+            utcMonth: date.getUTCMonth(),
+            utcDate: date.getUTCDate(),
+          });
+
+          // Use LOCAL date methods, not UTC methods
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          userData.dob = `${year}-${month}-${day}`;
+        }
+
+        console.log("Formatted user data:", userData);
+        res.status(200).json(userData);
       } else {
         res.status(404).json({
           message: "No personal information found for this user.",

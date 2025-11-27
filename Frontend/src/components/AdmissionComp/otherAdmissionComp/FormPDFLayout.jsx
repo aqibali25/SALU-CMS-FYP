@@ -62,22 +62,23 @@ export default function FormPDFLayout({ data }) {
   ];
 
   return (
-    <div
-      className="form-pdf-container"
-      style={{
-        width: "210mm",
-        minHeight: "297mm",
-        margin: "0 auto",
-        padding: "15mm",
-        backgroundColor: "white",
-        boxSizing: "border-box",
-        fontFamily: "Arial, sans-serif",
-        fontSize: "12px",
-        lineHeight: "1.3",
-      }}
-    >
+    <div className="pdf-wrapper">
       {/* Page 1 */}
-      <div className="page-1">
+      <div
+        className="pdf-page page-1"
+        style={{
+          width: "210mm",
+          minHeight: "297mm",
+          margin: "0 auto 10mm auto",
+          padding: "15mm",
+          backgroundColor: "white",
+          boxSizing: "border-box",
+          fontFamily: "Arial, sans-serif",
+          fontSize: "12px",
+          lineHeight: "1.3",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+        }}
+      >
         {/* Header with logo and QR */}
         <div className="row text-center align-items-center border-bottom p-2 mb-3">
           <div className="col-3">
@@ -164,7 +165,7 @@ export default function FormPDFLayout({ data }) {
                         margin: 0 auto;
                       `;
                       placeholder.innerHTML =
-                        '<span class="text-muted small">Photo Not Loaded</span>';
+                        '<span class="text-muted small">Photo Not Loaded <br/> Reload the Web and Download Again</span>';
                       e.target.parentNode.appendChild(placeholder);
                     }}
                   />
@@ -246,7 +247,12 @@ export default function FormPDFLayout({ data }) {
             </tr>
             <tr>
               <td>12. Domicile:</td>
-              <td>{personalInfo.province || "Not Provided"}</td>
+              <td>
+                {personalInfo.province +
+                  (personalInfo.domicile_district
+                    ? ", " + personalInfo.domicile_district
+                    : "") || "Not Provided"}
+              </td>
               <td>13. Mobile:</td>
               <td>
                 {personalInfo.phone_no ||
@@ -271,21 +277,19 @@ export default function FormPDFLayout({ data }) {
           <tbody>
             <tr>
               <td style={{ width: "70%" }}>15. Are you employed anywhere?</td>
-              <td style={{ width: "30%" }}>
-                {personalInfo.are_you_employed ? "Yes" : "No"}
-              </td>
+              <td style={{ width: "30%" }}>{personalInfo.are_you_employed}</td>
             </tr>
             <tr>
               <td>16. Considered for self-finance?</td>
-              <td>{personalInfo.self_finance ? "Yes" : "No"}</td>
+              <td>{personalInfo.self_finance}</td>
             </tr>
             <tr>
               <td>17. Hostel accommodation required?</td>
-              <td>{personalInfo.hostel ? "Yes" : "No"}</td>
+              <td>{personalInfo.hostel}</td>
             </tr>
             <tr>
               <td>18. Transportation required?</td>
-              <td>{personalInfo.transport ? "Yes" : "No"}</td>
+              <td>{personalInfo.transport}</td>
             </tr>
           </tbody>
         </table>
@@ -302,7 +306,6 @@ export default function FormPDFLayout({ data }) {
           <thead className="table-secondary">
             <tr>
               <th style={{ width: "12%" }}>Examination</th>
-              <th style={{ width: "10%" }}>Degree Name</th>
               <th style={{ width: "12%" }}>Group / Major</th>
               <th style={{ width: "8%" }}>Year</th>
               <th style={{ width: "10%" }}>Seat No</th>
@@ -315,7 +318,6 @@ export default function FormPDFLayout({ data }) {
           <tbody>
             <tr>
               <td>Matric</td>
-              <td>-</td>
               <td>{matriculation.group_name || "Not Provided"}</td>
               <td>{matriculation.degree_year || "Not Provided"}</td>
               <td>{matriculation.seat_no || "Not Provided"}</td>
@@ -326,7 +328,6 @@ export default function FormPDFLayout({ data }) {
             </tr>
             <tr>
               <td>Intermediate</td>
-              <td>-</td>
               <td>{intermediate.group_name || "Not Provided"}</td>
               <td>{intermediate.degree_year || "Not Provided"}</td>
               <td>{intermediate.seat_no || "Not Provided"}</td>
@@ -337,13 +338,7 @@ export default function FormPDFLayout({ data }) {
             </tr>
           </tbody>
         </table>
-      </div>
 
-      {/* Page Break */}
-      <div style={{ pageBreakAfter: "always" }}></div>
-
-      {/* Page 2 */}
-      <div className="page-2">
         {/* CHOICE SECTION */}
         <div className="section-title fw-bold border-bottom border-dark pb-1 mb-2">
           C. CHOICE OF PROGRAM FOR ADMISSION IN ORDER OF PREFERENCE:
@@ -364,7 +359,24 @@ export default function FormPDFLayout({ data }) {
             ))}
           </tbody>
         </table>
+      </div>
 
+      {/* Page 2 */}
+      <div
+        className="pdf-page page-2"
+        style={{
+          width: "210mm",
+          minHeight: "297mm",
+          margin: "0 auto",
+          padding: "15mm",
+          backgroundColor: "white",
+          boxSizing: "border-box",
+          fontFamily: "Arial, sans-serif",
+          fontSize: "12px",
+          lineHeight: "1.3",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+        }}
+      >
         {/* ADDITIONAL INFORMATION */}
         <div className="section-title fw-bold border-bottom border-dark pb-1 mb-2">
           D. ADDITIONAL INFORMATION:
@@ -479,7 +491,7 @@ export default function FormPDFLayout({ data }) {
         <div className="text-center border border-dark p-3 mt-4">
           <p className="fw-bold mb-1">Form Submission Fee</p>
           <p className="mb-0" style={{ fontSize: "14px" }}>
-            Rs. {admissionSchedule.admission_form_fee || "2,500"} /-
+            Rs. {admissionSchedule.admission_form_fee} /-
           </p>
         </div>
 
@@ -499,13 +511,32 @@ export default function FormPDFLayout({ data }) {
       <style>
         {`
           @media print {
-            .form-pdf-container {
-              margin: 0;
-              padding: 10mm;
-              box-shadow: none;
+            body, html {
+              margin: 0 !important;
+              padding: 0 !important;
             }
-            .page-break {
+            .pdf-wrapper {
+              width: 100% !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            .pdf-page {
               page-break-after: always;
+              margin: 0 !important;
+              padding: 15mm !important;
+              box-shadow: none !important;
+              width: 210mm !important;
+              min-height: 297mm !important;
+              height: 297mm !important;
+            }
+            .pdf-page:last-child {
+              page-break-after: auto;
+            }
+          }
+          
+          @media screen {
+            .pdf-page {
+              margin-bottom: 20px;
             }
           }
           

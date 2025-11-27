@@ -146,6 +146,19 @@ const PersonalInfo = () => {
               />
             </div>
 
+            {/* Phone Number Input */}
+            <InputContainer
+              htmlFor="phoneNumber"
+              title="Phone Number"
+              required
+              inputType="number"
+              value={formData.phoneNumber}
+              onChange={handleInputChange}
+              pattern="[0-9]{11}"
+              maxLength="11"
+              placeholder="03XXXXXXXXX"
+            />
+
             {/* Religion Select */}
             <div className="inputContainer">
               <label htmlFor="religion">

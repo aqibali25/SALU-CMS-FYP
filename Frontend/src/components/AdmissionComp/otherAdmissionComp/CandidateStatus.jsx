@@ -42,9 +42,7 @@ const CandidateStatus = () => {
   // 🔥 Fetch All Data on component mount - ONLY ONCE
   // ===========================================
   useEffect(() => {
-    console.log("🚀 Component mounted, fetching data...");
     if (cnic && !dataLoading && !allData) {
-      console.log("📡 Making API call...");
       getAllData(cnic);
     }
   }, [cnic]);
@@ -64,8 +62,6 @@ const CandidateStatus = () => {
         const response = await axios.get(
           `http://localhost:3306/api/getUploadedDocuments/${cnic}`
         );
-
-        console.log("Fetch challan response:", response.data);
 
         // Handle different response structures
         let documents = [];
@@ -341,7 +337,7 @@ const CandidateStatus = () => {
   };
 
   // ===========================================
-  // 🔥 Download Form as PDF
+  // 🔥 Download Form as PDF (FIXED)
   // ===========================================
   const handleDownloadForm = async () => {
     if (formStatus.percentage !== 100) {
@@ -353,49 +349,94 @@ const CandidateStatus = () => {
       return;
     }
 
+    let formContainer = null;
+    let root = null;
+
     try {
       setIsGeneratingForm(true);
       toast.info("Generating PDF form...");
 
-      // Create a temporary container for the form
-      const formContainer = document.createElement("div");
-      formContainer.style.position = "absolute";
-      formContainer.style.left = "-9999px";
-      formContainer.style.top = "0";
+      // Create a temporary container for the form - HIDDEN
+      formContainer = document.createElement("div");
+      formContainer.style.position = "fixed";
+      formContainer.style.left = "-9999px"; // Move off-screen
+      formContainer.style.top = "-9999px"; // Move off-screen
       formContainer.style.width = "210mm";
-      formContainer.style.padding = "20px";
       formContainer.style.background = "white";
+      formContainer.style.zIndex = "-1"; // Ensure it's behind everything
+      formContainer.style.visibility = "hidden"; // Hide it completely
+      formContainer.style.opacity = "0"; // Make it invisible
       document.body.appendChild(formContainer);
 
       // Render the FormPDFLayout component with data into the container
       const { createRoot } = await import("react-dom/client");
-      const root = createRoot(formContainer);
+      root = createRoot(formContainer);
       root.render(<FormPDFLayout data={allData} />);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const canvas = await html2canvas(formContainer, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        width: formContainer.scrollWidth,
-        height: formContainer.scrollHeight,
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-      const pdfWidth = 210;
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      // Wait for rendering to complete
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const pdf = new jsPDF("p", "mm", "a4");
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Admission-Form-${cnic || "unknown"}.pdf`);
+      const pages = formContainer.querySelectorAll(".pdf-page");
 
-      document.body.removeChild(formContainer);
+      if (pages.length === 0) {
+        throw new Error("No pages found for PDF generation");
+      }
+
+      for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
+
+        // Make sure the page is visible for capture
+        page.style.display = "block";
+        page.style.visibility = "visible";
+        page.style.opacity = "1";
+
+        const canvas = await html2canvas(page, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          width: page.scrollWidth,
+          height: page.scrollHeight,
+          windowWidth: page.scrollWidth,
+          windowHeight: page.scrollHeight,
+          onclone: (clonedDoc, element) => {
+            // Ensure all pages are properly visible during capture
+            const clonedPages = clonedDoc.querySelectorAll(".pdf-page");
+            clonedPages.forEach((clonedPage, index) => {
+              clonedPage.style.display = index === i ? "block" : "none";
+              clonedPage.style.visibility = "visible";
+              clonedPage.style.opacity = "1";
+            });
+          },
+        });
+
+        const imgData = canvas.toDataURL("image/png");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        if (i > 0) {
+          pdf.addPage();
+        }
+
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+        // Hide the page after capture
+        page.style.display = "none";
+      }
+
+      pdf.save(`Admission-Form-${cnic || "unknown"}.pdf`);
       toast.success("Form downloaded successfully!");
     } catch (error) {
       console.error("Error generating form PDF:", error);
-      toast.error("Error generating form PDF!");
+      toast.error("Error generating form PDF: " + error.message);
     } finally {
+      // Proper cleanup - unmount React component and remove container
+      if (root) {
+        root.unmount(); // Important: unmount the React component
+      }
+      if (formContainer && formContainer.parentNode) {
+        document.body.removeChild(formContainer);
+      }
       setIsGeneratingForm(false);
     }
   };

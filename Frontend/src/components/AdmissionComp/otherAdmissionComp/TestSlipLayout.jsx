@@ -173,7 +173,7 @@ export default function TestSlipLayout({ data }) {
                     margin: 0 auto;
                   `;
                   placeholder.innerHTML =
-                    '<span class="text-muted small">Photo Not Loaded</span>';
+                    '<span class="text-muted small">Photo Not Loaded <br/> Reload the Web and Download Again</span>';
                   e.target.parentNode.appendChild(placeholder);
                 }}
               />

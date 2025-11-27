@@ -175,15 +175,15 @@ export default function ChallanLayout({ data }) {
                   />
                 </div>
                 <h3
-                  className="mb-1"
+                  className="mb-1 d-flex justify-content-center align-items-center"
                   data-title="institute-name"
                   style={{
-                    fontSize: "15px",
+                    fontSize: "13px",
                     fontWeight: "bold",
                     margin: "5px 0",
                   }}
                 >
-                  {" Shah Abdul Latif University Ghotki Campus".toUpperCase}
+                  SHAH ABDUL LATIF UNIVERSITY <br /> GHOTKI CAMPUS
                 </h3>
                 <h6 data-title="bank-challan">BANK CHALLAN</h6>
               </div>
@@ -261,12 +261,7 @@ export default function ChallanLayout({ data }) {
                       {programOfStudy.applied_department || ""}
                     </td>
                   </tr>
-                  <tr data-row="program">
-                    <td data-label="program">Program:</td>
-                    <td data-value="program-value">
-                      {programOfStudy.first_choice || ""}
-                    </td>
-                  </tr>
+
                   <tr data-row="contact">
                     <td data-label="contact">Contact#:</td>
                     <td data-value="contact-value">
@@ -340,7 +335,10 @@ export default function ChallanLayout({ data }) {
 
               {/* Signatures */}
               <div className="mt-2" style={{ fontSize: "8px" }}>
-                <div className="d-flex justify-content-between">
+                <div
+                  className="d-flex justify-content-between "
+                  style={{ marginTop: "70px" }}
+                >
                   <span>Depositor's Signature</span>
                   <span>Authorized Signature</span>
                 </div>
