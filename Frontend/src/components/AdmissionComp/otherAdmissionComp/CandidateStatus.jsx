@@ -111,22 +111,17 @@ const CandidateStatus = () => {
     if (!file) return;
 
     if (alreadyUploaded) {
-      toast.info("🟡 Challan is already uploaded!");
+      toast.info("Challan is already uploaded!");
       return;
     }
 
     // File validation
-    const allowedTypes = [
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-      "application/pdf",
-    ];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
 
     const maxSize = 10 * 1024 * 1024; // 10MB
 
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Invalid file type. Please upload JPEG, PNG, or PDF files.");
+      toast.error("Invalid file type. Please upload JPEG, PNG, or JPG files.");
       e.target.value = "";
       return;
     }
@@ -140,7 +135,7 @@ const CandidateStatus = () => {
     }
 
     setUploadedChallan(file);
-    toast.info("📁 File selected. Click 'Upload Challan' to submit.");
+    toast.info("File selected. Click 'Upload Challan' to submit.");
   };
 
   // ==================================================
@@ -840,7 +835,7 @@ const CandidateStatus = () => {
             Choose a file or drag & drop it here.
           </p>
           <small className="text-muted">
-            JPEG, PNG, and PDF formats (Max 10MB).
+            JPEG, PNG, and JPG formats (Max 10MB).
           </small>
           <div className="mt-3">
             <label
@@ -852,7 +847,7 @@ const CandidateStatus = () => {
               <input
                 type="file"
                 hidden
-                accept="application/pdf,image/png,image/jpeg"
+                accept="image/png,image/jpeg,image/jpg"
                 disabled={alreadyUploaded || isLoading}
                 onChange={handleFileUpload}
               />
