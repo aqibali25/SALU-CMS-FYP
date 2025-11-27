@@ -17,6 +17,7 @@ import jsPDF from "jspdf";
 // Import your components
 import FormPDFLayout from "./FormPDFLayout";
 import ChallanLayout from "./ChallanLayout";
+import TestSlipLayout from "./TestSlipLayout";
 import useAllData from "../../../store/useAllData";
 
 const CandidateStatus = () => {
@@ -26,10 +27,10 @@ const CandidateStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingForm, setIsGeneratingForm] = useState(false);
   const [isGeneratingChallan, setIsGeneratingChallan] = useState(false);
+  const [isGeneratingSlip, setIsGeneratingSlip] = useState(false);
   const { formStatus } = useFormStatus();
   const cnic = Cookies.get("cnic");
 
-  // Use the useAllData hook
   const {
     data: allData,
     loading: dataLoading,
@@ -46,7 +47,7 @@ const CandidateStatus = () => {
       console.log("📡 Making API call...");
       getAllData(cnic);
     }
-  }, [cnic]); // Remove getAllData from dependencies
+  }, [cnic]);
 
   // ===========================================
   // 🔥 Fetch Challan from DB on component load
@@ -343,6 +344,10 @@ const CandidateStatus = () => {
   // 🔥 Download Form as PDF
   // ===========================================
   const handleDownloadForm = async () => {
+    if (formStatus.percentage !== 100) {
+      toast.error("Please complete the form first");
+      return;
+    }
     if (!allData) {
       toast.error("Please wait for data to load");
       return;
@@ -399,6 +404,10 @@ const CandidateStatus = () => {
   // 🔥 Download Challan as PDF
   // ===========================================
   const handleDownloadChallan = async () => {
+    if (formStatus.percentage !== 100) {
+      toast.error("Please complete the form first");
+      return;
+    }
     if (!allData) {
       toast.error("Please wait for data to load");
       return;
@@ -413,7 +422,7 @@ const CandidateStatus = () => {
       challanContainer.style.left = "-9999px";
       challanContainer.style.top = "0";
       challanContainer.style.width = "170mm";
-      challanContainer.style.padding = "20px";
+      challanContainer.style.padding = "10px";
       challanContainer.style.background = "white";
       document.body.appendChild(challanContainer);
 
@@ -449,6 +458,81 @@ const CandidateStatus = () => {
     }
   };
 
+  // ===========================================
+  // 🔥 Download Test Slip as PDF
+  // ===========================================
+  const handleDownloadSlip = async () => {
+    if (!allData) {
+      toast.error("Please wait for data to load");
+      return;
+    }
+
+    try {
+      setIsGeneratingSlip(true);
+      toast.info("Generating test slip PDF...");
+
+      const slipContainer = document.createElement("div");
+      slipContainer.style.position = "absolute";
+      slipContainer.style.left = "-9999px";
+      slipContainer.style.top = "0";
+      slipContainer.style.width = "210mm";
+      slipContainer.style.padding = "20px";
+      slipContainer.style.background = "white";
+      document.body.appendChild(slipContainer);
+
+      const { createRoot } = await import("react-dom/client");
+      const root = createRoot(slipContainer);
+      root.render(<TestSlipLayout data={allData} />);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const canvas = await html2canvas(slipContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: slipContainer.scrollWidth,
+        height: slipContainer.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdfWidth = 210;
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      const pdf = new jsPDF("p", "mm", "a4");
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Test-Slip-${cnic || "unknown"}.pdf`);
+
+      document.body.removeChild(slipContainer);
+      toast.success("Test slip downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating test slip PDF:", error);
+      toast.error("Error generating test slip PDF!");
+    } finally {
+      setIsGeneratingSlip(false);
+    }
+  };
+
+  // ===========================================
+  // 🔥 Helper function to check if entry test roll number exists and is not null
+  // ===========================================
+  const hasEntryTestRollNumber = () => {
+    if (!allData?.data?.personal_info) {
+      return false;
+    }
+
+    // Handle both array and object formats
+    const personalInfo = Array.isArray(allData.data.personal_info)
+      ? allData.data.personal_info[0]
+      : allData.data.personal_info;
+
+    return (
+      personalInfo &&
+      personalInfo.entry_test_roll_no !== null &&
+      personalInfo.entry_test_roll_no !== undefined &&
+      personalInfo.entry_test_roll_no !== ""
+    );
+  };
+
   // Helper functions for file display
   const getFileName = () => {
     if (!uploadedChallan) return "";
@@ -471,7 +555,7 @@ const CandidateStatus = () => {
   // Show loading state while data is being fetched
   if (dataLoading) {
     return (
-      <div className="formConitainer col-md-12 p-4">
+      <div className="formConitainer d-flex justify-content-center align-items-center h-75 col-md-12 p-4">
         <div className="text-center py-4">
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
@@ -545,7 +629,7 @@ const CandidateStatus = () => {
 
         {/* Download Form Card */}
         <div
-          className="downloadBox d-flex align-items-center justify-content-between p-3 mb-4 flex-wrap"
+          className="downloadBox d-flex align-items-center justify-content-between p-3 flex-wrap"
           style={{
             background: "#f8f9fa",
             borderRadius: "8px",
@@ -581,6 +665,47 @@ const CandidateStatus = () => {
             </button>
           </div>
         </div>
+
+        {/* Download Slip Card - ONLY SHOW IF ROLL NUMBER EXISTS AND IS NOT NULL */}
+        {hasEntryTestRollNumber() && (
+          <div
+            className="downloadBox d-flex align-items-center justify-content-between p-3 mb-4 flex-wrap"
+            style={{
+              background: "#f8f9fa",
+              borderRadius: "8px",
+              border: "1px solid #eee",
+              gap: "10px",
+            }}
+          >
+            <div className="d-flex align-items-center">
+              <div
+                className="me-3 d-flex justify-content-center align-items-center"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  background: "#e9ecef",
+                }}
+              >
+                <FaCloudDownloadAlt size={20} />
+              </div>
+              <div>
+                <h6 className="mb-0 fw-bold">Download Test Slip</h6>
+                <small>Download your Entry Test Slip.</small>
+              </div>
+            </div>
+            <div className="buttonContainer">
+              <button
+                className="button buttonFilled btn-sm"
+                onClick={handleDownloadSlip}
+                type="button"
+                disabled={isGeneratingSlip || !allData}
+              >
+                {isGeneratingSlip ? "Generating..." : "Download"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Uploaded Challan Card */}
         {uploadedChallan && (

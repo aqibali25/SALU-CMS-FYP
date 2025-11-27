@@ -4,7 +4,7 @@ import "../../../pages/Admission/Admission.css";
 import logo from "../../../assets/logo.png";
 
 export default function ChallanLayout({ data }) {
-  const copies = ["Bank Copy", "University Copy", "Student Copy"];
+  const copies = ["Bank Copy", "University Copy", "Admin Copy", "Student Copy"];
 
   if (!data || !data.data) {
     return (
@@ -137,209 +137,217 @@ export default function ChallanLayout({ data }) {
       }}
     >
       <div className="row" style={{ height: "190mm" }}>
-        {copies.map((title, copyIndex) => (
-          <div
-            className="col-3 challan-column"
-            key={copyIndex}
-            style={{
-              border: "1px solid #000",
-              padding: "5px",
-              margin: "0 2px",
-              height: "100%",
-              boxSizing: "border-box",
-            }}
-            data-copy-type={title.toLowerCase().replace(" ", "-")}
-          >
-            {/* Copy Title */}
+        <div
+          className="col-14 challan-column d-flex flex-row justify-content-between align-items-center p-2"
+          style={{ height: "700px" }}
+        >
+          {copies.map((title, copyIndex) => (
             <div
-              className="text-center fw-bold border-bottom p-1 mb-2"
-              style={{ fontSize: "12px", fontWeight: "bold" }}
-              data-section="copy-title"
+              className="challan-column"
+              key={copyIndex}
+              style={{
+                width: "30%",
+                border: "1px solid #000",
+                padding: "5px",
+                margin: "0 2px",
+                height: "100%",
+                boxSizing: "border-box",
+              }}
+              data-copy-type={title.toLowerCase().replace(" ", "-")}
             >
-              {title}
-            </div>
-
-            {/* Header Section */}
-            <div className="text-center mb-2" data-section="header">
-              <div className="logo-box mb-1">
-                <img
-                  src={logo}
-                  alt="SALU GC Logo"
-                  className="img-fluid"
-                  style={{ maxHeight: "100%" }}
-                />
-              </div>
-              <h6
-                style={{
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  margin: "5px 0",
-                }}
-                data-title="bank-challan"
+              {/* Copy Title */}
+              <div
+                className="text-center fw-bold border-bottom p-1 mb-2"
+                style={{ fontSize: "12px", fontWeight: "bold" }}
+                data-section="copy-title"
               >
-                BANK CHALLAN
-              </h6>
-            </div>
+                {title}
+              </div>
 
-            {/* Dates Table */}
-            <table
-              className="table table-bordered mb-1"
-              style={{ fontSize: "9px", marginBottom: "8px" }}
-              data-table-type="dates"
-            >
-              <tbody>
-                <tr data-row="date-issue">
-                  <td style={{ width: "40%" }} data-label="date-of-issue">
-                    Date of Issue
-                  </td>
-                  <td style={{ width: "60%" }} data-value="issue-date">
-                    {currentDate}
-                  </td>
-                </tr>
-                <tr data-row="due-date">
-                  <td data-label="due-date">Due Date</td>
-                  <td data-value="due-date-value">{dueDate}</td>
-                </tr>
-                <tr data-row="printed-date">
-                  <td data-label="printed-date">Challan Printed Date:</td>
-                  <td data-value="printed-date-value">{currentDate}</td>
-                </tr>
-              </tbody>
-            </table>
+              {/* Header Section */}
+              <div className="text-center mb-2" data-section="header">
+                <div className="logo-box mb-1">
+                  <img
+                    src={logo}
+                    alt="SALU GC Logo"
+                    className="img-fluid"
+                    style={{ maxHeight: "100%" }}
+                  />
+                </div>
+                <h3
+                  className="mb-1"
+                  data-title="institute-name"
+                  style={{
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                    margin: "5px 0",
+                  }}
+                >
+                  {" Shah Abdul Latif University Ghotki Campus".toUpperCase}
+                </h3>
+                <h6 data-title="bank-challan">BANK CHALLAN</h6>
+              </div>
 
-            {/* Instructions */}
-            <div
-              className="p-1 border border-top-0 text-center mb-1"
-              style={{ fontSize: "9px", fontWeight: "bold" }}
-              data-section="instructions"
-            >
-              Please Received and Credit to SALU GC
-            </div>
+              {/* Dates Table */}
+              <table
+                className="table table-bordered mb-1"
+                style={{ fontSize: "9px", marginBottom: "8px" }}
+                data-table-type="dates"
+              >
+                <tbody>
+                  <tr data-row="date-issue">
+                    <td style={{ width: "40%" }} data-label="date-of-issue">
+                      Date of Issue
+                    </td>
+                    <td style={{ width: "60%" }} data-value="issue-date">
+                      {currentDate}
+                    </td>
+                  </tr>
+                  <tr data-row="due-date">
+                    <td data-label="due-date">Due Date</td>
+                    <td data-value="due-date-value">{dueDate}</td>
+                  </tr>
+                  <tr data-row="printed-date">
+                    <td data-label="printed-date">Challan Printed Date:</td>
+                    <td data-value="printed-date-value">{currentDate}</td>
+                  </tr>
+                </tbody>
+              </table>
 
-            <div
-              className="p-1 border border-top-0 small text-center mb-2"
-              style={{ fontSize: "8px", fontWeight: "bold" }}
-              data-section="banking-instructions"
-            >
-              Please deposit your fees through HBL connect/ HBL mobile banking
-              in Salu Regular admission fees head.
-            </div>
+              {/* Instructions */}
+              <div
+                className="p-1 border border-top-0 text-center mb-1"
+                style={{ fontSize: "9px", fontWeight: "bold" }}
+                data-section="instructions"
+              >
+                Please Received and Credit to SALU GC
+              </div>
 
-            {/* Personal Information Table */}
-            <table
-              className="table table-bordered mb-2"
-              style={{ fontSize: "9px", marginBottom: "10px" }}
-              data-table-type="personal-info"
-            >
-              <tbody>
-                <tr data-row="name">
-                  <td style={{ width: "30%" }} data-label="name">
-                    Name:
-                  </td>
-                  <td style={{ width: "70%" }} data-value="name-value">
-                    {`${personalInfo.first_name || ""} ${
-                      personalInfo.last_name || ""
-                    }`.trim()}
-                  </td>
-                </tr>
-                <tr data-row="father-name">
-                  <td data-label="father-name">F/Name:</td>
-                  <td data-value="father-name-value">
-                    {fatherInfo.name || ""}
-                  </td>
-                </tr>
-                <tr data-row="department">
-                  <td data-label="department">Department:</td>
-                  <td data-value="department-value">
-                    {programOfStudy.applied_department || ""}
-                  </td>
-                </tr>
-                <tr data-row="program">
-                  <td data-label="program">Program:</td>
-                  <td data-value="program-value">
-                    {programOfStudy.first_choice || ""}
-                  </td>
-                </tr>
-                <tr data-row="contact">
-                  <td data-label="contact">Contact#:</td>
-                  <td data-value="contact-value">
-                    {personalInfo.phone_no || fatherInfo.mobile_number || ""}
-                  </td>
-                </tr>
-                <tr data-row="address">
-                  <td data-label="address">Address:</td>
-                  <td data-value="address-value">
-                    {personalInfo.permanent_address ||
-                      personalInfo.postal_address ||
-                      ""}
-                  </td>
-                </tr>
-                <tr data-row="cnic">
-                  <td data-label="cnic">CNIC No:</td>
-                  <td data-value="cnic-value">{personalInfo.cnic || ""}</td>
-                </tr>
-              </tbody>
-            </table>
+              <div
+                className="p-1 border border-top-0 small text-center mb-2"
+                style={{ fontSize: "8px", fontWeight: "bold" }}
+                data-section="banking-instructions"
+              >
+                Please deposit your fees through HBL connect/ HBL mobile banking
+                in Salu Regular admission fees head.
+              </div>
 
-            {/* Fee Information Table */}
-            <table
-              className="table table-bordered mb-1"
-              style={{ fontSize: "9px", marginBottom: "8px" }}
-              data-table-type="fee-info"
-            >
-              <tbody>
-                <tr data-row="application-fee">
-                  <td style={{ width: "70%" }} data-label="application-fee">
-                    Application Processing Fee
-                  </td>
-                  <td
-                    style={{ width: "30%" }}
-                    data-value="application-fee-value"
-                  >
-                    {isAdmissionYearValid ? applicationFee : "N/A"}
-                  </td>
-                </tr>
-                <tr data-row="late-fee">
-                  <td data-label="late-fee">Late Fee</td>
-                  <td data-value="late-fee-value">{lateFee}</td>
-                </tr>
-                <tr className="fw-bold" data-row="total-amount">
-                  <td data-label="total-amount">Total Amount</td>
-                  <td data-value="total-amount-value">
-                    {isAdmissionYearValid ? totalAmount : "N/A"}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+              {/* Personal Information Table */}
+              <table
+                className="table table-bordered mb-2"
+                style={{ fontSize: "9px", marginBottom: "10px" }}
+                data-table-type="personal-info"
+              >
+                <tbody>
+                  <tr data-row="name">
+                    <td style={{ width: "30%" }} data-label="name">
+                      Name:
+                    </td>
+                    <td style={{ width: "70%" }} data-value="name-value">
+                      {`${personalInfo.first_name || ""} ${
+                        personalInfo.last_name || ""
+                      }`.trim()}
+                    </td>
+                  </tr>
+                  <tr data-row="father-name">
+                    <td data-label="father-name">F/Name:</td>
+                    <td data-value="father-name-value">
+                      {fatherInfo.name || ""}
+                    </td>
+                  </tr>
+                  <tr data-row="department">
+                    <td data-label="department">Department:</td>
+                    <td data-value="department-value">
+                      {programOfStudy.applied_department || ""}
+                    </td>
+                  </tr>
+                  <tr data-row="program">
+                    <td data-label="program">Program:</td>
+                    <td data-value="program-value">
+                      {programOfStudy.first_choice || ""}
+                    </td>
+                  </tr>
+                  <tr data-row="contact">
+                    <td data-label="contact">Contact#:</td>
+                    <td data-value="contact-value">
+                      {personalInfo.phone_no || fatherInfo.mobile_number || ""}
+                    </td>
+                  </tr>
+                  <tr data-row="address">
+                    <td data-label="address">Address:</td>
+                    <td data-value="address-value">
+                      {personalInfo.permanent_address ||
+                        personalInfo.postal_address ||
+                        ""}
+                    </td>
+                  </tr>
+                  <tr data-row="cnic">
+                    <td data-label="cnic">CNIC No:</td>
+                    <td data-value="cnic-value">{personalInfo.cnic || ""}</td>
+                  </tr>
+                </tbody>
+              </table>
 
-            {/* Amount in Words */}
-            <div
-              className="border border-top-0 p-1 small text-center"
-              style={{ fontSize: "8px", marginBottom: "5px" }}
-              data-section="amount-label"
-            >
-              Rupees (in words)
-            </div>
+              {/* Fee Information Table */}
+              <table
+                className="table table-bordered mb-1"
+                style={{ fontSize: "9px", marginBottom: "8px" }}
+                data-table-type="fee-info"
+              >
+                <tbody>
+                  <tr data-row="application-fee">
+                    <td style={{ width: "70%" }} data-label="application-fee">
+                      Application Processing Fee
+                    </td>
+                    <td
+                      style={{ width: "30%" }}
+                      data-value="application-fee-value"
+                    >
+                      {isAdmissionYearValid ? applicationFee : "N/A"}
+                    </td>
+                  </tr>
+                  <tr data-row="late-fee">
+                    <td data-label="late-fee">Late Fee</td>
+                    <td data-value="late-fee-value">{lateFee}</td>
+                  </tr>
+                  <tr className="fw-bold" data-row="total-amount">
+                    <td data-label="total-amount">Total Amount</td>
+                    <td data-value="total-amount-value">
+                      {isAdmissionYearValid ? totalAmount : "N/A"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-            <div
-              className="text-center small fw-bold p-1 border border-top-0"
-              style={{ fontSize: "8px", minHeight: "30px" }}
-              data-section="amount-words"
-            >
-              {isAdmissionYearValid
-                ? amountInWords
-                : "Fee not applicable for current admission year"}
-            </div>
+              {/* Amount in Words */}
+              <div
+                className="border border-top-0 p-1 small text-center"
+                style={{ fontSize: "8px", marginBottom: "5px" }}
+                data-section="amount-label"
+              >
+                Rupees (in words)
+              </div>
 
-            {/* Signatures */}
-            <div className="mt-2" style={{ fontSize: "8px" }}>
-              <div className="d-flex justify-content-between">
-                <span>Depositor's Signature</span>
-                <span>Authorized Signature</span>
+              <div
+                className="text-center small fw-bold p-1 border border-top-0"
+                style={{ fontSize: "8px", minHeight: "30px" }}
+                data-section="amount-words"
+              >
+                {isAdmissionYearValid
+                  ? amountInWords
+                  : "Fee not applicable for current admission year"}
+              </div>
+
+              {/* Signatures */}
+              <div className="mt-2" style={{ fontSize: "8px" }}>
+                <div className="d-flex justify-content-between">
+                  <span>Depositor's Signature</span>
+                  <span>Authorized Signature</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Print Styles */}

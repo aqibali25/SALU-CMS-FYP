@@ -25,8 +25,6 @@ const useAllData = () => {
           return;
         }
 
-        console.log("🔍 Fetching data for CNIC:", userCnic);
-
         const response = await axios.get(
           `http://localhost:3306/api/all-data/${userCnic}`
         );
