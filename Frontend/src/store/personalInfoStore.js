@@ -8,6 +8,8 @@ const usePersonalInfoStore = create((set, get) => ({
   formData: {
     firstName: "",
     lastName: "",
+    surname: "",
+    email: "",
     gender: "",
     dob: "",
     cnic: Cookies.get("cnic") || "",
@@ -15,11 +17,16 @@ const usePersonalInfoStore = create((set, get) => ({
     nativeLanguage: "",
     bloodGroup: "",
     disability: "",
-    disabilityDescription: "",
+    disabilityDescription: "" || null,
     province: "",
     city: "",
+    domicileDistrict: "",
     postalAddress: "",
     permanentAddress: "",
+    areYouEmployed: "",
+    selfFinance: "",
+    hostel: "",
+    transport: "",
     form_fee_status: "Unpaid",
     admission_year: "",
   },
@@ -42,7 +49,6 @@ const usePersonalInfoStore = create((set, get) => ({
       const cnic = Cookies.get("cnic");
       if (!cnic) return "";
 
-      // Fetch user's program selection to get the selected shift
       const programResponse = await axios.get(
         `http://localhost:3306/api/getProgramSelection/${cnic}`
       );
@@ -50,14 +56,12 @@ const usePersonalInfoStore = create((set, get) => ({
       if (programResponse.data && programResponse.data.shift) {
         const userShift = programResponse.data.shift;
 
-        // Fetch admission schedules
         const admissionResponse = await axios.get(
           "http://localhost:3306/api/admission-schedule"
         );
         const admissionSchedules =
           admissionResponse.data.data || admissionResponse.data;
 
-        // Find the admission schedule that matches the user's shift and has status "Open"
         const matchingSchedule = admissionSchedules.find(
           (schedule) =>
             schedule.Shift === userShift && schedule.status === "Open"
@@ -85,7 +89,6 @@ const usePersonalInfoStore = create((set, get) => ({
     } = get();
     const cnic = Cookies.get("cnic");
 
-    // Stop if already fetched, no CNIC, or exceeded max attempts
     if (hasFetched || !cnic || fetchAttempts >= maxFetchAttempts) {
       set({ loading: false });
       return false;
@@ -94,7 +97,6 @@ const usePersonalInfoStore = create((set, get) => ({
     try {
       set({ loading: true, error: null, fetchAttempts: fetchAttempts + 1 });
 
-      // Get admission year first
       const admissionYear = await getAdmissionYearForShift();
 
       const response = await axios.get(
@@ -111,6 +113,8 @@ const usePersonalInfoStore = create((set, get) => ({
           formData: {
             firstName: userData.first_name || "",
             lastName: userData.last_name || "",
+            surname: userData.surname || "",
+            email: userData.email || "",
             gender: userData.gender || "",
             dob: formattedDOB,
             cnic: cnic,
@@ -121,10 +125,15 @@ const usePersonalInfoStore = create((set, get) => ({
             disabilityDescription: userData.disability_description || "",
             province: userData.province || "",
             city: userData.city || "",
+            domicileDistrict: userData.domicile_district || "",
             postalAddress: userData.postal_address || "",
             permanentAddress: userData.permanent_address || "",
+            areYouEmployed: userData.are_you_employed || "",
+            selfFinance: userData.self_finance || "",
+            hostel: userData.hostel || "",
+            transport: userData.transport || "",
             form_fee_status: userData.form_fee_status || "Unpaid",
-            admission_year: userData.admission_year || admission_year || "",
+            admission_year: userData.admission_year || admissionYear || "",
           },
           hasFetched: true,
           loading: false,
@@ -137,11 +146,9 @@ const usePersonalInfoStore = create((set, get) => ({
       set({ loading: false });
       return false;
     } catch (error) {
-      // Handle 404 gracefully (no existing data)
       if (error.response && error.response.status === 404) {
         console.warn("No existing personal information found for this CNIC.");
 
-        // Get admission year even for new users
         const admissionYear = await getAdmissionYearForShift();
 
         set({
@@ -166,7 +173,6 @@ const usePersonalInfoStore = create((set, get) => ({
         error: errorMessage,
       });
 
-      // Only show error toast on last attempt
       if (get().fetchAttempts >= maxFetchAttempts) {
         toast.error(`Error: ${errorMessage}`);
       }
@@ -174,7 +180,7 @@ const usePersonalInfoStore = create((set, get) => ({
     }
   },
 
-  // Reset fetch state (useful if you need to refetch)
+  // Reset fetch state
   resetFetchState: () =>
     set({
       hasFetched: false,
@@ -201,15 +207,32 @@ const usePersonalInfoStore = create((set, get) => ({
     const requiredFields = [
       "firstName",
       "lastName",
+      "surname",
+      "email",
       "gender",
       "dob",
       "religion",
       "nativeLanguage",
+      "disability",
+      "areYouEmployed",
+      "selfFinance",
+      "hostel",
+      "transport",
+      "domicileDistrict",
     ];
+
     const missingFields = requiredFields.filter((field) => !formData[field]);
 
     if (missingFields.length > 0) {
-      toast.error(`Please fill in all required fields`);
+      toast.error(
+        `Please fill in all required fields: ${missingFields.join(", ")}`
+      );
+      return false;
+    }
+
+    // Additional validation for disability description
+    if (formData.disability === "Yes" && !formData.disabilityDescription) {
+      toast.error("Please provide disability description");
       return false;
     }
 
@@ -223,9 +246,38 @@ const usePersonalInfoStore = create((set, get) => ({
         finalFormData.admission_year = admissionYear;
       }
 
+      // Convert frontend camelCase to backend snake_case
+      const backendFormData = {
+        cnic: finalFormData.cnic,
+        first_name: finalFormData.firstName,
+        last_name: finalFormData.lastName,
+        surname: finalFormData.surname,
+        email: finalFormData.email,
+        gender: finalFormData.gender,
+        dob: finalFormData.dob,
+        religion: finalFormData.religion,
+        native_language: finalFormData.nativeLanguage,
+        blood_group: finalFormData.bloodGroup,
+        disability: finalFormData.disability,
+        disability_description: finalFormData.disabilityDescription,
+        province: finalFormData.province,
+        city: finalFormData.city,
+        domicile_district: finalFormData.domicileDistrict,
+        postal_address: finalFormData.postalAddress,
+        permanent_address: finalFormData.permanentAddress,
+        are_you_employed: finalFormData.areYouEmployed,
+        self_finance: finalFormData.selfFinance,
+        hostel: finalFormData.hostel,
+        transport: finalFormData.transport,
+        form_fee_status: finalFormData.form_fee_status,
+        admission_year: finalFormData.admission_year,
+      };
+
+      console.log("Sending to backend:", backendFormData);
+
       const response = await axios.post(
         "http://localhost:3306/api/savePersonalInfo",
-        { ...finalFormData, cnic },
+        backendFormData,
         {
           headers: { "Content-Type": "application/json" },
           timeout: 7000,
@@ -237,6 +289,7 @@ const usePersonalInfoStore = create((set, get) => ({
 
       if (success) {
         set({ loading: false });
+        toast.success("Personal information saved successfully!");
         return true;
       } else {
         throw new Error(`Unexpected response status: ${response.status}`);
@@ -248,6 +301,13 @@ const usePersonalInfoStore = create((set, get) => ({
         errorMessage =
           error.response.data?.message ||
           `Server error: ${error.response.status}`;
+
+        // Show specific missing fields if provided by backend
+        if (error.response.data?.missingFields) {
+          errorMessage += `. Missing: ${error.response.data.missingFields.join(
+            ", "
+          )}`;
+        }
       } else if (error.request) {
         errorMessage = "No response from server. Please check your connection.";
       } else {
@@ -270,6 +330,8 @@ const usePersonalInfoStore = create((set, get) => ({
       formData: {
         firstName: "",
         lastName: "",
+        surname: "",
+        email: "",
         gender: "",
         dob: "",
         cnic: Cookies.get("cnic") || "",
@@ -280,8 +342,13 @@ const usePersonalInfoStore = create((set, get) => ({
         disabilityDescription: "",
         province: "",
         city: "",
+        domicileDistrict: "",
         postalAddress: "",
         permanentAddress: "",
+        areYouEmployed: "",
+        selfFinance: "",
+        hostel: "",
+        transport: "",
         form_fee_status: "Unpaid",
         admission_year: "",
       },
@@ -292,7 +359,7 @@ const usePersonalInfoStore = create((set, get) => ({
   // Clear errors
   clearError: () => set({ error: null }),
 
-  // Method to update admission year (can be called externally if needed)
+  // Method to update admission year
   updateAdmissionYear: async () => {
     const admissionYear = await get().getAdmissionYearForShift();
     if (admissionYear) {

@@ -31,12 +31,20 @@ const savePersonalInfo = (req, res) => {
     entry_test_roll_no,
     cgpa,
     form_fee_status,
-    admission_year
+    admission_year,
   } = req.body;
 
   console.log("Save Personal Info Request:", req.body);
 
-  if (!cnic || !first_name || !last_name || !gender || !dob || !religion || !admission_year) {
+  if (
+    !cnic ||
+    !first_name ||
+    !last_name ||
+    !gender ||
+    !dob ||
+    !religion ||
+    !admission_year
+  ) {
     return res.status(400).json({ message: "Required fields are missing." });
   }
 
@@ -67,6 +75,7 @@ const savePersonalInfo = (req, res) => {
         });
       }
 
+      // FIXED SQL QUERY - Count the fields carefully
       const insertOrUpdateQuery = `
         INSERT INTO personal_info (
           cnic, phone_no, first_name, last_name, surname, email, gender, dob, religion,
@@ -75,7 +84,7 @@ const savePersonalInfo = (req, res) => {
           transport, domicile_district, block_no, form_status, remarks, roll_no,
           entry_test_roll_no, cgpa, form_fee_status, admission_year
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
           phone_no = VALUES(phone_no),
           first_name = VALUES(first_name),
@@ -108,11 +117,12 @@ const savePersonalInfo = (req, res) => {
           admission_year = VALUES(admission_year)
       `;
 
+      // FIXED: Now only 30 parameters to match 30 placeholders
       connection.query(
         insertOrUpdateQuery,
         [
           cnic,
-          phone_no,
+          phone_no || null,
           first_name,
           last_name,
           surname,
@@ -133,14 +143,14 @@ const savePersonalInfo = (req, res) => {
           hostel,
           transport,
           domicile_district,
-          block_no,
-          form_status,
-          remarks,
-          roll_no,
-          entry_test_roll_no,
-          cgpa,
+          block_no || null,
+          form_status || "Pending",
+          remarks || null,
+          roll_no || null,
+          entry_test_roll_no || null,
+          cgpa || null,
           form_fee_status,
-          admission_year
+          admission_year,
         ],
         (insertErr, result) => {
           connection.release();
